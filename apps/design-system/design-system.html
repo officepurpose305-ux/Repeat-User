@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design system — component showcase</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    .showcase-page { max-width: 420px; margin: 0 auto; padding: var(--space-4); padding-bottom: 120px; }
+    .token-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-top: var(--space-2); }
+    .token-swatch { height: 40px; border-radius: var(--radius-btn); border: 1px solid var(--border); }
+    .token-name { font-size: var(--text-xs); color: var(--text-tertiary); margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="showcase-page">
+    <h1 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);">Design system</h1>
+
+    <!-- Tokens -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">Tokens — colours</h2>
+      <div class="token-grid">
+        <div><div class="token-swatch" style="background: var(--surface);"></div><div class="token-name">surface</div></div>
+        <div><div class="token-swatch" style="background: var(--surface-alt);"></div><div class="token-name">surface-alt</div></div>
+        <div><div class="token-swatch" style="background: var(--surface-input);"></div><div class="token-name">surface-input</div></div>
+        <div><div class="token-swatch" style="background: var(--text-primary);"></div><div class="token-name">text-primary</div></div>
+        <div><div class="token-swatch" style="background: var(--blue-btn-light);"></div><div class="token-name">blue-btn-light</div></div>
+        <div><div class="token-swatch" style="background: var(--blue-btn-primary);"></div><div class="token-name">blue-btn-primary</div></div>
+        <div><div class="token-swatch" style="background: var(--blue-light);"></div><div class="token-name">blue-light</div></div>
+        <div><div class="token-swatch" style="background: var(--orange);"></div><div class="token-name">orange</div></div>
+        <div><div class="token-swatch" style="background: var(--green);"></div><div class="token-name">green</div></div>
+        <div><div class="token-swatch" style="background: var(--red);"></div><div class="token-name">red</div></div>
+      </div>
+    </section>
+
+    <!-- NavBar -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">NavBar</h2>
+      <div class="ds-navbar">
+        <button type="button" class="ds-navbar-back" aria-label="Back">←</button>
+        <input type="text" class="ds-navbar-search" placeholder="Search City / Locality...">
+        <div class="ds-navbar-actions">
+          <button type="button" class="ds-navbar-btn" aria-label="Save">♡</button>
+          <button type="button" class="ds-navbar-btn" aria-label="Share">⎘</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- StatusHeader -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">StatusHeader</h2>
+      <div class="ds-status-header">
+        <div class="ds-status-icon">⌂</div>
+        <div class="ds-status-text">
+          <div class="ds-status-title">Ready to move</div>
+          <div class="ds-status-sub">Since Jun, 2023</div>
+        </div>
+        <div class="ds-status-updates">
+          <span class="ds-status-dot"></span>
+          <span>Updates</span>
+          <span>▾</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MetricsRow -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">MetricsRow</h2>
+      <div class="ds-metrics-row">
+        <div class="ds-metrics-cell">
+          <div class="ds-metrics-value">₹15,000 /sqft</div>
+          <div class="ds-metrics-label">Super area</div>
+        </div>
+        <div class="ds-metrics-cell">
+          <div class="ds-metrics-value">★ 3.5</div>
+          <div class="ds-metrics-label">7 reviews</div>
+        </div>
+        <div class="ds-metrics-cell">
+          <div class="ds-metrics-value">📍 Map</div>
+          <div class="ds-metrics-label">View</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TabBar -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">TabBar</h2>
+      <div class="ds-tabbar">
+        <button type="button" class="ds-tab active">⊞ Overview</button>
+        <button type="button" class="ds-tab">⌂ Properties <span class="ds-tab-badge">New</span></button>
+      </div>
+    </section>
+
+    <!-- SectionHeading + FilterPills -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">SectionHeading + FilterPills</h2>
+      <div class="ds-section-heading">
+        <div class="ds-section-title">Available units</div>
+        <div class="ds-section-engagement">🔥 36 potential buyers showed interest recently</div>
+      </div>
+      <div class="ds-filter-pills">
+        <button type="button" class="ds-pill active">2 BHK Apartment</button>
+        <button type="button" class="ds-pill">3 BHK Apartment</button>
+        <button type="button" class="ds-pill">4 BHK Apartment</button>
+      </div>
+    </section>
+
+    <!-- ListingCard -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">ListingCard (detail)</h2>
+      <div class="ds-listing-card">
+        <div class="ds-listing-card-header">
+          <div class="ds-listing-card-icon">✦</div>
+          <span class="ds-listing-card-title">New bookings</span>
+        </div>
+        <div class="ds-listing-card-meta">1,085 – 1,095 sqft (Super built-up area) ▾</div>
+        <div class="ds-listing-card-price">₹1.63 – 1.64 Cr</div>
+        <div class="ds-listing-card-meta">+ charges · ₹15,000 /sqft</div>
+        <button type="button" class="ds-listing-card-cta">View 2 property options</button>
+        <div class="ds-listing-card-footer">
+          <span>ℹ Updated 1 day ago</span>
+          <a href="#">View details</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PropertyCard carousel -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">PropertyCard (carousel)</h2>
+      <div class="ds-section-heading">
+        <div class="ds-section-title">People like you also viewed</div>
+      </div>
+      <div style="display: flex; gap: var(--space-3); overflow-x: auto;">
+        <div class="ds-property-card">
+          <div class="ds-property-card-image">
+            <span class="ds-property-card-badge"><span class="ds-property-card-badge-check">✓</span> RERA</span>
+            <span class="ds-property-card-heart" aria-label="Save">♡</span>
+            <span class="ds-property-card-banner">Possession from Dec 2030</span>
+          </div>
+          <div class="ds-property-card-body">
+            <div class="ds-property-card-name">Project name</div>
+            <div class="ds-property-card-desc">2, 3, 4 BHK in Locality, City</div>
+            <div class="ds-property-card-price">₹ 1.81 – 3.37 Cr</div>
+          </div>
+        </div>
+        <div class="ds-property-card">
+          <div class="ds-property-card-image">
+            <span class="ds-property-card-badge"><span class="ds-property-card-badge-check">✓</span> RERA</span>
+            <span class="ds-property-card-heart" aria-label="Save">♡</span>
+            <span class="ds-property-card-banner">Possession from 2029</span>
+          </div>
+          <div class="ds-property-card-body">
+            <div class="ds-property-card-name">Another project</div>
+            <div class="ds-property-card-desc">3, 4 BHK in Locality, City</div>
+            <div class="ds-property-card-price">₹ 4.23 Cr</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SellerCards -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">SellerCards</h2>
+      <div class="ds-section-heading">
+        <div class="ds-section-title">Contact top sellers</div>
+      </div>
+      <div class="ds-seller-cards">
+        <div class="ds-seller-card">
+          <div class="ds-seller-card-badges">
+            <span class="ds-seller-badge">✓ RERA</span>
+            <span class="ds-seller-badge">✓ Advisor</span>
+          </div>
+          <div class="ds-seller-card-title">Seller name</div>
+          <div class="ds-seller-card-sub">50+ agents and advisors</div>
+          <button type="button" class="ds-seller-card-btn">View number</button>
+        </div>
+        <div class="ds-seller-card" style="background: linear-gradient(135deg, #374151 0%, #1f2937 100%);">
+          <div class="ds-seller-card-title">Another seller</div>
+          <button type="button" class="ds-seller-card-btn">View number</button>
+        </div>
+      </div>
+      <a href="#" class="ds-view-all">View all sellers →</a>
+    </section>
+
+    <!-- MapCard -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">MapCard</h2>
+      <div class="ds-map-card">
+        <div class="ds-map-area">
+          <button type="button" class="ds-map-btn">View on map</button>
+        </div>
+        <div class="ds-map-address">
+          <div>
+            <strong>Address:</strong><br>
+            Plot No 01, Sector 150, City – 201301
+          </div>
+          <a href="#">Directions</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ProsConsList -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">ProsConsList</h2>
+      <div class="ds-pros-cons">
+        <div class="ds-pros-cons-title">Pros & cons</div>
+        <ul class="ds-pros-cons-list">
+          <li><span class="ds-pros-cons-icon pro">✓</span> Temperature-controlled indoor swimming pool</li>
+          <li><span class="ds-pros-cons-icon pro">✓</span> Gated society with 24/7 security</li>
+          <li><span class="ds-pros-cons-icon con">−</span> Possession timeline is 2+ years</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CompareSection -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">CompareSection</h2>
+      <div class="ds-section-heading">
+        <div class="ds-section-title">Compare with similar projects</div>
+      </div>
+      <input type="text" class="ds-compare-search" placeholder="Search projects to compare">
+      <div class="ds-compare-cards">
+        <div class="ds-compare-card">
+          <div class="ds-compare-card-image"></div>
+          <div class="ds-compare-card-body">
+            <div class="ds-compare-card-name">Project A</div>
+            <div class="ds-compare-card-meta">★ 3.5 · 7 reviews</div>
+            <div class="ds-compare-card-meta">2, 3, 4 BHK · Locality, City</div>
+            <div class="ds-compare-card-meta">Ready to move · Completed Jun 2023</div>
+            <div class="ds-compare-card-price-block">
+              <div class="label">2 BHK · 1085 sq.ft.</div>
+              <div class="value">₹1.63 Cr</div>
+              <div class="sub">₹14.6k/sq ft</div>
+            </div>
+          </div>
+        </div>
+        <div class="ds-compare-card">
+          <div class="ds-compare-card-image"></div>
+          <div class="ds-compare-card-body">
+            <div class="ds-compare-card-name">Project B</div>
+            <div class="ds-compare-card-meta">★ 3.8 · 9 reviews</div>
+            <div class="ds-compare-card-meta">2, 3 BHK · Locality, City</div>
+            <div class="ds-compare-card-meta">Ready to move</div>
+            <div class="ds-compare-card-price-block">
+              <div class="label">2 BHK · 1195 sq.ft.</div>
+              <div class="value">₹1.38 Cr</div>
+              <div class="sub">₹12.3k/sq ft</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SegmentedControl -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">SegmentedControl</h2>
+      <div class="ds-section-heading">
+        <div class="ds-section-title">Projects by builder</div>
+      </div>
+      <div class="ds-segmented">
+        <button type="button" class="active">Ongoing</button>
+        <button type="button">Upcoming</button>
+        <button type="button">Delivered</button>
+      </div>
+    </section>
+
+    <!-- ProjectListCard -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">ProjectListCard</h2>
+      <div class="ds-project-list-card">
+        <div class="ds-project-list-card-thumb"></div>
+        <div class="ds-project-list-card-body">
+          <div class="ds-project-list-card-name">Project name</div>
+          <div class="ds-project-list-card-type">3, 4 BHK Apartment</div>
+          <div class="ds-project-list-card-price">₹ 5.25 – 15.64 Cr</div>
+          <div class="ds-project-list-card-divider"></div>
+          <div class="ds-project-list-card-footer">
+            <span>Sector 107, City</span>
+            <span>Possession: Sep 2029</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FeedbackPrompt -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">FeedbackPrompt</h2>
+      <div class="ds-feedback">
+        <div class="ds-feedback-q">Is this helpful?</div>
+        <div class="ds-feedback-btns">
+          <button type="button">👍 Yes</button>
+          <button type="button">👎 No</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- NewLaunchesBlock -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">NewLaunchesBlock</h2>
+      <div class="ds-new-launches">
+        <div class="ds-new-launches-head">
+          <div class="ds-new-launches-icon">✦</div>
+          <div class="ds-section-title">Newly launched projects</div>
+        </div>
+        <div class="ds-new-launches-sub">Best prices · Unit of choice · Easy payment plans</div>
+        <div class="ds-new-launches-cards">
+          <div class="ds-new-launch-card">
+            <div class="ds-new-launch-banner">✦ New launch ✦</div>
+            <div class="thumb"></div>
+            <div class="name">Project name</div>
+            <div class="location">Sector 97, City</div>
+            <div class="price">₹6.14 – 20.77 Cr</div>
+            <div class="ds-listing-card-meta">3, 4, 5 BHK · Completion Jul 2030</div>
+            <button type="button" class="ds-btn">View number</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- InterestingReadsBlock -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">InterestingReadsBlock</h2>
+      <div class="ds-section-heading">
+        <div class="ds-section-title">Interesting reads</div>
+      </div>
+      <div class="ds-reads-cards">
+        <div class="ds-read-card">
+          <div class="ds-read-card-image"></div>
+          <div class="ds-read-card-body">
+            <div class="ds-read-card-title">Reasons to invest in Locality, City</div>
+            <div class="ds-read-card-date">Nov 18, 2025</div>
+          </div>
+        </div>
+        <div class="ds-read-card">
+          <div class="ds-read-card-image"></div>
+          <div class="ds-read-card-body">
+            <div class="ds-read-card-title">Price trends and buyer guide</div>
+            <div class="ds-read-card-date">Oct 2, 2025</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BottomActionBar -->
+    <section class="ds-showcase-section">
+      <h2 class="ds-showcase-label">BottomActionBar</h2>
+      <div class="ds-action-bar">
+        <button type="button" class="ds-btn ds-btn-secondary">⬇ Brochure</button>
+        <button type="button" class="ds-btn ds-btn-primary">📞 View number</button>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

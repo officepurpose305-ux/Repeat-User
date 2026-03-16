@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>99acres · Home</title>
+  <link rel="stylesheet" href="../design-system/design-system.css">
+  <style>
+    /* Fallback if design-system.css fails to load (e.g. in iframe or file://) */
+    :root { --page-bg: #f8f8f8; --surface: #fff; --surface-alt: #f5f5f5; --surface-input: #f0f0f0; --text-primary: #111; --text-secondary: #555; --text-tertiary: #999; --border: rgba(0,0,0,0.08); --blue-btn-primary: #2563eb; --blue-btn-light: #93c5fd; --blue-cta: #3b82f6; --green: #16a34a; --red: #dc2626; --radius-btn: 1000px; --radius-pill: 50px; --radius-sm: 6px; --radius-md: 10px; --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --text-xs: 11px; --text-sm: 13px; --text-base: 15px; --text-lg: 18px; --text-xl: 20px; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700; --shadow-card: 0 1px 5px rgba(0,0,0,0.08); --badge-dark: #374151; }
+    /* App-like rhythm: tight section spacing, CTAs contextual. Spec-aligned per stage. */
+    .homepage { max-width: 420px; margin: 0 auto; padding-bottom: 80px; min-height: 100vh; background: var(--page-bg); }
+    .homepage section { padding: var(--space-3) var(--space-4); }
+    .homepage section + section { padding-top: var(--space-2); }
+    .homepage .sec-inner { padding-top: var(--space-3); }
+    .homepage .section-hero { padding: var(--space-4) var(--space-4); }
+    .homepage .section-hero + section { padding-top: 0; }
+    .homepage .section-title-wrap { margin-bottom: var(--space-2); }
+    .homepage .ds-section-heading { margin-bottom: var(--space-2); }
+    .hero-title { font-size: var(--text-xl); font-weight: var(--weight-bold); margin-bottom: var(--space-1); }
+    .hero-sub { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.4; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0 var(--space-4) var(--space-2); }
+    .chip { padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--border); font-size: var(--text-xs); color: var(--text-secondary); display: inline-flex; align-items: center; gap: var(--space-1); }
+    .locality-cards { display: flex; gap: var(--space-2); overflow-x: auto; padding: var(--space-1) 0; -webkit-overflow-scrolling: touch; }
+    .locality-card { flex-shrink: 0; width: 140px; background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+    .locality-card-img { height: 72px; background: var(--surface-input); background-size: cover; background-position: center; }
+    .locality-card-body { padding: var(--space-3); }
+    .locality-card-name { font-weight: var(--weight-bold); font-size: var(--text-sm); }
+    .locality-card-meta { font-size: var(--text-xs); color: var(--text-tertiary); margin-top: 2px; }
+    .comparison-table { width: 100%; font-size: var(--text-xs); border-collapse: collapse; background: var(--surface); border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); }
+    .comparison-table th, .comparison-table td { padding: var(--space-2) var(--space-3); text-align: left; border-bottom: 1px solid var(--border); }
+    .comparison-table th { background: var(--surface-alt); font-weight: var(--weight-semibold); color: var(--text-secondary); }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .tools-strip { display: flex; gap: var(--space-2); overflow-x: auto; padding: var(--space-1) 0; -webkit-overflow-scrolling: touch; }
+    .tool-pill { flex-shrink: 0; padding: 0 var(--space-3); border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--border); font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--text-primary); cursor: pointer; height: 36px; align-items: center; display: inline-flex; box-sizing: border-box; }
+    .cta-row { display: flex; gap: var(--space-2); margin-top: var(--space-2); flex-wrap: wrap; }
+    .cta-primary, .cta-secondary { padding: 0 var(--space-3); border-radius: var(--radius-btn); font-size: var(--text-sm); border: none; cursor: pointer; text-align: center; height: 36px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; }
+    .cta-primary { background: var(--blue-btn-primary); color: #fff; font-weight: var(--weight-bold); flex: 1; min-width: 0; }
+    .cta-secondary { background: var(--blue-btn-light); color: var(--blue-btn-primary); font-weight: var(--weight-semibold); }
+    .decision-spotlight { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 0; overflow: hidden; }
+    .decision-spotlight .img-wrap { height: 180px; background: var(--surface-input); display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); font-size: var(--text-xs); border-bottom: 1px solid var(--border); }
+    .decision-spotlight .body { padding: var(--space-3); }
+    .decision-spotlight .tags { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-bottom: var(--space-1); }
+    .decision-spotlight .tag { padding: 2px 6px; border-radius: var(--radius-pill); background: var(--surface-alt); font-size: 10px; font-weight: var(--weight-semibold); color: var(--text-secondary); }
+    .decision-spotlight .price-drop { color: var(--green); font-size: var(--text-xs); font-weight: var(--weight-semibold); margin-top: 2px; }
+    .decision-spotlight .urgency { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--red); }
+    .decision-spotlight .proximity { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--text-secondary); }
+    .decision-spotlight .yoy { font-size: var(--text-xs); color: var(--green); margin-top: 2px; }
+    .feedback-prompt-block { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border); padding: var(--space-3); }
+    .feedback-prompt-block .q { font-weight: var(--weight-semibold); font-size: var(--text-sm); margin-bottom: var(--space-1); }
+    .budget-nudge { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border); padding: var(--space-3); }
+    .adjacent-module { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border); padding: var(--space-3); }
+    .adjacent-module .tag { font-size: 10px; color: var(--text-tertiary); margin-bottom: 2px; }
+    .consideration-block { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border); padding: var(--space-3); }
+    .consideration-block .options { display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-2); }
+    .consideration-block .opt { padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface-alt); font-size: var(--text-xs); cursor: pointer; }
+    .worth-it { margin-top: var(--space-2); padding: var(--space-2); background: var(--surface-alt); border-radius: var(--radius-sm); font-size: var(--text-xs); }
+    .worth-it .btns { display: flex; gap: var(--space-2); margin-top: var(--space-1); }
+    .experts-cards { display: flex; gap: var(--space-2); overflow-x: auto; padding: var(--space-1) 0; }
+    .expert-card { flex-shrink: 0; width: 160px; padding: var(--space-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+    .img-placeholder { background: var(--surface-input); display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); font-size: 10px; border: 1px dashed var(--border); }
+    .card-scroll { display: flex; gap: var(--space-2); overflow-x: auto; padding: var(--space-1) 0; -webkit-overflow-scrolling: touch; }
+    .see-all { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--blue-cta); }
+    .shortlist-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-2); margin-bottom: var(--space-2); }
+    .shortlist-card .personal { font-size: var(--text-xs); color: var(--text-secondary); margin-top: 2px; }
+    .shortlist-card .prompt { font-size: var(--text-xs); margin-top: var(--space-1); }
+    .shortlist-card .yn { display: flex; gap: var(--space-1); margin-top: var(--space-1); flex-wrap: wrap; }
+    .social-line { font-size: var(--text-xs); color: var(--text-secondary); padding: 0 var(--space-4) var(--space-2); }
+    .ds-section-title { font-size: var(--text-base); }
+    .ds-section-sub { font-size: var(--text-xs); margin-top: 2px; }
+  </style>
+</head>
+<body style="margin:0;background:#f8f8f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div id="root" class="homepage"></div>
+  <script>
+(function() {
+  var STAGE_NAMES = { 1: 'Discovery', 2: 'Locality Awareness', 3: 'Comparison', 4: 'Shortlist', 5: 'Post-Visit' };
+  function getApiBase() { return (config && config.apiBase) || window.NINETY_NINE_ACRES_API_BASE || 'http://10.10.17.143:5003'; }
+  var FALLBACK_IMGS = [
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=220&fit=crop',
+    'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=220&fit=crop',
+    'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=400&h=220&fit=crop',
+  ];
+  var LOCALITY_IMGS = [
+    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=400&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&h=200&fit=crop',
+  ];
+  var ARTICLE_IMGS = [
+    'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=200&h=200&fit=crop',
+  ];
+  var apiProperties = [];
+  var apiLoading = false;
+  var searchUrl99acres = '';
+
+  function hashStr(s) { var h = 0; for (var i = 0; i < (s || '').length; i++) h = ((h << 5) - h) + (s || '').charCodeAt(i) | 0; return h < 0 ? -h : h; }
+  function locationImageFor(localityName, city) { return LOCALITY_IMGS[hashStr((localityName || '') + (city || '')) % LOCALITY_IMGS.length]; }
+  function articleImageFor(city, loc, index) { return ARTICLE_IMGS[hashStr((city || '') + (loc || '') + index) % ARTICLE_IMGS.length]; }
+
+  /** Real data only: properties from 99acres API. No dummy fallback — empty state when no API data. */
+  function getDisplayProperties() {
+    return apiProperties.length > 0 ? apiProperties : [];
+  }
+  function emptyListingsHTML() {
+    return '<div class="ds-section-sub" style="padding:var(--space-4);text-align:center;color:var(--text-secondary);font-size:var(--text-sm);">' +
+      'No listings for this location yet. The app has tried 99acres and OpenAI.</div>';
+  }
+
+  function defaultConfig() {
+    return {
+      user: { name: '', age: null, occupation: '', worksNear: '' },
+      stage: 2,
+      lastVisitDaysAgo: 3,
+      location: { primary: 'Sector 137', secondary: 'Sector 143', openToNearby: false, city: 'Noida', primaryMeta: null, secondaryMeta: null, adjacentLocalities: [] },
+      filters: { budgetMin: 70, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
+      behavior: { savedProperties: [], contactedDeveloper: false, visitedSite: false, priceSensitivity: 'medium' },
+      openAIData: null
+    };
+  }
+
+  var config = defaultConfig();
+
+  function mapAPIProperties(data) {
+    var items = [];
+    if (Array.isArray(data)) items = data;
+    else if (data && data.results) items = data.results;
+    else if (data && data.properties) items = data.properties;
+    else if (data && data.listings) items = data.listings;
+    else if (data && data.data && Array.isArray(data.data)) items = data.data;
+    var loc = primaryLoc();
+    var city = cityLabel();
+    var f = config.filters || {};
+    var bMin = f.budgetMin || 70, bMax = f.budgetMax || 95;
+    return items.slice(0, 10).map(function(p, i) {
+      var price = p.price || p.min_price || p.listed_price;
+      var priceStr = typeof price === 'number' ? '₹' + (price / 100000).toFixed(1) + 'L' : (p.price_str || '₹' + (bMin + Math.floor(Math.random() * (bMax - bMin))) + 'L');
+      var sqftNum = p.area || p.carpet_area || p.built_up_area || (900 + Math.floor(Math.random() * 400));
+      var img = p.image_url || p.photo_url || p.thumbnail || p.cover_photo || p.image || (p.images && p.images[0]) || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
+      return {
+        id: p.id || p.property_id || i,
+        name: p.name || p.project_name || p.title || 'Project ' + (i + 1),
+        loc: p.location || p.locality_name || p.address || (loc + ', ' + city),
+        price: priceStr,
+        bhk: p.bhk_types || (p.bedroom ? p.bedroom + ' BHK' : '2 BHK'),
+        sqft: sqftNum ? sqftNum.toLocaleString() + ' sq ft' : '',
+        status: p.status || (p.ready_to_move ? 'Ready to move' : 'Under construction'),
+        isNew: !!(p.is_new_launch || p.new_launch || p.is_new),
+        isDrop: !!(p.price_drop || p.is_price_drop),
+        img: img
+      };
+    });
+  }
+
+  function fetchPropertiesFrom99acres() {
+    if (apiLoading) return Promise.resolve();
+    var loc = primaryLoc();
+    var city = cityLabel();
+    var primaryIsCity = (config.location && config.location.primaryType === 'city') || (primaryLoc() === cityLabel());
+    var f = config.filters || {};
+    var bhk = (f.bhk && f.bhk[0]) ? f.bhk[0].replace('BHK', '').replace('+', '') : '2';
+    var rtm = f.readyToMove === 'yes' ? ' ready to move' : '';
+    var query = primaryIsCity ? (bhk + ' BHK' + rtm + ' flat for sale in ' + city) : (bhk + ' BHK' + rtm + ' flat for sale in ' + loc + ' ' + city);
+    apiLoading = true;
+    apiProperties = [];
+    var base = getApiBase();
+    return fetch(base + '/debug/entities?query=' + encodeURIComponent(query))
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(new Error('entities ' + r.status)); })
+      .then(function(entities) {
+        var entitiesStr = JSON.stringify(entities);
+        searchUrl99acres = '';
+        return fetch(base + '/debug/search-urls?entities=' + encodeURIComponent(entitiesStr))
+          .then(function(r) { return r.ok ? r.json() : {}; })
+          .then(function(searchData) {
+            searchUrl99acres = searchData.url || searchData.search_url || searchData.buy_url || searchData.buy || searchData.rent || (typeof searchData === 'string' ? searchData : (searchData && Object.values(searchData)[0])) || '';
+            return entities;
+          })
+          .catch(function() { return entities; });
+      })
+      .then(function(entities) {
+        var entitiesStr = JSON.stringify(entities);
+        var candidateEndpoints = [
+          '/search?entities=' + encodeURIComponent(entitiesStr) + '&limit=8',
+          '/listings?entities=' + encodeURIComponent(entitiesStr) + '&limit=8',
+          '/api/properties?city=' + (entities.city || '') + '&locality=' + (entities.locality || '') + '&bedroom=' + (entities.bedroom || bhk) + '&limit=8'
+        ];
+        var tried = 0;
+        function tryNext() {
+          if (tried >= candidateEndpoints.length) { apiLoading = false; return; }
+          var ep = candidateEndpoints[tried++];
+          return fetch(base + ep)
+            .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+            .then(function(d) {
+              var mapped = mapAPIProperties(d);
+              if (mapped.length > 0) { apiProperties = mapped; apiLoading = false; return; }
+              return tryNext();
+            })
+            .catch(function() { return tryNext(); });
+        }
+        return tryNext();
+      })
+      .catch(function() { apiLoading = false; })
+      .then(function() { apiLoading = false; });
+  }
+
+  function cityLabel() {
+    return (config.location && config.location.city) || 'Noida';
+  }
+
+  function primaryLoc() {
+    return (config.location && config.location.primary) || 'Sector 137';
+  }
+
+  function secondaryLoc() {
+    return (config.location && config.location.secondary) || null;
+  }
+
+  function worksNear() {
+    return (config.user && config.user.worksNear) || null;
+  }
+
+  function budgetRange() {
+    var f = config.filters || {};
+    var min = f.budgetMin || 70, max = f.budgetMax || 95;
+    return '₹' + min + 'L – ' + max + 'L';
+  }
+
+  function bhkLabel() {
+    var bhk = (config.filters && config.filters.bhk) || ['2BHK'];
+    return bhk.join(', ');
+  }
+
+  function searchChipsHTML() {
+    var stage = config.stage;
+    var loc = primaryLoc();
+    var city = cityLabel();
+    var bhk = bhkLabel();
+    var chips = '';
+    if (stage === 1) chips = '<span class="chip">Buy in ' + city + ' ×</span>';
+    else if (stage === 2) chips = '<span class="chip">Buy in ' + city + ' ×</span><span class="chip">' + loc + ' · ' + bhk + ' ×</span>';
+    else if (stage === 3) {
+      var sec = secondaryLoc();
+      chips = '<span class="chip">' + loc + ' · ' + bhk + ' · Under ' + (config.filters && config.filters.budgetMax) + 'L ×</span>' + (sec ? '<span class="chip">' + sec + ' · ' + bhk + ' ×</span>' : '');
+    } else chips = '<span class="chip">' + loc + ' · ' + bhk + ' · Under ' + (config.filters && config.filters.budgetMax) + 'L ×</span>' + (secondaryLoc() ? '<span class="chip">' + secondaryLoc() + ' · ' + bhk + ' ×</span>' : '');
+    return '<section><div class="chip-row">' + chips + '</div></section>';
+  }
+
+  function heroHTML() {
+    var stage = config.stage;
+    var city = cityLabel();
+    var loc = primaryLoc();
+    var mostViewed = (config.behavior && config.behavior.mostViewedProperty) || 'Godrej Air';
+    var viewCount = (config.behavior && config.behavior.viewCount) || 0;
+    var sec = secondaryLoc();
+    var contacted = config.behavior && config.behavior.contactedDeveloper;
+    var userName = (config.user && config.user.name) ? config.user.name + ', ' : '';
+    /* S1: Spec — generic search prompt + trending. No "Continue where you left off" (no history yet). */
+    if (stage === 1) {
+      return '<section class="section-hero"><div class="section-title-wrap"><div class="hero-title">Find your home in ' + city + '</div><div class="hero-sub">Search by locality, budget or project name.</div></div>' +
+        '<div class="hero-sub" style="margin-bottom:var(--space-2);">Trending: Sector 137, Sector 143, Sector 50</div>' +
+        '<div class="cta-row"><button type="button" class="cta-primary">Search properties in ' + city + '</button><button type="button" class="cta-secondary">Explore localities</button></div></section>';
+    }
+    var disp = getDisplayProperties();
+    var hasCards = disp.length >= 2;
+    var cardsOrEmpty = hasCards ? (propertyCardFromApi(disp[0], 'Viewed 3×') + propertyCardFromApi(disp[1], 'Viewed 1×')) : emptyListingsHTML();
+    /* S2: Continue where you left off + 2 cards. */
+    if (stage === 2) {
+      return '<section class="section-hero"><div class="section-title-wrap"><div class="ds-section-title">Continue where you left off</div><div class="hero-sub">Most properties you viewed are in ' + loc + (sec ? ', ' + sec : '') + '</div></div><div class="card-scroll">' + cardsOrEmpty + '</div><div class="cta-row"><button type="button" class="cta-primary">See all in ' + loc + '</button><button type="button" class="cta-secondary">Explore nearby</button></div></section>';
+    }
+    /* S3: Continue + 2 cards + which locality? (only when second locality set) */
+    if (stage === 3) {
+      if (!sec) {
+        return '<section class="section-hero"><div class="section-title-wrap"><div class="ds-section-title">Continue where you left off</div><div class="hero-sub">Most properties you viewed are in ' + loc + '</div></div><div class="card-scroll">' + cardsOrEmpty + '</div><div class="cta-row"><button type="button" class="cta-primary">See all in ' + loc + '</button><button type="button" class="cta-secondary">Explore nearby</button></div></section>';
+      }
+      var c3a = hasCards ? (propertyCardFromApi(disp[0], 'Viewed 3× · MOST VIEWED') + propertyCardFromApi(disp[1], 'Viewed 1×')) : emptyListingsHTML();
+      return '<section class="section-hero"><div class="section-title-wrap"><div class="ds-section-title">Continue where you left off</div><div class="hero-sub">Comparing ' + loc + ' and ' + sec + '</div></div><div class="card-scroll">' + c3a + '</div><p class="hero-sub" style="margin-top:var(--space-1);">Which locality are you leaning towards?</p><div class="cta-row"><button type="button" class="cta-primary">Compare ' + loc + ' vs ' + sec + '</button></div></section>';
+    }
+    /* S4: Decision spotlight — top property from display list (real data only). */
+    if (stage === 4) {
+      if (disp.length === 0) return '<section class="section-hero"><div class="section-title-wrap"><div class="ds-section-title">Continue where you left off</div><div class="hero-sub">Your top pick — time to take the next step</div></div>' + emptyListingsHTML() + '</section>';
+      var spot = disp[0];
+      var spotImg = spot.img ? '<img src="' + spot.img + '" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">' : '';
+      var spotDesc = [spot.loc, spot.bhk, spot.sqft, spot.status].filter(Boolean).join(' · ');
+      return '<section class="section-hero"><div class="section-title-wrap"><div class="ds-section-title">Continue where you left off</div><div class="hero-sub">Your top pick' + (userName ? ' — ' + userName.split(' ')[0] : '') + ' — time to take the next step</div></div>' +
+        '<div class="decision-spotlight">' +
+        '<div class="img-wrap" style="position:relative;min-height:180px;">' + spotImg + '</div>' +
+        '<div class="body">' +
+        '<div class="tags"><span class="tag">Viewed ' + (viewCount >= 7 ? '7+' : viewCount || 7) + '</span>' + (contacted ? '<span class="tag">Contacted</span>' : '') + '</div>' +
+        '<div class="ds-property-card-name">' + (spot.name || mostViewed) + '</div>' +
+        '<div class="ds-property-card-desc">' + spotDesc + '</div>' +
+        '<div class="ds-property-card-price">' + (spot.price || '₹86L') + '</div><div class="price-drop">₹2L since last visit</div>' +
+        '<div class="proximity">' + (worksNear() ? '🚗 15 mins from ' + worksNear() + ' · ' : '') + '🚇 10 mins from metro</div>' +
+        '<div class="yoy">+12% YoY</div>' +
+        '<div class="urgency">🔥 12 people contacted this week · 3 units left</div>' +
+        '<p class="hero-sub" style="margin-top:var(--space-1);">You\'ve opened this ' + (viewCount || 7) + ' times. Your instinct is telling you something.</p>' +
+        '<div class="cta-row"><button type="button" class="cta-secondary">Not interested</button><button type="button" class="cta-primary">Visit this weekend</button></div>' +
+        '</div></div></section>';
+    }
+    /* S5: Post-visit feedback; show visited property from data (real only). */
+    if (stage === 5) {
+      if (disp.length === 0) return '<section class="section-hero"><div class="section-title-wrap"><div class="ds-section-title">Continue where you left off</div><div class="hero-sub">How was your visit? We\'ll personalise what we show next.</div></div>' + emptyListingsHTML() + '<div class="cta-row"><button type="button" class="cta-primary">Confirm your visit</button></div></section>';
+      var vp = disp[0];
+      return '<section class="section-hero"><div class="section-title-wrap"><div class="ds-section-title">Continue where you left off</div><div class="hero-sub">How was your visit? We\'ll personalise what we show next.</div></div>' +
+        '<div class="feedback-prompt-block"><div class="q">What\'s working / not working for you?</div>' +
+        '<div style="display:flex;gap:var(--space-1);flex-wrap:wrap;"><button type="button" class="tool-pill">👍 Good fit</button><button type="button" class="tool-pill">👎 Still comparing</button></div></div>' +
+        '<div class="shortlist-card"><div class="ds-property-card-name">' + (vp.name || mostViewed) + '</div><div class="ds-property-card-desc">' + (vp.loc || 'You visited recently') + ' · ' + (vp.price || '') + '</div><div class="ds-property-card-price">' + (vp.price || '') + '</div></div>' +
+        '<div class="cta-row"><button type="button" class="cta-primary">Confirm your visit</button><button type="button" class="cta-secondary">Talk to a loan advisor</button></div></section>';
+    }
+    return '';
+  }
+
+  function propertyCardInsight(prop, index) {
+    var wn = worksNear();
+    var loc = primaryLoc();
+    var sec = secondaryLoc();
+    var propLoc = (prop.loc || '').toLowerCase();
+    var locLower = (loc || '').toLowerCase();
+    var secLower = (sec || '').toLowerCase();
+    if (sec && propLoc.indexOf(secLower) !== -1) return 'One of 2 localities you\'re comparing';
+    if (loc && propLoc.indexOf(locLower) !== -1) return sec ? 'In ' + loc + ' you\'re exploring' : 'In ' + loc + ' you\'re browsing';
+    if (wn) return '~15 min from ' + wn;
+    return '';
+  }
+
+  /** Single property card: real API or contextual fallback; design-system compliant. */
+  function propertyCardFromApi(prop, viewedLabel) {
+    if (!prop) return '';
+    var desc = [prop.bhk, prop.loc].filter(Boolean).join(' · ');
+    if (prop.sqft) desc += ' · ' + prop.sqft;
+    if (prop.status) desc += ' · ' + prop.status;
+    var badges = '<span class="ds-property-card-badge"><span class="ds-property-card-badge-check">✓</span> RERA</span>';
+    if (prop.isDrop) badges += '<span style="position:absolute;top:var(--space-2);right:40px;padding:2px 6px;border-radius:var(--radius-pill);background:var(--green);color:#fff;font-size:10px;">Price drop</span>';
+    if (viewedLabel) badges += '<span style="position:absolute;top:var(--space-2);left:var(--space-2);background:rgba(0,0,0,0.6);color:#fff;padding:2px 8px;border-radius:var(--radius-pill);font-size:10px;">' + viewedLabel + '</span>';
+    var imgHtml = prop.img ? '<img src="' + prop.img + '" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">' : '';
+    var insight = propertyCardInsight(prop);
+    var insightHtml = insight ? '<div class="ds-property-card-desc" style="font-size:10px;color:var(--blue-cta);margin-top:4px;">' + insight + '</div>' : '';
+    return '<div class="ds-property-card"><div class="ds-property-card-image" style="position:relative;overflow:hidden;"><div style="position:absolute;inset:0;background:var(--surface-input);">' + imgHtml + '</div>' + badges + '<span class="ds-property-card-heart" aria-label="Save">♡</span><span class="ds-property-card-banner">' + (prop.status || 'Possession from Dec 2030') + '</span></div><div class="ds-property-card-body"><div class="ds-property-card-name">' + (prop.name || '') + '</div><div class="ds-property-card-desc">' + desc + '</div><div class="ds-property-card-price">' + (prop.price || '') + '</div>' + insightHtml + '</div></div>';
+  }
+
+  function localityHTML() {
+    var stage = config.stage;
+    var loc = primaryLoc();
+    var sec = secondaryLoc();
+    var city = cityLabel();
+    if (stage === 1) {
+      var s1Localities = (config.openAIData && Array.isArray(config.openAIData.localities) && config.openAIData.localities.length > 0)
+        ? config.openAIData.localities.map(function(x) { return { name: x.name || x, avgPricePerSqft: x.avgPricePerSqft != null ? x.avgPricePerSqft : 12.5 }; })
+        : [{ name: 'Sector 137', avgPricePerSqft: 12.5 }, { name: 'Sector 143', avgPricePerSqft: 12.1 }, { name: 'Sector 50', avgPricePerSqft: 11.8 }, { name: 'Sector 78', avgPricePerSqft: 11.4 }, { name: 'Sector 128', avgPricePerSqft: 11.0 }, { name: 'Sector 150', avgPricePerSqft: 10.6 }];
+      var s1Cards = s1Localities.map(function(x, i) {
+        var name = typeof x === 'string' ? x : x.name;
+        var avg = (typeof x === 'object' && x.avgPricePerSqft != null) ? x.avgPricePerSqft : (12.5 - i * 0.4);
+        var img = locationImageFor(name, city);
+        return '<div class="locality-card"><div class="locality-card-img" style="background-image:url(\'' + img + '\')"></div><div class="locality-card-body"><div class="locality-card-name">' + name + '</div><div class="locality-card-meta">Avg ₹' + (typeof avg === 'number' ? avg.toFixed(1) : avg) + 'k/sqft</div></div></div>';
+      }).join('');
+      return '<section><div class="ds-section-heading"><div class="ds-section-title">Trending localities in ' + city + '</div><div class="ds-section-sub">Top areas by search volume</div></div><div class="locality-cards">' + s1Cards + '</div></section>';
+    }
+    if (stage === 2) {
+      var l2a = '<div class="locality-card"><div class="locality-card-img" style="background-image:url(\'' + locationImageFor(loc, city) + '\')"></div><div class="locality-card-body"><div class="locality-card-name">' + loc + '</div><div class="locality-card-meta">Avg ₹12.5k/sqft · Metro 2km</div></div></div>';
+      var l2b = sec ? '<div class="locality-card"><div class="locality-card-img" style="background-image:url(\'' + locationImageFor(sec, city) + '\')"></div><div class="locality-card-body"><div class="locality-card-name">' + sec + '</div><div class="locality-card-meta">Avg ₹11.8k/sqft</div></div></div>' : '';
+      return '<section><div class="ds-section-heading"><div class="ds-section-title">Localities on your radar</div><div class="ds-section-sub">' + loc + (sec ? ', ' + sec : '') + '</div></div><div class="locality-cards">' + l2a + l2b + '</div><div class="consideration-block" style="margin-top:var(--space-2);"><div class="ds-section-title" style="font-size:var(--text-sm);">Which matters for your daily routine?</div><div class="ds-filter-pills" style="margin-top:var(--space-1);"><button type="button" class="ds-pill">Metro</button><button type="button" class="ds-pill">Hospital</button><button type="button" class="ds-pill">School</button><button type="button" class="ds-pill">Market</button></div></div></section>';
+    }
+    if (stage === 3 && sec) {
+      return '<section><div class="ds-section-heading"><div class="ds-section-title">HEAD TO HEAD ' + loc + ' vs ' + sec + '</div><div class="ds-section-sub">Which matters more to you?</div></div>' +
+        '<table class="comparison-table"><tr><th></th><th>' + loc + '</th><th>' + sec + '</th></tr>' +
+        '<tr><td>Travel time</td><td>5 mins</td><td>20–25 mins</td></tr><tr><td>Avg. price</td><td>₹86L</td><td>₹80L (+₹6L)</td></tr><tr><td>Rent</td><td>₹7,000–8,000</td><td>₹8,000</td></tr><tr><td>Demand next 3 yrs</td><td>+12%</td><td>+14%</td></tr><tr><td>Connectivity</td><td>Excellent</td><td>Mixed — check</td></tr></table>' +
+        '<div class="landmarks-table"><div class="ds-section-title" style="margin-top:var(--space-4);font-size:var(--text-base);">NEAREST LANDMARKS</div><table class="comparison-table" style="margin-top:var(--space-2);"><tr><th></th><th>' + loc + '</th><th>' + sec + '</th></tr><tr><td>Metro</td><td>Blue Line</td><td>Botanical Garden</td></tr><tr><td>Hospital</td><td>Felix</td><td>Jaypee Hospital</td></tr><tr><td>School</td><td>DPS Sec 103</td><td>Mayur Vihar School</td></tr></table></div>' +
+        '<div class="worth-it"><p>' + sec + ' saves you ~₹6L but puts you 2km from metro. Worth it?</p><div class="btns"><button type="button" class="cta-secondary">Metro first</button><button type="button" class="cta-secondary">₹6L saving</button></div></div></section>';
+    }
+    if (stage === 3 && !sec) {
+      var l2a = '<div class="locality-card"><div class="locality-card-img" style="background-image:url(\'' + locationImageFor(loc, city) + '\')"></div><div class="locality-card-body"><div class="locality-card-name">' + loc + '</div><div class="locality-card-meta">Avg ₹12.5k/sqft · Metro 2km</div></div></div>';
+      return '<section><div class="ds-section-heading"><div class="ds-section-title">Localities on your radar</div><div class="ds-section-sub">' + loc + ' — add another locality to compare</div></div><div class="locality-cards">' + l2a + '</div></section>';
+    }
+    if (stage === 4) return '';
+    if (stage === 5) {
+      return '<section><div class="ds-section-heading"><div class="ds-section-title">Locality appreciation</div><div class="ds-section-sub">' + loc + ' — +8% YoY</div></div></section>';
+    }
+    return '';
+  }
+
+  function propertyFeedHTML() {
+    var stage = config.stage;
+    if (stage === 4) return '';
+    var loc = primaryLoc();
+    var sec = secondaryLoc();
+    var city = cityLabel();
+    var rtm = (config.filters && config.filters.readyToMove) === 'yes';
+    var title = stage === 1 ? 'Trending properties in ' + city : stage === 2 ? 'Properties in your browsed sectors' : stage === 3 ? 'Properties in ' + loc + (sec ? ' and ' + sec : '') : 'Similar properties you might like';
+    var rtmSub = rtm ? '<div class="ds-section-sub" style="margin-top:2px;">Showing ready-to-move properties</div>' : '';
+    var disp = getDisplayProperties();
+    var cards = disp.length > 0 ? disp.slice(0, 4).map(function(p) { return propertyCardFromApi(p, ''); }).join('') : emptyListingsHTML();
+    var liveLink = (searchUrl99acres && apiProperties.length) ? '<a href="' + searchUrl99acres + '" target="_blank" rel="noopener" class="ds-section-sub" style="display:block;margin-top:4px;color:var(--blue);">Live on 99acres →</a>' : '';
+    return '<section><div class="ds-section-heading"><div class="ds-section-title">' + title + '</div>' + rtmSub + liveLink + '</div><div class="card-scroll">' + cards + '</div></section>';
+  }
+
+  function nowInBrowsedHTML() {
+    if (config.stage !== 2) return '';
+    var disp = getDisplayProperties();
+    if (disp.length < 2) return '<section><div class="ds-section-heading"><div class="ds-section-title">Now in your browsed sections</div></div>' + emptyListingsHTML() + '</section>';
+    var cards = propertyCardFromApi(disp[0], '') + propertyCardFromApi(disp[1], '');
+    return '<section><div class="ds-section-heading" style="display:flex;justify-content:space-between;align-items:center;"><div class="ds-section-title">Now in your browsed sections</div><span class="tag" style="background:var(--red);color:#fff;padding:2px 6px;border-radius:var(--radius-pill);font-size:10px;">2 New</span></div>' +
+      '<div class="card-scroll">' + cards + '</div><a href="#" class="see-all">See all</a></section>';
+  }
+
+  function considerationHTML() {
+    var stage = config.stage;
+    if (stage !== 2 && stage !== 3) return '';
+    return '<section><div class="consideration-block"><div class="ds-section-title">What is your consideration to buy?</div><div class="options">' +
+      '<button type="button" class="opt">Ready to move properties only</button>' +
+      '<button type="button" class="opt">Open to under construction properties</button>' +
+      '<button type="button" class="opt">Interested in new launches</button>' +
+      '</div></div></section>';
+  }
+
+  function expertsHTML() {
+    var stage = config.stage;
+    if (stage !== 2 && stage !== 3) return '';
+    var city = cityLabel();
+    var loc = primaryLoc();
+    var expImg1 = articleImageFor(city, loc, 10);
+    var expImg2 = articleImageFor(city, loc, 11);
+    return '<section><div class="ds-section-heading"><div class="ds-section-title">Experts to help you with properties in ' + loc + '</div><div class="ds-section-sub">Based on your search · Meeting time</div></div>' +
+      '<div class="experts-cards"><div class="expert-card"><div style="display:flex;gap:var(--space-2);align-items:flex-start;"><div style="width:48px;height:48px;border-radius:50%;background:url(\'' + expImg1 + '\') center/cover;flex-shrink:0;"></div><div><div class="ds-property-card-name">Ankit Sharma</div><div class="ds-property-card-desc">Sales Mgr · 24 yrs exp · English</div><button type="button" class="cta-secondary" style="margin-top:var(--space-2);">Contact</button></div></div></div>' +
+      '<div class="expert-card"><div style="display:flex;gap:var(--space-2);align-items:flex-start;"><div style="width:48px;height:48px;border-radius:50%;background:url(\'' + expImg2 + '\') center/cover;flex-shrink:0;"></div><div><div class="ds-property-card-name">Punit Joshi</div><div class="ds-property-card-desc">Sales Mgr · 20 yrs exp · English</div><button type="button" class="cta-secondary" style="margin-top:var(--space-2);">Contact</button></div></div></div></div></section>';
+  }
+
+  function stillConsideringHTML() {
+    if (config.stage !== 4) return '';
+    var disp = getDisplayProperties();
+    if (disp.length < 2) return '<section><div class="ds-section-heading"><div class="ds-section-title">STILL CONSIDERING</div><div class="ds-section-sub">Your other shortlisted properties</div></div></div>' + emptyListingsHTML() + '</section>';
+    var mostViewed = (config.behavior && config.behavior.mostViewedProperty) || (disp[0] && disp[0].name) || 'Your top pick';
+    var p1 = disp[1] || disp[0];
+    var p2 = disp[2] || disp[1] || disp[0];
+    return '<section><div class="ds-section-heading" style="display:flex;justify-content:space-between;align-items:center;"><div><div class="ds-section-title">STILL CONSIDERING</div><div class="ds-section-sub">Your other shortlisted properties</div></div><a href="#" class="see-all">' + (disp.length > 2 ? disp.length - 1 + ' others' : 'See all') + '</a></div>' +
+      '<div class="shortlist-card"><div class="ds-property-card-name">' + (p1.name || '') + '</div><div class="ds-property-card-desc">' + (p1.loc || '') + ' · ' + (p1.price || '') + '</div><div class="personal">You saved this</div><div class="prompt">Still in the running?</div><div class="yn"><button type="button" class="tool-pill">Yes</button><button type="button" class="tool-pill">No</button></div><button type="button" class="cta-secondary" style="margin-top:var(--space-2);width:100%;">Save</button></div>' +
+      '<div class="shortlist-card"><div class="ds-property-card-name">' + (p2.name || '') + '</div><div class="ds-property-card-desc">' + (p2.loc || '') + ' · ' + (p2.price || '') + (p2.isDrop ? ' · Price drop' : '') + '</div><div class="prompt">Still in the running?</div><div class="yn"><button type="button" class="tool-pill">Yes</button><button type="button" class="tool-pill">No</button></div></div></section>';
+  }
+
+  function budgetNudgeHTML() {
+    var stage = config.stage;
+    if (stage === 1) return '';
+    if (stage === 2) return '<section><div class="budget-nudge"><div class="ds-section-title">Open to new properties in ' + budgetRange() + '?</div><div class="ds-section-sub">Or set a specific budget</div><div class="ds-filter-pills" style="margin-top:var(--space-1);"><button type="button" class="ds-pill active">' + budgetRange() + '</button><button type="button" class="ds-pill">Change</button></div></div></section>';
+    if (stage === 3) return '<section><div class="budget-nudge"><div class="ds-section-title">Budget set: ' + budgetRange() + '</div><div class="ds-section-sub">Do you want to continue seeing ' + bhkLabel() + 's?</div><button type="button" class="cta-secondary" style="margin-top:var(--space-2);">Yes, keep showing</button></div></section>';
+    if (stage === 4) return '<section><div class="ds-section-engagement">Price movement on cards above.</div></section>';
+    if (stage === 5) return '<section><div class="budget-nudge"><div class="ds-section-title">EMI at ' + budgetRange() + '</div><div class="ds-section-sub">Your EMI would be ~₹68K/mo</div><button type="button" class="cta-primary" style="margin-top:var(--space-2);">EMI calculator</button></div></section>';
+    return '';
+  }
+
+  function adjacentHTML() {
+    var stage = config.stage;
+    if (stage !== 2 && stage !== 3) return '';
+    var loc = primaryLoc();
+    return '<section><div class="adjacent-module"><div class="tag">Nearby localities</div><div class="ds-section-title">₹9L below ' + loc + '</div><div class="ds-section-sub" style="margin-top:var(--space-1);">Godrej Sector K · Prateek Edifice Sector L</div><button type="button" class="cta-secondary" style="margin-top:var(--space-2);">Explore nearby</button></div></section>';
+  }
+
+  function socialProofHTML() {
+    var stage = config.stage;
+    var secForLine = secondaryLoc();
+    var lines = { 1: '127 families moved to ' + cityLabel() + ' this month', 2: '2BHK similar to what you viewed recently', 3: secForLine ? '12 people are also looking at ' + primaryLoc() + ' vs ' + secForLine + ' this week' : '12 people are also looking at ' + primaryLoc() + ' this week', 4: '', 5: "You've opened this " + ((config.behavior && config.behavior.viewCount) || 7) + " times. Your instinct is telling you something." };
+    var line = lines[stage] || '';
+    if (!line) return '';
+    return '<section class="social-line">' + line + '</section>';
+  }
+
+  function newLaunchesHTML() {
+    var stage = config.stage;
+    if (stage === 4 || stage === 5) return '';
+    var loc = primaryLoc();
+    var sec = secondaryLoc();
+    var city = cityLabel();
+    var scope = stage === 1 ? city : (stage === 2 ? 'your browsed sectors' : (sec ? loc + ' & ' + sec : loc));
+    var thumbImg = locationImageFor(loc, city);
+    return '<section><div class="ds-new-launches"><div class="ds-new-launches-head"><div class="ds-new-launches-icon">✦</div><div class="ds-section-title">New launches in ' + scope + '</div></div><div class="ds-new-launches-sub">Best prices · Unit of choice</div><div class="ds-new-launches-cards"><div class="ds-new-launch-card"><div class="ds-new-launch-banner">✦ New launch ✦</div><div class="thumb" style="background:url(\'' + thumbImg + '\') center/cover;"></div><div class="name">New in ' + loc + '</div><div class="location">' + loc + ', ' + city + '</div><div class="price">₹1.2 – 1.8 Cr</div><button type="button" class="cta-primary" style="width:100%;margin-top:var(--space-2);">View number</button></div></div></div></section>';
+  }
+
+  function toolsHTML() {
+    var stage = config.stage;
+    var tools = [];
+    if (stage === 1) return '';
+    if (stage === 2) tools = ['Price Trends', 'Buyer Guide'];
+    else if (stage === 3) tools = ['Price Trends', 'EMI Calculator', 'Home Loan Guide', 'Buyer Guide', 'Rent vs Buy'];
+    else if (stage === 4) tools = ['EMI Calculator', 'Home Loan', 'Price Check'];
+    else if (stage === 5) tools = ['Home Loan Calculator', 'Registration guide'];
+    var pills = tools.map(function(t) { return '<button type="button" class="tool-pill">' + t + '</button>'; }).join('');
+    return '<section><div class="ds-section-heading"><div class="ds-section-title">Tools & calculators</div></div><div class="tools-strip">' + pills + '</div></section>';
+  }
+
+  function visitAlongShortlistHTML() {
+    if (config.stage !== 4) return '';
+    var disp = getDisplayProperties();
+    return '<section><div class="ds-section-heading" style="display:flex;justify-content:space-between;align-items:center;"><div class="ds-section-title">Visit these places along with your shortlists</div><a href="#" class="see-all">See all</a></div><div class="ds-section-sub">' + bhkLabel() + ' ' + budgetRange() + '</div>' +
+      '<div class="card-scroll">' + propertyCardFromApi(disp[1], '') + propertyCardFromApi(disp[2] || disp[0], '') + '</div></section>';
+  }
+
+  /* S4 only: contextual CTA strip after shortlist — Compare + Plan weekend visits. */
+  function findHomeCtaHTML() {
+    if (config.stage !== 4) return '';
+    return '<section><div class="ds-section-title" style="font-size:var(--text-sm);margin-bottom:var(--space-1);">Find the home that feels right for you</div><div class="cta-row"><button type="button" class="cta-primary">Compare</button><button type="button" class="cta-secondary">Plan Weekend Visits (7–8 Mar)</button></div></section>';
+  }
+
+  function readsHTML() {
+    var stage = config.stage;
+    if (stage === 1) return '';
+    var city = cityLabel();
+    var loc = primaryLoc();
+    var sec = secondaryLoc();
+    var titles = { 2: ['When is the right time to buy?', 'How to read a RERA certificate', 'Home loan eligibility in ' + city], 3: ['Why buyers prefer ' + loc, 'Price trends in ' + (sec || loc) + ' — ' + city], 4: ['What to check before a site visit', 'How to negotiate with a developer'], 5: ['Home loan process — step by step', 'Stamp duty and registration in UP'] };
+    var list = (titles[stage] || titles[2]).map(function(t, i) {
+      var img = articleImageFor(city, loc, i);
+      return '<div class="ds-read-card"><div class="ds-read-card-image" style="width:80px;height:80px;flex-shrink:0;background:url(\'' + img + '\') center/cover;border-radius:var(--radius-sm);"></div><div class="ds-read-card-body"><div class="ds-read-card-title">' + t + '</div><div class="ds-read-card-date">3 min read</div></div></div>';
+    }).join('');
+    return '<section><div class="ds-section-heading"><div class="ds-section-title">Interesting reads</div></div><div class="ds-reads-cards">' + list + '</div></section>';
+  }
+
+  function render() {
+    if (!config || typeof config !== 'object') config = defaultConfig();
+    config.stage = Math.min(5, Math.max(1, parseInt(config.stage, 10) || 2));
+    var stage = config.stage;
+    var city = cityLabel();
+    var loc = primaryLoc();
+    var sec = secondaryLoc();
+    var searchPlaceholder = stage === 1 ? 'Search City / Locality…' : stage === 2 ? 'Buy in ' + city + ' · ' + loc : stage >= 3 ? loc + (sec ? ' · ' + sec : '') + ' · ' + bhkLabel() : 'Search locality, property type, budget…';
+    /* Spec order: Search/chips → Hero → Locality → Property feed → Budget → Adjacent → Social → New launches → Tools → Reads */
+    var parts = [
+      '<div class="ds-navbar" style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);background:var(--surface);border-bottom:1px solid var(--border);">',
+      '<span style="font-weight:var(--weight-bold);font-size:var(--text-lg);color:var(--blue-btn-primary);flex-shrink:0;">99acres</span>',
+      '<input type="text" class="ds-navbar-search" placeholder="' + searchPlaceholder + '" readonly style="flex:1;min-width:0;padding:8px 12px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--page-bg);font-size:var(--text-sm);">',
+      '</div>',
+      searchChipsHTML(),
+      heroHTML(),
+      localityHTML(),
+      (stage >= 2 ? nowInBrowsedHTML() : ''),
+      (stage === 2 || stage === 3 ? considerationHTML() : ''),
+      propertyFeedHTML(),
+      budgetNudgeHTML(),
+      (stage === 2 || stage === 3 ? adjacentHTML() : ''),
+      (stage === 2 || stage === 3 ? expertsHTML() : ''),
+      (stage === 4 ? stillConsideringHTML() + findHomeCtaHTML() + visitAlongShortlistHTML() : ''),
+      socialProofHTML(),
+      (stage <= 3 ? newLaunchesHTML() : ''),
+      (stage >= 2 ? toolsHTML() : ''),
+      (stage >= 2 ? readsHTML() : '')
+    ].filter(Boolean);
+    var root = document.getElementById('root');
+    if (root) root.innerHTML = parts.join('');
+  }
+
+  function applyOpenAIData(openAIData) {
+    if (!openAIData || !Array.isArray(openAIData.properties)) return;
+    var f = config.filters || {};
+    var bMin = f.budgetMin || 70;
+    apiProperties = openAIData.properties.map(function(p, i) {
+      var priceStr = p.price || (p.priceNum != null ? '₹' + p.priceNum + 'L' : '₹' + (bMin + i) + 'L');
+      return {
+        id: p.id || i,
+        name: p.name || 'Property ' + (i + 1),
+        loc: p.location || p.loc || (primaryLoc() + ', ' + cityLabel()),
+        price: priceStr,
+        bhk: p.bhk || '2 BHK',
+        sqft: p.sqft || '',
+        status: p.status || (p.ready_to_move ? 'Ready to move' : 'Under construction'),
+        isNew: !!p.is_new_launch,
+        isDrop: !!p.price_drop,
+        img: p.image_url || p.img || FALLBACK_IMGS[i % FALLBACK_IMGS.length]
+      };
+    });
+  }
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'CONFIG_UPDATE' && e.data.config && typeof e.data.config === 'object') {
+      var c = e.data.config;
+      config = {
+        user: c.user && typeof c.user === 'object' ? c.user : (config.user || {}),
+        stage: Math.min(5, Math.max(1, parseInt(c.stage, 10) || config.stage || 2)),
+        lastVisitDaysAgo: c.lastVisitDaysAgo != null ? c.lastVisitDaysAgo : config.lastVisitDaysAgo,
+        location: c.location && typeof c.location === 'object' ? c.location : (config.location || defaultConfig().location),
+        filters: c.filters && typeof c.filters === 'object' ? c.filters : (config.filters || defaultConfig().filters),
+        behavior: c.behavior && typeof c.behavior === 'object' ? c.behavior : (config.behavior || defaultConfig().behavior),
+        apiBase: c.apiBase || config.apiBase,
+        openAIData: c.openAIData || null
+      };
+      apiProperties = [];
+      fetchPropertiesFrom99acres().then(function() {
+        if (apiProperties.length === 0 && config.openAIData && config.openAIData.properties && config.openAIData.properties.length > 0) {
+          applyOpenAIData(config.openAIData);
+        }
+        render();
+      }).catch(function() {
+        if (config.openAIData && config.openAIData.properties && config.openAIData.properties.length > 0) {
+          applyOpenAIData(config.openAIData);
+        }
+        render();
+      });
+    }
+  });
+
+  function run() {
+    try {
+      if (!document.getElementById('root')) return;
+      render();
+      fetchPropertiesFrom99acres().then(render).catch(function() { render(); });
+    } catch (err) {
+      var root = document.getElementById('root');
+      if (root) root.innerHTML = '<div style="padding:20px;font-family:sans-serif;color:#c00;">Error loading homepage: ' + (err.message || err) + '</div>';
+      console.error(err);
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+})();
+  </script>
+</body>
+</html>

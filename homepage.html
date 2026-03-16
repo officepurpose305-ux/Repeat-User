@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>99acres — Homepage</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #2B3BE5;
+      --blue-lt:    #EEF2FF;
+      --blue-mid:   #6370F0;
+      --bg:         #F0F0F5;
+      --white:      #FFFFFF;
+      --t1:         #111111;
+      --t2:         #555555;
+      --t3:         #999999;
+      --gold:       #F5A623;
+      --green:      #1B7F4F;
+      --green-lt:   #E6F7F0;
+      --red:        #D93025;
+      --red-lt:     #FEE8E6;
+      --r-card:     14px;
+      --r-pill:     50px;
+      --shadow:     0 1px 5px rgba(0,0,0,0.08);
+      --shadow-md:  0 3px 14px rgba(0,0,0,0.11);
+    }
+
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+    }
+
+    /* ── Standalone (direct browser open) ─────────── */
+    body:not(.in-iframe) {
+      background: #D8D8E0;
+      min-height: 100vh;
+    }
+
+    /* Dev mode switcher bar */
+    .dev-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: #16162A;
+      display: none; /* shown only in ?dev=1 */
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      overflow-x: auto;
+    }
+    .dev-bar::-webkit-scrollbar { display: none; }
+    .dev-bar label {
+      font-size: 10px; font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      margin-right: 4px; white-space: nowrap; flex-shrink: 0;
+    }
+    .s-btn {
+      flex-shrink: 0;
+      padding: 6px 13px; border-radius: 20px;
+      font-size: 11.5px; font-weight: 600;
+      color: rgba(255,255,255,0.45);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: transparent; cursor: pointer;
+      white-space: nowrap; transition: all 0.15s;
+    }
+    .s-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    /* ── Phone shell (standalone only) ─────────────── */
+    .frame-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 24px 0 32px;
+      min-height: 100vh;
+    }
+    body.dev-mode .frame-wrap { padding-top: 56px; }
+    body.in-iframe .frame-wrap { padding: 0; display: block; }
+
+    .phone {
+      width: 360px;
+      background: var(--bg);
+      border-radius: 38px;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.12);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    body.in-iframe .phone {
+      width: 100%; border-radius: 0; box-shadow: none;
+      min-height: 100vh;
+    }
+
+    /* LIVE badge */
+    #live-badge {
+      position: fixed;
+      top: 8px; right: 10px;
+      background: var(--green);
+      color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 20px;
+      display: none;
+      align-items: center; gap: 4px;
+      z-index: 300;
+      letter-spacing: 0.3px;
+    }
+    #live-badge.on { display: flex; }
+
+    .statusbar {
+      background: var(--white);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 20px 6px;
+      font-size: 11px; font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .scroll {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroll::-webkit-scrollbar { display: none; }
+
+    /* ── Header ──────────────────────────────── */
+    .hdr {
+      background: var(--white);
+      padding: 6px 12px 8px;
+      display: flex; align-items: center; gap: 8px;
+      position: sticky; top: 0; z-index: 10;
+      box-shadow: 0 1px 0 #EBEBEB;
+    }
+    .ico-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #F3F3F3; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .srch {
+      flex: 1; background: #F0F0F0;
+      border-radius: var(--r-pill);
+      display: flex; align-items: center;
+      padding: 8px 12px; gap: 7px;
+    }
+    .srch-txt { color: var(--t3); font-size: 13px; flex: 1; }
+
+    /* Chips row */
+    .chips {
+      background: var(--white);
+      padding: 0 12px 9px;
+      display: flex; gap: 6px;
+      border-bottom: 1px solid #EBEBEB;
+    }
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: var(--r-pill);
+      font-size: 11.5px; font-weight: 500;
+      background: var(--blue-lt); color: var(--blue);
+      border: 1px solid #BCC4FB;
+    }
+    .chip .x { opacity: 0.6; font-size: 10px; margin-left: 1px; }
+
+    /* ── Sections ────────────────────────────── */
+    .sec {
+      background: var(--white);
+      margin-top: 8px;
+      padding: 16px 16px 18px;
+    }
+    .sec-title { font-size: 17px; font-weight: 700; color: var(--t1); margin-bottom: 3px; }
+    .sec-sub { font-size: 12px; color: var(--t3); margin-bottom: 12px; }
+
+    .div8 { height: 8px; background: var(--bg); }
+
+    .hscroll {
+      display: flex; gap: 10px;
+      overflow-x: auto; padding-bottom: 3px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .hscroll::-webkit-scrollbar { display: none; }
+
+    /* ── HERO (Stage 1) ──────────────────────── */
+    .hero-s1 {
+      background: linear-gradient(160deg, #1A1F6B 0%, #2B3BE5 55%, #5B6EFA 100%);
+      padding: 28px 18px 24px;
+      position: relative; overflow: hidden;
+    }
+    .hero-s1::after {
+      content: ''; position: absolute;
+      bottom: -30px; right: -30px;
+      width: 160px; height: 160px;
+      border-radius: 50%; background: rgba(255,255,255,0.06);
+    }
+    .hero-s1 .city { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 500; margin-bottom: 4px; }
+    .hero-s1 h1 { font-size: 22px; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 16px; }
+    .hero-srch {
+      background: var(--white); border-radius: var(--r-pill);
+      display: flex; align-items: center;
+      padding: 10px 14px; gap: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .hero-srch span { font-size: 13.5px; color: var(--t3); flex: 1; }
+    .hero-stats { display: flex; gap: 16px; margin-top: 16px; }
+    .hstat { text-align: center; }
+    .hstat-val { font-size: 18px; font-weight: 800; color: #fff; }
+    .hstat-lbl { font-size: 10px; color: rgba(255,255,255,0.55); margin-top: 1px; }
+
+    /* ── Trending locality pills ─────────────── */
+    .trend-pill {
+      flex-shrink: 0; padding: 8px 14px; border-radius: var(--r-pill);
+      background: var(--white); border: 1px solid #E0E0E0;
+      font-size: 12.5px; font-weight: 500; color: var(--t1);
+      white-space: nowrap; display: flex; align-items: center; gap: 5px;
+    }
+    .trend-pill .pill-stat { color: var(--green); font-weight: 700; font-size: 11px; }
+
+    /* ── Compact property cards ──────────────── */
+    .pcard {
+      flex-shrink: 0; width: 190px;
+      border-radius: var(--r-card); background: var(--white);
+      border: 1px solid #E8E8E8; box-shadow: var(--shadow); overflow: hidden;
+    }
+    .pcard-img-wrap { position: relative; height: 115px; overflow: hidden; }
+    .pcard-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pcard-badges {
+      position: absolute; top: 7px; left: 7px; right: 7px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .rera {
+      background: rgba(0,0,0,0.52); color: #fff;
+      font-size: 9px; font-weight: 700;
+      padding: 3px 7px; border-radius: 20px;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .hrt {
+      width: 26px; height: 26px;
+      background: rgba(255,255,255,0.92); border-radius: 50%; border: none;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; cursor: pointer;
+    }
+    .pcard-bottom-badge {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 14px 8px 6px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.55));
+    }
+    .badge-pill {
+      display: inline-flex; align-items: center;
+      padding: 2px 7px; border-radius: 20px;
+      font-size: 9px; font-weight: 700;
+    }
+    .badge-new  { background: var(--blue); color: #fff; }
+    .badge-drop { background: var(--green); color: #fff; }
+    .badge-seen { background: rgba(0,0,0,0.55); color: #fff; }
+    .pcard-body { padding: 9px 10px 10px; }
+    .pcard-name { font-size: 12.5px; font-weight: 700; color: var(--t1); line-height: 1.3; }
+    .pcard-loc  { font-size: 11px; color: var(--t3); margin-top: 2px; }
+    .pcard-price { font-size: 13px; font-weight: 700; color: var(--t1); margin-top: 6px; }
+    .pcard-per  { font-size: 10.5px; color: var(--t3); }
+
+    /* ── Full-width property card (shortlist) ── */
+    .pcard-full {
+      border-radius: var(--r-card); background: var(--white);
+      border: 1px solid #E8E8E8; box-shadow: var(--shadow);
+      overflow: hidden; margin-bottom: 10px;
+    }
+    .pcard-full-img-wrap { position: relative; height: 140px; overflow: hidden; }
+    .pcard-full-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .pcard-full-body { padding: 10px 12px 12px; }
+    .pcard-full-name { font-size: 14px; font-weight: 700; }
+    .pcard-full-row { display: flex; gap: 8px; align-items: center; margin-top: 3px; }
+    .star-row { display: flex; align-items: center; gap: 3px; font-size: 12px; color: var(--t2); }
+    .star { color: var(--gold); font-size: 12px; }
+    .pcard-full-meta { font-size: 12px; color: var(--t2); margin-top: 2px; }
+    .pcard-full-loc  { font-size: 12.5px; font-weight: 600; color: var(--t1); margin-top: 4px; }
+    .pricebox {
+      background: #F7F7F7; border-radius: 10px;
+      padding: 9px 10px; margin-top: 9px;
+    }
+    .pricebox-bhk   { font-size: 12px; font-weight: 600; }
+    .pricebox-sqft  { font-size: 11px; color: var(--t3); }
+    .pricebox-price { font-size: 16px; font-weight: 700; margin-top: 3px; }
+    .pricebox-per   { font-size: 11px; color: var(--t3); }
+
+    /* ── Locality cards ──────────────────────── */
+    .lcard {
+      flex-shrink: 0; min-width: 140px;
+      border-radius: var(--r-card); background: var(--white);
+      border: 1px solid #E8E8E8; box-shadow: var(--shadow); overflow: hidden;
+    }
+    .lcard-color { height: 8px; }
+    .lcard-body { padding: 10px 12px 12px; }
+    .lcard-name { font-size: 13px; font-weight: 700; }
+    .lcard-city { font-size: 11px; color: var(--t3); margin-bottom: 8px; }
+    .lcard-stat {
+      display: flex; justify-content: space-between;
+      font-size: 11.5px; color: var(--t2); padding: 4px 0;
+    }
+    .lcard-stat strong { color: var(--t1); font-weight: 600; }
+    .lcard-tag {
+      display: inline-block; margin-top: 8px;
+      padding: 3px 8px; border-radius: 20px;
+      font-size: 10px; font-weight: 700;
+    }
+
+    /* ── Comparison table ────────────────────── */
+    .ctable { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .ctable th { padding: 9px 8px; background: #F7F7F7; font-weight: 700; text-align: left; }
+    .ctable th:first-child { color: var(--t2); font-weight: 500; }
+    .ctable td { padding: 9px 8px; border-bottom: 1px solid #F2F2F2; color: var(--t1); }
+    .ctable td:first-child { color: var(--t2); font-size: 11px; }
+    .win { color: var(--green); font-weight: 700; }
+
+    /* ── Preference pills ────────────────────── */
+    .prefs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .pref {
+      padding: 6px 13px; border-radius: var(--r-pill);
+      border: 1.5px solid #E0E0E0; font-size: 12px; font-weight: 500;
+      color: var(--t2); cursor: pointer; background: var(--white);
+    }
+    .pref.on { border-color: var(--blue); color: var(--blue); background: var(--blue-lt); }
+
+    /* ── Nearby locality items ───────────────── */
+    .nearby-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid #F5F5F5;
+    }
+    .nearby-item:last-child { border-bottom: none; }
+    .nearby-dot {
+      width: 36px; height: 36px; border-radius: 50%;
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+    }
+    .nearby-info { flex: 1; }
+    .nearby-name { font-size: 13px; font-weight: 600; color: var(--t1); }
+    .nearby-sub  { font-size: 11px; color: var(--t3); margin-top: 1px; }
+    .nearby-right { text-align: right; }
+    .nearby-price { font-size: 12px; font-weight: 700; color: var(--t1); }
+    .nearby-delta { font-size: 11px; color: var(--green); font-weight: 600; }
+
+    /* ── Social proof banner ─────────────────── */
+    .sproof {
+      border-radius: 10px; padding: 10px 12px;
+      display: flex; align-items: center; gap: 9px;
+      margin-bottom: 12px;
+    }
+    .sproof p { font-size: 12.5px; line-height: 1.4; }
+    .sproof-amber { background: #FFF8E7; border: 1px solid #FFE082; }
+    .sproof-amber p { color: #795500; }
+    .sproof-blue  { background: var(--blue-lt); border: 1px solid #BCC4FB; }
+    .sproof-blue p { color: var(--blue); }
+    .sproof-green { background: var(--green-lt); border: 1px solid #A8DFC5; }
+    .sproof-green p { color: var(--green); }
+
+    /* ── Budget nudge ────────────────────────── */
+    .b-nudge {
+      background: var(--blue-lt); border: 1px solid #BCC4FB;
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .b-nudge-q { font-size: 13px; color: var(--blue); font-weight: 500; margin-bottom: 10px; }
+    .b-choices { display: flex; flex-direction: column; gap: 6px; }
+    .b-choice {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 10px;
+      background: var(--white); border: 1.5px solid #DDDDF8; cursor: pointer;
+    }
+    .b-choice.on { border-color: var(--blue); }
+    .b-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #CCC; flex-shrink: 0; }
+    .b-radio.on { border-color: var(--blue); background: var(--blue); box-shadow: inset 0 0 0 3px #fff; }
+    .b-choice-txt { font-size: 13px; font-weight: 500; color: var(--t1); }
+
+    /* ── New launch card ─────────────────────── */
+    .nlcard {
+      border-radius: var(--r-card); border: 1px solid #E8E8E8;
+      box-shadow: var(--shadow); overflow: hidden; background: var(--white);
+    }
+    .nlcard-hdr {
+      text-align: center; padding: 7px; background: #FAFAF5;
+      font-size: 11.5px; color: var(--t2); letter-spacing: 0.5px;
+      border-bottom: 1px solid #F0F0E8;
+    }
+    .nlcard-body { display: flex; gap: 10px; padding: 12px; }
+    .nlcard-thumb { width: 68px; height: 68px; border-radius: 10px; flex-shrink: 0; overflow: hidden; }
+    .nlcard-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .nlcard-info { flex: 1; }
+    .nlcard-name  { font-size: 13px; font-weight: 700; line-height: 1.3; }
+    .nlcard-loc   { font-size: 11px; color: var(--t2); margin-top: 1px; }
+    .nlcard-price { font-size: 13px; font-weight: 700; margin-top: 5px; }
+    .nlcard-det   { font-size: 11px; color: var(--t2); }
+    .nlcard-footer { padding: 0 12px 12px; display: flex; justify-content: space-between; align-items: center; }
+    .zero-brok { font-size: 11px; color: var(--t2); display: flex; align-items: center; gap: 4px; }
+
+    /* ── Tools ───────────────────────────────── */
+    .tool-chip {
+      flex-shrink: 0; padding: 8px 14px; border-radius: var(--r-pill);
+      border: 1.5px solid #E0E0E0; font-size: 12px; font-weight: 500;
+      color: var(--t1); background: var(--white); white-space: nowrap; cursor: pointer;
+    }
+
+    /* ── Articles ────────────────────────────── */
+    .acard {
+      flex-shrink: 0; min-width: 215px;
+      border-radius: 12px; border: 1px solid #E8E8E8;
+      box-shadow: var(--shadow); padding: 10px;
+      display: flex; gap: 10px; background: var(--white);
+    }
+    .athumb { width: 68px; height: 68px; border-radius: 9px; flex-shrink: 0; object-fit: cover; }
+    .ainfo { flex: 1; }
+    .atitle { font-size: 12.5px; font-weight: 600; color: var(--t1); line-height: 1.4; }
+    .adate  { font-size: 11px; color: var(--t3); margin-top: 4px; }
+
+    /* ── Decision Spotlight (Stage 4) ────────── */
+    .spotlight { margin: 8px 0 0; background: var(--white); }
+    .spot-alert {
+      background: linear-gradient(90deg, #E6F7F0, #F0FBF6);
+      border-bottom: 1px solid #A8DFC5;
+      padding: 10px 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .spot-alert p { font-size: 12px; color: var(--green); font-weight: 500; }
+    .spot-label {
+      background: linear-gradient(90deg, var(--blue) 0%, #5B6EFA 100%);
+      padding: 9px 16px; font-size: 11px; font-weight: 800;
+      color: rgba(255,255,255,0.85); letter-spacing: 1.2px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .spot-img-wrap { position: relative; height: 185px; overflow: hidden; }
+    .spot-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .spot-img-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 30px 12px 10px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.65));
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .spot-drop { background: var(--green); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+    .spot-hrt  { width: 32px; height: 32px; background: rgba(255,255,255,0.9); border-radius: 50%; border: none; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .spot-body { padding: 12px 14px; }
+    .spot-name { font-size: 18px; font-weight: 800; color: var(--t1); }
+    .spot-loc  { font-size: 13px; color: var(--t2); margin-top: 2px; }
+    .spot-signals {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border-top: 1px solid #F0F0F0; border-bottom: 1px solid #F0F0F0;
+      margin: 12px 0;
+    }
+    .sig { text-align: center; padding: 10px 4px; border-right: 1px solid #F0F0F0; }
+    .sig:last-child { border-right: none; }
+    .sig-val { font-size: 17px; font-weight: 800; color: var(--t1); }
+    .sig-val.g { color: var(--green); }
+    .sig-val.r { color: var(--red); }
+    .sig-lbl { font-size: 9.5px; color: var(--t3); margin-top: 2px; }
+    .spot-price { font-size: 22px; font-weight: 800; }
+    .spot-price-sub { font-size: 12px; color: var(--t3); margin-top: 2px; }
+    .spot-price-old { text-decoration: line-through; color: var(--t3); font-size: 14px; margin-left: 6px; font-weight: 400; }
+    .spot-ctas { display: flex; gap: 8px; margin-top: 14px; }
+
+    /* ── Stage 5 social proof ────────────────── */
+    .s5-header {
+      background: linear-gradient(135deg, #1A1F6B 0%, #2B3BE5 100%);
+      padding: 20px 16px 22px;
+    }
+    .s5-you-viewed {
+      background: rgba(255,255,255,0.12);
+      border-radius: 12px; padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+    .s5-yv-label { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .s5-yv-count { font-size: 38px; font-weight: 900; color: #fff; line-height: 1; }
+    .s5-yv-sub   { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 4px; }
+    .s5-signals  { display: flex; gap: 8px; }
+    .s5-sig {
+      flex: 1; background: rgba(255,255,255,0.1); border-radius: 10px;
+      padding: 10px 8px; text-align: center;
+    }
+    .s5-sig-val { font-size: 16px; font-weight: 800; color: #fff; }
+    .s5-sig-lbl { font-size: 10px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+    /* ── Shortlist items ─────────────────────── */
+    .sl-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 0; border-bottom: 1px solid #F5F5F5;
+    }
+    .sl-item:last-child { border-bottom: none; }
+    .sl-thumb { width: 52px; height: 52px; border-radius: 9px; flex-shrink: 0; overflow: hidden; }
+    .sl-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .sl-info { flex: 1; min-width: 0; }
+    .sl-name  { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sl-loc   { font-size: 11px; color: var(--t3); }
+    .sl-price { font-size: 12.5px; font-weight: 700; margin-top: 2px; }
+    .yn-row { display: flex; gap: 4px; flex-shrink: 0; }
+    .yn { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1.5px solid; cursor: pointer; }
+    .yn-y { color: var(--green); border-color: var(--green); background: var(--green-lt); }
+    .yn-n { color: var(--t3); border-color: #E0E0E0; background: var(--white); }
+
+    /* ── Post-visit feedback ─────────────────── */
+    .fb-card { border-radius: var(--r-card); border: 1px solid #E8E8E8; padding: 14px; background: var(--white); }
+    .fb-ttl  { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .fb-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+    .fb-tag  {
+      padding: 5px 12px; border-radius: var(--r-pill);
+      font-size: 12px; font-weight: 500;
+      border: 1.5px solid #E0E0E0; color: var(--t2); cursor: pointer;
+    }
+    .fb-tag.ok  { border-color: var(--green); color: var(--green); background: var(--green-lt); }
+    .fb-tag.bad { border-color: var(--red); color: var(--red); background: var(--red-lt); }
+    .fb-note {
+      width: 100%; height: 58px; resize: none;
+      border: 1px solid #E8E8E8; border-radius: 10px;
+      padding: 9px 11px; font-size: 13px; font-family: inherit; color: var(--t1);
+    }
+    .fb-note:focus { outline: none; border-color: var(--blue); }
+
+    /* ── EMI box ─────────────────────────────── */
+    .emi-box { background: var(--blue-lt); border: 1px solid #BCC4FB; border-radius: 12px; padding: 13px 14px; }
+    .emi-lbl { font-size: 12px; color: var(--t2); }
+    .emi-amt { font-size: 24px; font-weight: 800; color: var(--blue); margin-top: 2px; }
+    .emi-det { font-size: 11.5px; color: var(--t3); margin-top: 3px; }
+
+    /* ── Buttons ─────────────────────────────── */
+    .btn-p {
+      flex: 1; background: var(--blue); color: #fff;
+      border: none; border-radius: var(--r-pill);
+      padding: 11px 14px; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .btn-s {
+      flex: 1; background: var(--blue-lt); color: var(--blue);
+      border: 1.5px solid #BCC4FB; border-radius: var(--r-pill);
+      padding: 11px 14px; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .btn-ghost {
+      width: 100%; background: var(--white); color: var(--blue);
+      border: 1.5px solid #E0E0E0; border-radius: var(--r-pill);
+      padding: 11px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .link-btn {
+      background: none; border: none; color: var(--blue);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 3px;
+      margin-top: 10px; padding: 0;
+    }
+
+    /* ── Visit box ───────────────────────────── */
+    .visit-box { background: #F7F7F7; border-radius: 12px; padding: 12px 14px; text-align: center; }
+    .visit-box p { font-size: 13px; color: var(--t2); margin-bottom: 10px; }
+
+    /* ── Loc appreciation ────────────────────── */
+    .appr-row {
+      display: flex; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid #F5F5F5;
+      font-size: 13px;
+    }
+    .appr-row:last-child { border-bottom: none; }
+    .appr-row .val { font-weight: 700; }
+    .appr-row .val.g { color: var(--green); }
+
+    /* ── Section footer link ─────────────────── */
+    .sec-footer { padding-top: 12px; display: flex; justify-content: center; }
+  </style>
+</head>
+<body>
+
+<!-- Dev-mode stage switcher (hidden unless ?dev=1) -->
+<div class="dev-bar" id="dev-bar">
+  <label>STAGE</label>
+  <button class="s-btn" onclick="go(1)">1 · Discovery</button>
+  <button class="s-btn" onclick="go(2)">2 · Awareness</button>
+  <button class="s-btn" onclick="go(3)">3 · Comparison</button>
+  <button class="s-btn" onclick="go(4)">4 · Shortlist</button>
+  <button class="s-btn" onclick="go(5)">5 · Post-Visit</button>
+</div>
+
+<!-- LIVE badge (shown when receiving config from researcher dashboard) -->
+<div id="live-badge">● LIVE</div>
+
+<div class="frame-wrap">
+<div class="phone">
+
+  <!-- Status bar -->
+  <div class="statusbar">
+    <span id="status-time">9:41</span>
+    <span style="font-size:10px;letter-spacing:-0.3px">▲▲▲ WiFi 🔋</span>
+  </div>
+
+  <!-- Header -->
+  <div class="hdr">
+    <button class="ico-btn">
+      <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M9 11L5 7l4-4" stroke="#111" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <div class="srch">
+      <svg width="14" height="14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#aaa" stroke-width="1.5"/><path d="M10 10l2 2" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="srch-txt" id="srch-txt">Search City / Locality…</span>
+    </div>
+    <button class="ico-btn" id="hdr-heart">
+      <svg width="16" height="14" fill="none" viewBox="0 0 16 14"><path d="M8 12.5C8 12.5 1.5 8 1.5 4.5C1.5 2.5 3 1 5 1C6.3 1 7.4 1.8 8 2.8C8.6 1.8 9.7 1 11 1C13 1 14.5 2.5 14.5 4.5C14.5 8 8 12.5 8 12.5Z" stroke="#111" stroke-width="1.5"/></svg>
+    </button>
+    <button class="ico-btn">
+      <svg width="16" height="14" fill="none" viewBox="0 0 16 14"><circle cx="13" cy="3" r="2" stroke="#111" stroke-width="1.4"/><circle cx="3" cy="7" r="2" stroke="#111" stroke-width="1.4"/><circle cx="13" cy="11" r="2" stroke="#111" stroke-width="1.4"/><path d="M5 8l6 2M11 4L5 6" stroke="#111" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <!-- Chips -->
+  <div class="chips" id="chips" style="display:none"></div>
+
+  <!-- Scrollable content -->
+  <div class="scroll" id="content"></div>
+
+</div>
+</div>
+
+<script>
+/* ─── Static image assets ──────────────────────────────── */
+const IMGS = [
+  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=400&h=220&fit=crop&auto=format',
+];
+const ARTICLE_IMGS = [
+  'https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?w=150&h=150&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1554774853-719586f82d77?w=150&h=150&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1460472897551-b99e5024abdd?w=150&h=150&fit=crop&auto=format',
+];
+
+/* ─── Default data ─────────────────────────────────────── */
+const DEFAULT_PROPS = [
+  { id:0, name:'Godrej Evergreens', loc:'Sector 137, Noida', rating:4.2, rev:38, meta:'2, 3 BHK', bhk:'2 BHK', sqft:'1,085 sq.ft.', price:'₹84.5L', per:'₹7,786/sqft', status:'Ready To Move', isNew:false, isDrop:true, isSeen:false, img:IMGS[0] },
+  { id:1, name:'Prestige High Fields', loc:'Sector 137, Noida', rating:3.8, rev:22, meta:'2, 3, 4 BHK', bhk:'2 BHK', sqft:'1,120 sq.ft.', price:'₹91.5L', per:'₹8,169/sqft', status:'Ready To Move', isNew:true, isDrop:false, isSeen:true, img:IMGS[1] },
+  { id:2, name:'ATS Tourmaline', loc:'Sector 109, Noida', rating:4.0, rev:15, meta:'2, 3 BHK', bhk:'2 BHK', sqft:'1,050 sq.ft.', price:'₹79.5L', per:'₹7,571/sqft', status:'Under Construction', isNew:false, isDrop:false, isSeen:false, img:IMGS[2] },
+  { id:3, name:'Apex Sector 143', loc:'Sector 143, Noida', rating:3.5, rev:9, meta:'2 BHK', bhk:'2 BHK', sqft:'995 sq.ft.', price:'₹78L', per:'₹7,839/sqft', status:'Ready To Move', isNew:true, isDrop:false, isSeen:false, img:IMGS[3] },
+  { id:4, name:'Mahagun Mywoods', loc:'Sector 128, Noida', rating:4.1, rev:31, meta:'2, 3 BHK', bhk:'2 BHK', sqft:'1,010 sq.ft.', price:'₹75L', per:'₹7,425/sqft', status:'Ready To Move', isNew:false, isDrop:true, isSeen:false, img:IMGS[4] },
+];
+const DEFAULT_LOC = {
+  primary:   { name:'Sector 137', avg:'₹8,021', yoy:'+18%', metro:'900m', type:'Gated', rtm:'High', color:'#2B3BE5' },
+  secondary: { name:'Sector 143', avg:'₹9,500', yoy:'+12%', metro:'1.2km', type:'Mixed', rtm:'Med', color:'#9B59B6' },
+  adjacent:  { name:'Sector 128', avg:'₹7,200', yoy:'+21%', metro:'1.5km', type:'Gated', rtm:'High', color:'#1B7F4F' },
+};
+
+/* ─── Session state (driven by researcher or defaults) ──── */
+let CONFIG = {
+  stage: 2,
+  user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager' },
+  location: {
+    primary: 'Sector 137',
+    secondary: 'Sector 143',
+    city: 'Noida',
+  },
+  filters: { budgetMin: 75, budgetMax: 95, bhk: ['2BHK'] },
+  behavior: { viewCount: 7, contactedDeveloper: true, visitedSite: false, savedCount: 3, priceSensitivity: 'medium' },
+  properties: DEFAULT_PROPS,
+  loc: DEFAULT_LOC,
+};
+
+/* ─── 99acres API: live listings (entities + search-urls + listings) ─── */
+const API_BASE = window.NINETY_NINE_ACRES_API_BASE || 'http://10.10.17.143:5003';
+const FALLBACK_IMGS = IMGS;
+
+function mapAPIPropertiesRoot(data) {
+  let items = [];
+  if (Array.isArray(data)) items = data;
+  else if (data?.results) items = data.results;
+  else if (data?.properties) items = data.properties;
+  else if (data?.listings) items = data.listings;
+  else if (data?.data && Array.isArray(data.data)) items = data.data;
+  const { location, filters } = CONFIG;
+  return items.slice(0, 8).map((p, i) => {
+    const price = p.price || p.min_price || p.listed_price;
+    const priceStr = typeof price === 'number' ? `₹${(price / 100000).toFixed(1)}L` : (p.price_str || `₹${(filters.budgetMin || 75) + Math.floor(Math.random() * ((filters.budgetMax || 95) - (filters.budgetMin || 75)))}L`);
+    const sqftNum = p.area || p.carpet_area || p.built_up_area || (900 + Math.floor(Math.random() * 400));
+    const perSqft = price && sqftNum ? Math.round((price * 100) / sqftNum) : (7000 + Math.floor(Math.random() * 2000));
+    const img = p.image_url || p.photo_url || p.thumbnail || p.cover_photo || p.image || p.img || (p.images && p.images[0]) || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
+    return {
+      id: p.id || p.property_id || p.listing_id || i,
+      name: p.name || p.project_name || p.title || `Project ${i + 1}`,
+      loc: p.location || p.locality_name || p.address || `${location.primary}, ${location.city}`,
+      rating: parseFloat((p.rating || p.review_score || (3.5 + Math.random())).toFixed(1)),
+      rev: parseInt(p.review_count || p.num_reviews || (10 + Math.floor(Math.random() * 40)), 10),
+      meta: p.bhk_types || p.configuration || `${p.bedroom || 2} BHK`,
+      bhk: `${p.bedroom || 2} BHK`,
+      sqft: `${sqftNum.toLocaleString()} sq.ft.`,
+      price: priceStr,
+      per: `₹${perSqft.toLocaleString()}/sqft`,
+      status: p.status || p.possession_status || (p.ready_to_move ? 'Ready To Move' : 'Under Construction'),
+      isNew: !!(p.is_new_launch || p.new_launch || p.is_new),
+      isDrop: !!(p.price_drop || p.is_price_drop),
+      isSeen: false,
+      img,
+    };
+  });
+}
+
+async function fetchLivePropertiesFrom99acres() {
+  const { location, filters } = CONFIG;
+  const bhkNum = (filters.bhk && filters.bhk[0] ? filters.bhk[0] : '2BHK').replace(/BHK|\\+/g, '').trim() || '2';
+  const rtm = filters.readyToMove === 'yes' ? ' ready to move' : '';
+  const query = `${bhkNum} BHK${rtm} flat for sale in ${location.primary} ${location.city}`.trim();
+  try {
+    const entRes = await fetch(`${API_BASE}/debug/entities?query=${encodeURIComponent(query)}`);
+    if (!entRes.ok) return;
+    const entities = await entRes.json();
+    const entitiesStr = JSON.stringify(entities);
+    await fetch(`${API_BASE}/debug/search-urls?entities=${encodeURIComponent(entitiesStr)}`).catch(() => {});
+    const endpoints = [
+      `/search?entities=${encodeURIComponent(entitiesStr)}&limit=8`,
+      `/listings?entities=${encodeURIComponent(entitiesStr)}&limit=8`,
+      `/api/properties?city=${entities.city || ''}&locality=${entities.locality || ''}&bedroom=${entities.bedroom || bhkNum}&limit=8`,
+    ];
+    for (const ep of endpoints) {
+      try {
+        const r = await fetch(`${API_BASE}${ep}`);
+        if (r.ok) {
+          const d = await r.json();
+          const mapped = mapAPIPropertiesRoot(d);
+          if (mapped.length > 0) {
+            CONFIG.properties = mapped;
+            return;
+          }
+        }
+      } catch (_) {}
+    }
+  } catch (_) {}
+}
+
+/* ─── Helpers ──────────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+
+function svg_shield() {
+  return `<svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M5 1L6.2 3.6L9 4L7 6L7.5 9L5 7.6L2.5 9L3 6L1 4L3.8 3.6L5 1Z" fill="white"/></svg>`;
+}
+
+function chip(txt) {
+  return `<div class="chip">${txt} <span class="x">✕</span></div>`;
+}
+
+/* Compact property card */
+function pcard(p) {
+  const badge = p.isDrop ? `<span class="badge-pill badge-drop">↓ Price drop</span>`
+    : p.isNew ? `<span class="badge-pill badge-new">NEW</span>`
+    : p.isSeen ? `<span class="badge-pill badge-seen">Seen</span>` : '';
+  return `
+    <div class="pcard">
+      <div class="pcard-img-wrap">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#8395A7,#5C7A8A)'">
+        <div class="pcard-badges">
+          <div class="rera">${svg_shield()}RERA</div>
+          <button class="hrt">♡</button>
+        </div>
+        ${badge ? `<div class="pcard-bottom-badge">${badge}</div>` : ''}
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-name">${p.name}</div>
+        <div class="pcard-loc">${p.loc}</div>
+        <div class="pcard-price">${p.price}</div>
+        <div class="pcard-per">${p.per} · ${p.bhk}</div>
+      </div>
+    </div>`;
+}
+
+/* Locality card */
+function lcard(loc, size) {
+  if (!loc) return '';
+  return `
+    <div class="lcard" style="min-width:${size||140}px">
+      <div class="lcard-color" style="background:${loc.color}"></div>
+      <div class="lcard-body">
+        <div class="lcard-name">${loc.name}</div>
+        <div class="lcard-city">${CONFIG.location.city}</div>
+        <div class="lcard-stat"><span>Avg price</span><strong>${loc.avg}/sqft</strong></div>
+        <div class="lcard-stat"><span>YoY growth</span><strong class="win">${loc.yoy}</strong></div>
+        <div class="lcard-stat"><span>Metro</span><strong>${loc.metro}</strong></div>
+        <span class="lcard-tag" style="background:${loc.color}18;color:${loc.color}">RTM: ${loc.rtm}</span>
+      </div>
+    </div>`;
+}
+
+/* Article card */
+function acard(title, date, imgIdx) {
+  return `
+    <div class="acard">
+      <img class="athumb" src="${ARTICLE_IMGS[imgIdx%3]}" alt="" loading="lazy" onerror="this.style.background='#E0E0E0'">
+      <div class="ainfo">
+        <div class="atitle">${title}</div>
+        <div class="adate">${date}</div>
+      </div>
+    </div>`;
+}
+
+/* New launch card */
+function nlcard(img, name, loc, price, det) {
+  return `
+    <div class="nlcard">
+      <div class="nlcard-hdr">✦ &nbsp; New launch &nbsp; ✦</div>
+      <div class="nlcard-body">
+        <div class="nlcard-thumb"><img src="${img}" alt="" onerror="this.style.background='linear-gradient(135deg,#667EEA,#764BA2)'"></div>
+        <div class="nlcard-info">
+          <div class="nlcard-name">${name}</div>
+          <div class="nlcard-loc">${loc}</div>
+          <div class="nlcard-price">${price}</div>
+          <div class="nlcard-det">${det}</div>
+        </div>
+      </div>
+      <div class="nlcard-footer">
+        <div class="zero-brok">🏷 Zero brokerage</div>
+        <button class="btn-p" style="flex:0;padding:8px 14px;font-size:12px">View number</button>
+      </div>
+    </div>`;
+}
+
+/* ─── Main render ───────────────────────────────────────── */
+function go(n) {
+  CONFIG.stage = n;
+  document.querySelectorAll('.s-btn').forEach((b,i) => b.classList.toggle('on', i === n-1));
+  render();
+}
+
+function render() {
+  const { stage, location, behavior, properties, loc } = CONFIG;
+  const chips_el = $('chips');
+  const srch = $('srch-txt');
+
+  // Search bar & chips
+  if (stage === 1) {
+    chips_el.style.display = 'none';
+    srch.textContent = 'Search City / Locality…';
+  } else if (stage === 2) {
+    chips_el.style.display = 'flex';
+    chips_el.innerHTML = chip(`Buy in ${location.city}`) + chip(`${location.primary} · 2BHK`);
+    srch.textContent = `Buy in ${location.city} · ${location.primary}`;
+  } else if (stage >= 3) {
+    chips_el.style.display = 'flex';
+    chips_el.innerHTML = chip(`${location.primary} · Under ₹${CONFIG.filters.budgetMax}L`) + chip(`${location.secondary} · 2BHK`);
+    srch.textContent = `${location.primary} · ${location.secondary} · 2BHK`;
+  }
+
+  const fns = { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5 };
+  $('content').innerHTML = (fns[stage] || s2)();
+
+  // interactive pill clicks
+  $('content').querySelectorAll('[data-group]').forEach(el => {
+    el.addEventListener('click', function() {
+      const g = this.dataset.group;
+      document.querySelectorAll(`[data-group="${g}"]`).forEach(x => x.classList.remove('on'));
+      this.classList.add('on');
+    });
+  });
+  $('content').scrollTop = 0;
+}
+
+/* ─── Stage 1: Discovery ─────────────────────────────── */
+function s1() {
+  const { location } = CONFIG;
+  return `
+    <div class="hero-s1">
+      <div class="city">🏙 ${location.city}, Delhi NCR</div>
+      <h1>Find your home<br>in ${location.city}</h1>
+      <div class="hero-srch">
+        <svg width="16" height="16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#aaa" stroke-width="1.5"/><path d="M12 12l2.5 2.5" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Search locality, project, builder…</span>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-val">12K+</div><div class="hstat-lbl">Properties</div></div>
+        <div class="hstat"><div class="hstat-val">240+</div><div class="hstat-lbl">Projects</div></div>
+        <div class="hstat"><div class="hstat-val">2,340</div><div class="hstat-lbl">Families moved</div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">Trending localities</div>
+      <div class="sec-sub">Most searched in ${location.city} this week</div>
+      <div class="hscroll">
+        ${[
+          {name:'Sector 150', yoy:'+14%'},
+          {name:'Sector 137', yoy:'+18%'},
+          {name:'Greater Noida West', yoy:'+22%'},
+          {name:'Sector 62', yoy:'+10%'},
+          {name:'Sector 75', yoy:'+9%'},
+        ].map(l => `
+          <div class="trend-pill">${l.name}<span class="pill-stat">${l.yoy}</span></div>`
+        ).join('')}
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Popular right now</div>
+      <div class="sec-sub">Trending 2 &amp; 3 BHKs across ${location.city}</div>
+      <div class="sproof sproof-amber">
+        <span style="font-size:18px">🏠</span>
+        <p>2,340 families chose ${location.city} in the last 30 days</p>
+      </div>
+      <div class="hscroll">
+        ${CONFIG.properties.map(pcard).join('')}
+      </div>
+      <div class="sec-footer">
+        <button class="btn-ghost" style="font-size:12.5px">Explore all properties in ${location.city} →</button>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">New launches</div>
+      <div class="sec-sub">Pre-launch prices · unit of choice</div>
+      ${nlcard(IMGS[5],'Mahagun Mywoods Ph 3',`Sector 128, ${location.city}`,'₹72L – 95L','2, 3 BHK · Completion Jul 2027')}
+    </div>
+
+    <div style="height:24px"></div>`;
+}
+
+/* ─── Stage 2: Locality Awareness ───────────────────── */
+function s2() {
+  const { location, behavior, properties } = CONFIG;
+  const viewCount = behavior.viewCount || 5;
+  return `
+    <div class="sec">
+      <div class="sec-title">Continue where you left off</div>
+      <div class="sec-sub">Your recent views in ${location.primary}</div>
+      <div class="hscroll">
+        ${properties.slice(0,3).map(pcard).join('')}
+      </div>
+      <button class="link-btn">See all in ${location.primary} →</button>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Localities on your radar</div>
+      <div class="sec-sub">Based on your searches</div>
+      <div class="hscroll">
+        ${lcard(CONFIG.loc.primary)}${lcard(CONFIG.loc.secondary)}
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid #F2F2F2">
+        <div style="font-size:12.5px;color:var(--t2);margin-bottom:8px">What matters most to you?</div>
+        <div class="prefs">
+          <div class="pref on" data-group="pref">🚇 Metro access</div>
+          <div class="pref" data-group="pref">🏫 Schools</div>
+          <div class="pref" data-group="pref">🛒 Marketplace</div>
+          <div class="pref" data-group="pref">🌳 Green cover</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Properties for you</div>
+      <div class="sproof sproof-amber" style="margin-bottom:12px">
+        <span style="font-size:16px">🔥</span>
+        <p>24 buyers looked at these on Tuesday</p>
+      </div>
+      <div class="hscroll">
+        ${properties.slice(0,4).map(pcard).join('')}
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Open to areas nearby?</div>
+      <div class="sec-sub">Comparable localities at lower prices</div>
+      ${[
+        { loc: CONFIG.loc.adjacent, sub: `₹9L cheaper than ${location.primary}`, per: CONFIG.loc.adjacent.avg + '/sqft' },
+        { loc: CONFIG.loc.secondary, sub: 'Premium corridor · Metro nearby', per: CONFIG.loc.secondary.avg + '/sqft' },
+        { loc: CONFIG.loc.primary, sub: 'Greenest belt · RERA certified', per: CONFIG.loc.primary.avg + '/sqft' },
+      ].map(n => `
+        <div class="nearby-item">
+          <div class="nearby-dot" style="background:${n.loc.color}18;color:${n.loc.color}">${n.loc.name[0]}</div>
+          <div class="nearby-info">
+            <div class="nearby-name">${n.loc.name}</div>
+            <div class="nearby-sub">${n.sub}</div>
+          </div>
+          <div class="nearby-right">
+            <div class="nearby-price">${n.per}</div>
+            <div class="nearby-delta">${n.loc.yoy} YoY</div>
+          </div>
+        </div>`
+      ).join('')}
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">What's your budget?</div>
+      <div class="b-nudge">
+        <div class="b-nudge-q">Looks like you're browsing in the ₹${CONFIG.filters.budgetMin}–${CONFIG.filters.budgetMax}L range. Should we focus here?</div>
+        <div class="b-choices">
+          <div class="b-choice on" data-group="bgt">
+            <div class="b-radio on" data-group="bgt"></div>
+            <div class="b-choice-txt">Yes, ₹${CONFIG.filters.budgetMin}L – ₹${CONFIG.filters.budgetMax}L</div>
+          </div>
+          <div class="b-choice" data-group="bgt">
+            <div class="b-radio" data-group="bgt"></div>
+            <div class="b-choice-txt">₹${CONFIG.filters.budgetMax}L – ₹${Math.round(CONFIG.filters.budgetMax * 1.25)}L</div>
+          </div>
+          <div class="b-choice" data-group="bgt">
+            <div class="b-radio" data-group="bgt"></div>
+            <div class="b-choice-txt">I'll set my own budget</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">New in ${location.primary}</div>
+      ${nlcard(IMGS[5],'Mahagun Mywoods Ph 3',`${location.primary}, ${location.city}`,'₹82L – 1.1Cr','2, 3 BHK · Completion Jul 2027')}
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Helpful reads</div>
+      <div class="hscroll">
+        ${acard('When is the right time to buy a home?','Feb 12, 2026',0)}
+        ${acard('How to read a RERA certificate','Jan 28, 2026',1)}
+        ${acard('Home loan eligibility explained','Jan 15, 2026',2)}
+      </div>
+    </div>
+
+    <div style="height:24px"></div>`;
+}
+
+/* ─── Stage 3: Comparison ────────────────────────────── */
+function s3() {
+  const { location, properties } = CONFIG;
+  const lp = CONFIG.loc.primary;
+  const ls = CONFIG.loc.secondary;
+  const la = CONFIG.loc.adjacent;
+  return `
+    <div class="sec">
+      <div class="sec-title">Your consideration set</div>
+      <div class="sec-sub">Comparing ${location.primary} vs ${location.secondary}</div>
+      <div class="hscroll" style="margin-bottom:16px">
+        ${lcard(lp,150)}${lcard(ls,150)}
+      </div>
+      <table class="ctable">
+        <thead><tr><th></th><th>${lp.name}</th><th>${ls.name}</th></tr></thead>
+        <tbody>
+          <tr><td>Avg price</td><td class="win">${lp.avg}/sqft</td><td>${ls.avg}/sqft</td></tr>
+          <tr><td>YoY growth</td><td class="win">${lp.yoy}</td><td>${ls.yoy}</td></tr>
+          <tr><td>Metro dist.</td><td class="win">${lp.metro}</td><td>${ls.metro}</td></tr>
+          <tr><td>RTM units</td><td class="win">${lp.rtm}</td><td>${ls.rtm}</td></tr>
+          <tr><td>Society type</td><td>${lp.type}</td><td>${ls.type}</td></tr>
+          <tr><td>New launches</td><td class="win">3</td><td>1</td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:12px;color:var(--t3);margin-top:8px">Which matters more to you?</div>
+      <div class="prefs" style="margin-top:8px">
+        <div class="pref on" data-group="comp">💰 Lower price</div>
+        <div class="pref" data-group="comp">🚇 Metro</div>
+        <div class="pref" data-group="comp">🏫 Schools</div>
+        <div class="pref" data-group="comp">🌳 Greenery</div>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Properties in both areas</div>
+      <div class="sproof sproof-blue" style="margin-bottom:14px">
+        <span style="font-size:16px">👥</span>
+        <p>12 buyers compared these localities this week</p>
+      </div>
+      <div class="hscroll">
+        ${properties.map(pcard).join('')}
+      </div>
+      <button class="link-btn">Find the one that feels right →</button>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Do you want to keep seeing 2BHKs?</div>
+      <div class="b-nudge">
+        <div class="b-nudge-q">Most of your views are 2BHKs under ₹${CONFIG.filters.budgetMax}L. Stick with this?</div>
+        <div class="b-choices">
+          <div class="b-choice on" data-group="bhk">
+            <div class="b-radio on" data-group="bhk"></div>
+            <div class="b-choice-txt">Yes, 2BHK only</div>
+          </div>
+          <div class="b-choice" data-group="bhk">
+            <div class="b-radio" data-group="bhk"></div>
+            <div class="b-choice-txt">Show 3BHK too</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Adjacent localities worth a look</div>
+      <div class="sec-sub">Similar price points · different trade-offs</div>
+      ${la ? `
+      <div class="nearby-item">
+        <div class="nearby-dot" style="background:${la.color}18;color:${la.color}">${la.name[0]}</div>
+        <div class="nearby-info">
+          <div class="nearby-name">${la.name}</div>
+          <div class="nearby-sub">₹9L cheaper than ${lp.name} · Gated community</div>
+        </div>
+        <div class="nearby-right">
+          <div class="nearby-price">${la.avg}/sqft</div>
+          <div class="nearby-delta">${la.yoy} YoY</div>
+        </div>
+      </div>` : ''}
+      <div class="nearby-item">
+        <div class="nearby-dot" style="background:#E67E2218;color:#E67E22">S</div>
+        <div class="nearby-info">
+          <div class="nearby-name">Sector 150</div>
+          <div class="nearby-sub">Sports City · larger layouts available</div>
+        </div>
+        <div class="nearby-right">
+          <div class="nearby-price">₹9.2K/sqft</div>
+          <div class="nearby-delta">+14% YoY</div>
+        </div>
+      </div>
+      <div class="nearby-item">
+        <div class="nearby-dot" style="background:#8E44AD18;color:#8E44AD">G</div>
+        <div class="nearby-info">
+          <div class="nearby-name">Greater Noida West</div>
+          <div class="nearby-sub">Budget-friendly · fast appreciation</div>
+        </div>
+        <div class="nearby-right">
+          <div class="nearby-price">₹5.6K/sqft</div>
+          <div class="nearby-delta">+22% YoY</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">New launches to consider</div>
+      <div class="sec-sub">Pre-launch pricing · before prices rise</div>
+      ${nlcard(IMGS[5],'Mahagun Mywoods Ph 3',`${location.primary}, ${location.city}`,'₹82L – 1.1Cr','2, 3 BHK · Completion Jul 2027')}
+      <div style="height:10px"></div>
+      ${nlcard(IMGS[4],'Apex Premium Residences',`${location.secondary}, ${location.city}`,'₹88L – 1.2Cr','2, 3 BHK · Completion Dec 2026')}
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Tools</div>
+      <div class="hscroll">
+        <div class="tool-chip">📊 Price Trends</div>
+        <div class="tool-chip">🏦 EMI Calculator</div>
+        <div class="tool-chip">📋 Home Loan Guide</div>
+        <div class="tool-chip">📖 Buyer Guide</div>
+        <div class="tool-chip">⚖️ Rent vs Buy</div>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Reads for your search</div>
+      <div class="hscroll">
+        ${acard(`Why buyers prefer ${location.primary}`,'Mar 1, 2026',0)}
+        ${acard(`Price trends in ${location.secondary} — 2025`,'Feb 20, 2026',1)}
+        ${acard('Noida Expressway vs FNG Corridor','Feb 8, 2026',2)}
+      </div>
+    </div>
+
+    <div style="height:24px"></div>`;
+}
+
+/* ─── Stage 4: Shortlist / Decision ─────────────────── */
+function s4() {
+  const { location, behavior, properties } = CONFIG;
+  const topProp = properties[0];
+  const viewCount = behavior.viewCount || 7;
+  const contacted = behavior.contactedDeveloper;
+  return `
+    <div class="spot-alert">
+      <span style="font-size:18px">📉</span>
+      <p>Since last visit: ${location.primary} avg ↑ ₹200/sqft · ${location.secondary} unchanged</p>
+    </div>
+
+    <div class="spotlight">
+      <div class="spot-label">⚡ &nbsp;&nbsp;YOUR TOP PICK</div>
+      <div class="spot-img-wrap">
+        <img src="${topProp.img}" alt="${topProp.name}" onerror="this.style.background='linear-gradient(135deg,#4A90D9,#357ABD)'">
+        <div class="spot-img-overlay">
+          <span class="spot-drop">↓ ₹2L since your last visit</span>
+          <button class="spot-hrt">♥</button>
+        </div>
+      </div>
+      <div class="spot-body">
+        <div class="spot-name">${topProp.name}</div>
+        <div class="spot-loc">${topProp.loc} · ${topProp.meta} · RERA ✓</div>
+        <div class="spot-signals">
+          <div class="sig"><div class="sig-val">${viewCount}×</div><div class="sig-lbl">You viewed</div></div>
+          <div class="sig"><div class="sig-val ${contacted ? 'g' : ''}">${contacted ? '✓' : '—'}</div><div class="sig-lbl">Contacted</div></div>
+          <div class="sig"><div class="sig-val r">12</div><div class="sig-lbl">Contacted/wk</div></div>
+          <div class="sig"><div class="sig-val">3</div><div class="sig-lbl">Units left</div></div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <div class="spot-price">${topProp.price}</div>
+          <div class="spot-price-old">₹86.5L</div>
+        </div>
+        <div class="spot-price-sub">${topProp.per} · ${topProp.sqft} Super Built-up</div>
+        <div class="spot-ctas">
+          <button class="btn-s">📋 Compare</button>
+          <button class="btn-p">🏠 Visit this weekend</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Still in the running?</div>
+      <div class="sec-sub">Mark what's alive, drop what's not</div>
+      ${properties.slice(1,4).map(p => `
+        <div class="sl-item">
+          <div class="sl-thumb"><img src="${p.img}" alt="${p.name}" onerror="this.style.background='#ccc'"></div>
+          <div class="sl-info">
+            <div class="sl-name">${p.name}</div>
+            <div class="sl-loc">${p.loc}</div>
+            <div class="sl-price">${p.price}</div>
+          </div>
+          <div class="yn-row">
+            <button class="yn yn-y">Yes</button>
+            <button class="yn yn-n">No</button>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Plan your visits</div>
+      <div class="visit-box">
+        <p>📅 This weekend · Sat &amp; Sun, 7–8 March</p>
+        <button class="btn-p" style="flex:none;width:100%">Plan Weekend Visits</button>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Your EMI estimate</div>
+      <div class="emi-box" style="margin-bottom:12px">
+        <div class="emi-lbl">At ${topProp.price} · 20% down · 8.5% interest</div>
+        <div class="emi-amt">₹53,200/mo</div>
+        <div class="emi-det">20-year tenure · SBI pre-approved indicative rate</div>
+      </div>
+      <div class="hscroll">
+        <div class="tool-chip">🏦 EMI Calculator</div>
+        <div class="tool-chip">💳 Home Loan</div>
+        <div class="tool-chip">📊 Price Check</div>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Before you visit</div>
+      <div class="hscroll">
+        ${acard('What to check at a site visit','Mar 3, 2026',0)}
+        ${acard('How to negotiate with a developer','Feb 25, 2026',1)}
+        ${acard('Understanding the sale deed','Feb 15, 2026',2)}
+      </div>
+    </div>
+
+    <div style="height:24px"></div>`;
+}
+
+/* ─── Stage 5: Post-Visit ────────────────────────────── */
+function s5() {
+  const { location, behavior, properties } = CONFIG;
+  const topProp = properties[0];
+  const viewCount = behavior.viewCount || 7;
+  const visitedSite = behavior.visitedSite;
+  return `
+    <!-- Prominent social proof header -->
+    <div class="s5-header">
+      <div class="s5-you-viewed">
+        <div class="s5-yv-label">Your engagement with ${topProp.name}</div>
+        <div class="s5-yv-count">${viewCount}×</div>
+        <div class="s5-yv-sub">times opened · Your instinct is telling you something</div>
+      </div>
+      <div class="s5-signals">
+        <div class="s5-sig">
+          <div class="s5-sig-val">${visitedSite ? '✓' : '—'}</div>
+          <div class="s5-sig-lbl">Site visited</div>
+        </div>
+        <div class="s5-sig">
+          <div class="s5-sig-val">${behavior.contactedDeveloper ? '✓' : '—'}</div>
+          <div class="s5-sig-lbl">Contacted</div>
+        </div>
+        <div class="s5-sig">
+          <div class="s5-sig-val">${behavior.savedCount || 3}</div>
+          <div class="s5-sig-lbl">Saved props</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">You visited ${topProp.name}</div>
+      <div class="sec-sub">${topProp.loc} · Yesterday</div>
+      <div style="position:relative;border-radius:14px;overflow:hidden;height:150px;margin-bottom:12px">
+        <img src="${topProp.img}" style="width:100%;height:100%;object-fit:cover" alt="" onerror="this.style.background='#ccc'">
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:20px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,0.6))">
+          <div style="color:#fff;font-size:15px;font-weight:700">${topProp.name}</div>
+          <div style="color:rgba(255,255,255,0.8);font-size:12px">${topProp.loc}</div>
+        </div>
+      </div>
+
+      <div class="fb-card">
+        <div class="fb-ttl">What's working for you? 👍</div>
+        <div class="fb-tags">
+          <div class="fb-tag ok">✓ Location</div>
+          <div class="fb-tag ok">✓ Floor plan</div>
+          <div class="fb-tag">Amenities</div>
+          <div class="fb-tag">Price</div>
+          <div class="fb-tag">Builder trust</div>
+        </div>
+        <div class="fb-ttl">Any concerns? 📝</div>
+        <div class="fb-tags">
+          <div class="fb-tag bad">✗ Parking</div>
+          <div class="fb-tag">Possession date</div>
+          <div class="fb-tag">Society rules</div>
+        </div>
+        <textarea class="fb-note" placeholder="Add a note about your visit…"></textarea>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Make it yours</div>
+      <div class="emi-box" style="margin-bottom:12px">
+        <div class="emi-lbl">At ${topProp.price} · 20% down · 8.5% rate</div>
+        <div class="emi-amt">₹53,200/mo</div>
+        <div class="emi-det">20-year tenure · HDFC / SBI eligibility estimate</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-s">🏦 Loan advisor</button>
+        <button class="btn-p">Confirm visit again</button>
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Price appreciation · ${location.primary}</div>
+      <div class="appr-row"><span>Avg price/sqft</span><span class="val">${CONFIG.loc.primary.avg}</span></div>
+      <div class="appr-row"><span>YoY growth</span><span class="val g">${CONFIG.loc.primary.yoy} · Highest in ${location.city}</span></div>
+      <div class="appr-row"><span>3-year growth</span><span class="val g">+48%</span></div>
+      <div class="appr-row"><span>Metro (Aqua line)</span><span class="val">${CONFIG.loc.primary.metro} walk</span></div>
+      <div class="appr-row"><span>Major employers</span><span class="val">Tech Mahindra, Axis</span></div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">Similar homes nearby</div>
+      <div class="sec-sub">In your budget · slightly different trade-offs</div>
+      <div class="hscroll">
+        ${properties.slice(1,4).map(pcard).join('')}
+      </div>
+    </div>
+
+    <div class="div8"></div>
+
+    <div class="sec">
+      <div class="sec-title">After your visit</div>
+      <div class="hscroll">
+        ${acard('Home loan process — step by step','Mar 2, 2026',0)}
+        ${acard('Stamp duty &amp; registration in UP','Feb 22, 2026',1)}
+        ${acard('Tax benefits on home loans','Feb 10, 2026',2)}
+      </div>
+    </div>
+
+    <div style="height:32px"></div>`;
+}
+
+/* ─── Init: detect context ──────────────────────────── */
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const isIframe = window !== window.parent;
+  const isDev = params.get('dev') === '1';
+
+  // iframe mode: strip phone shell chrome
+  if (isIframe) {
+    document.body.classList.add('in-iframe');
+  }
+
+  // dev mode: show switcher
+  if (isDev || (!isIframe && !params.has('session'))) {
+    document.body.classList.add('dev-mode');
+    const bar = $('dev-bar');
+    bar.style.display = 'flex';
+    // update switcher to match initial stage
+    document.querySelectorAll('.s-btn').forEach((b,i) => b.classList.toggle('on', i === CONFIG.stage-1));
+  }
+
+  // update clock every minute
+  function updateClock() {
+    const now = new Date();
+    const h = now.getHours();
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const el = $('status-time');
+    if (el) el.textContent = `${h}:${m}`;
+  }
+  updateClock();
+  setInterval(updateClock, 60000);
+
+  // initial render, then load live 99acres listings and re-render
+  render();
+  fetchLivePropertiesFrom99acres().then(() => render());
+})();
+
+/* ─── postMessage handler (from researcher dashboard) ── */
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'CONFIG_UPDATE') return;
+
+  const incoming = e.data.config;
+  if (!incoming) return;
+
+  // Merge incoming config
+  if (incoming.stage)    CONFIG.stage = incoming.stage;
+  if (incoming.user)     CONFIG.user = { ...CONFIG.user, ...incoming.user };
+  if (incoming.location) CONFIG.location = { ...CONFIG.location, ...incoming.location };
+  if (incoming.filters)  CONFIG.filters = { ...CONFIG.filters, ...incoming.filters };
+  if (incoming.behavior) CONFIG.behavior = { ...CONFIG.behavior, ...incoming.behavior };
+  if (incoming.properties && incoming.properties.length > 0) {
+    CONFIG.properties = incoming.properties;
+  } else {
+    fetchLivePropertiesFrom99acres().then(() => render());
+  }
+
+  // If researcher sent locality data, update it
+  if (incoming.loc) {
+    CONFIG.loc = { ...CONFIG.loc, ...incoming.loc };
+  }
+
+  // Show LIVE badge
+  const badge = $('live-badge');
+  badge.classList.add('on');
+
+  // Update dev switcher if visible
+  document.querySelectorAll('.s-btn').forEach((b,i) => b.classList.toggle('on', i === CONFIG.stage-1));
+
+  if (incoming.properties && incoming.properties.length > 0) render();
+  // else: render() is called after fetchLivePropertiesFrom99acres() resolves
+
+  // Acknowledge to parent
+  try {
+    e.source.postMessage({ type: 'ACK', stage: CONFIG.stage }, '*');
+  } catch(_) {}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Researcher Panel · 99acres</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --sidebar-w:320px;
+      --blue:#2B3BE5;
+      --blue-mid:#5B6EFA;
+      --dark:#0F1117;
+      --dark2:#1A1D2E;
+      --dark3:#22273A;
+      --border:rgba(255,255,255,0.07);
+      --text:rgba(255,255,255,0.9);
+      --text2:rgba(255,255,255,0.5);
+      --text3:rgba(255,255,255,0.25);
+      --green:#1DB97C;
+      --red:#E53E3E;
+      --r:8px;
+      --r-sm:6px;
+    }
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--dark);color:var(--text);height:100vh;overflow:hidden;}
+    .layout{display:flex;height:100vh;}
+    .sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+    .sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex:1;min-width:0;}
+    .btn-new-cta{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:opacity .15s;}
+    .btn-new-cta:hover{opacity:.9;}
+    .sidebar-header .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+    .brand-logo{width:32px;height:32px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;}
+    .brand-name{font-size:14px;font-weight:700;}
+    .brand-sub{font-size:11px;color:var(--text2);}
+    .session-help{font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.4;}
+    .session-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+    .session-legend{list-style:none;font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:12px;padding:0;}
+    .session-legend li{margin-bottom:6px;}
+    .session-legend strong{color:var(--text);}
+    .sidebar-footer{flex-shrink:0;padding:12px 16px;border-top:1px solid var(--border);}
+    .btn-apply{width:100%;padding:10px 16px;font-size:13px;}
+    .btn{padding:6px 12px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:opacity .15s;}
+    .btn:hover{opacity:.9;}
+    .btn-primary{background:var(--blue);color:#fff;}
+    .btn-secondary{background:var(--dark3);color:var(--text);border:1px solid var(--border);}
+    .btn-green{background:var(--green);color:#fff;}
+    .db-status{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text2);}
+    .db-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);}
+    .db-dot.connected{background:var(--green);}
+    .db-dot.error{background:var(--red);}
+    .sidebar-scroll{flex:1;overflow-y:auto;padding:12px 0;}
+    .s-section{padding:0 16px 14px;margin-bottom:4px;border-bottom:1px solid var(--border);}
+    .s-section:last-child{border-bottom:none;}
+    .s-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:8px;}
+    .field{margin-bottom:8px;}
+    .field label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px;}
+    .field input,.field select,.field textarea{width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 10px;font-size:12px;color:var(--text);font-family:inherit;outline:none;}
+    .field input:focus,.field select:focus{border-color:var(--blue-mid);}
+    .field-row{display:flex;gap:8px;}
+    .field-row .field{flex:1;}
+    .stage-btns{display:flex;gap:4px;}
+    .stg-btn{flex:1;padding:6px 4px;border-radius:var(--r-sm);font-size:11px;font-weight:600;text-align:center;border:1px solid var(--border);background:var(--dark3);color:var(--text2);cursor:pointer;}
+    .stg-btn.on{border-color:var(--blue);background:var(--blue);color:#fff;}
+    .toggle{width:36px;height:20px;border-radius:10px;background:var(--dark3);border:1px solid var(--border);cursor:pointer;position:relative;flex-shrink:0;}
+    .toggle::after{content:'';position:absolute;left:3px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--text2);transition:left .2s;}
+    .toggle.on{background:var(--blue);border-color:var(--blue);}
+    .toggle.on::after{left:19px;background:#fff;}
+    .behavior-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);}
+    .behavior-row:last-child{border-bottom:none;}
+    .session-list{margin-top:8px;}
+    .session-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r-sm);background:var(--dark3);border:1px solid var(--border);margin-bottom:6px;cursor:pointer;}
+    .session-item:hover,.session-item.active{border-color:var(--blue-mid);}
+    .session-item.active{border-color:var(--blue);}
+    .si-name{font-size:12px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+    .si-meta{font-size:10px;color:var(--text2);}
+    .si-acts{display:flex;gap:4px;}
+    .si-act{padding:3px 6px;font-size:10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;}
+    .si-act:hover{color:var(--text);}
+    .preview-panel{flex:1;background:#1A1A2E;display:flex;flex-direction:column;overflow:hidden;}
+    .preview-header{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .preview-title{font-size:13px;font-weight:600;}
+    .preview-meta{font-size:11px;color:var(--text2);}
+    .preview-body{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow:auto;}
+    .phone-outer{background:#111;border-radius:46px;padding:10px;box-shadow:0 24px 60px rgba(0,0,0,.6);}
+    .phone-inner{border-radius:38px;overflow:hidden;background:#f5f5f5;}
+    .phone-iframe{width:360px;height:760px;border:none;display:block;}
+    #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:#fff;padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;z-index:9999;transition:transform .3s;}
+    #toast.show{transform:translateX(-50%) translateY(0);}
+    .bhk-row{display:flex;gap:6px;flex-wrap:wrap;}
+    .bhk-cb{padding:6px 10px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--dark3);font-size:11px;color:var(--text2);cursor:pointer;}
+    .bhk-cb.on{border-color:var(--blue);background:rgba(43,59,229,.2);color:var(--text);}
+    .slider-val{font-size:11px;color:var(--text);}
+    input[type=range]{width:100%;margin:4px 0;}
+    .stg-labels{display:flex;gap:2px;margin-top:4px;}
+    .stg-lbl{flex:1;font-size:9px;color:var(--text3);text-align:center;}
+    .field-optional label::after{content:' (optional)';font-weight:400;color:var(--text3);}
+    .section-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0;}
+    .section-toggle:hover{color:var(--blue-mid);}
+    .view-toggle{display:none;position:fixed;top:0;left:0;right:0;z-index:100;padding:8px 12px;gap:6px;background:var(--dark2);border-bottom:1px solid var(--border);}
+    .view-toggle .view-btn{padding:8px 16px;border-radius:var(--r-sm);font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--dark3);color:var(--text2);cursor:pointer;flex:1;}
+    .view-toggle .view-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+    .view-toggle .view-btn:not(.active):hover{color:var(--text);}
+    @media (max-width: 900px) {
+      .view-toggle{display:flex;}
+      body{padding-top:48px;}
+      .layout{flex-direction:column;height:calc(100vh - 48px);}
+      .sidebar{width:100%;max-width:100%;min-width:0;max-height:none;flex:1;border-right:none;border-bottom:none;}
+      .preview-panel{flex:1;min-height:0;}
+      .preview-body{padding:16px;}
+      .phone-outer{transform:scale(0.85);transform-origin:top center;}
+      .layout--show-preview .sidebar{display:none;}
+      .layout--show-form .preview-panel{display:none;}
+    }
+    @media (max-width: 600px) {
+      .sidebar-header{padding:12px;}
+      .session-actions{flex-direction:column;}
+      .session-actions .btn{flex:1;min-width:0;}
+      .field-row{flex-direction:column;}
+      .stage-btns .stg-btn{padding:8px 4px;}
+    }
+  </style>
+</head>
+<body>
+<div class="view-toggle" id="view-toggle" aria-label="Switch between form and preview">
+  <button type="button" class="view-btn active" data-view="form" onclick="setPanelView('form')">Form</button>
+  <button type="button" class="view-btn" data-view="preview" onclick="setPanelView('preview')">Preview</button>
+</div>
+<div class="layout layout--show-form" id="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-logo">9</div>
+        <div>
+          <div class="brand-name">Researcher Panel</div>
+          <div class="brand-sub">99acres · UX Research</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button type="button" class="btn-new-cta" title="New session — clear form and start fresh" onclick="newSession()" aria-label="New session">+</button>
+        <div class="db-status">
+          <span class="db-dot" id="db-dot"></span>
+          <span id="db-label">Supabase: —</span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-scroll">
+      <div class="s-section">
+        <div class="s-title">User identity</div>
+        <div class="field"><label>Name</label><input id="f-name" type="text" placeholder="e.g. Priya Mehta" oninput="syncForm()"/></div>
+        <div class="field-row">
+          <div class="field field-optional"><label>Age</label><input id="f-age" type="number" min="18" max="99" placeholder="—" oninput="syncForm()"/></div>
+          <div class="field field-optional"><label>Occupation</label><input id="f-occ" type="text" placeholder="—" oninput="syncForm()"/></div>
+        </div>
+        <div class="field field-optional"><label>Works near</label><input id="f-worksNear" type="text" placeholder="Locality" oninput="syncForm()"/></div>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Last visit</div>
+        <div class="field"><label>Days ago</label><input id="f-lastVisit" type="number" min="0" max="90" value="3" oninput="syncForm()"/></div>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Location</div>
+        <div class="field"><label>Primary</label><input id="f-primary" type="text" placeholder="e.g. Sector 137" oninput="syncForm()"/></div>
+        <div class="behavior-row" style="margin-top:8px;"><span class="beh-lbl">Open to other / similar / nearby localities</span><div class="toggle" id="t-open-nearby" onclick="toggleOpenNearby()"></div></div>
+        <div class="field loc-extra" id="loc-extra" style="display:none;margin-top:8px;"><label>Another locality (to compare)</label><input id="f-secondary" type="text" placeholder="e.g. Sector 143" oninput="syncForm()"/></div>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Filters</div>
+        <div class="field-row">
+          <div class="field"><label>Budget min (L)</label><input id="f-bmin" type="number" min="0" value="70" oninput="syncForm()"/></div>
+          <div class="field"><label>Budget max (L)</label><input id="f-bmax" type="number" min="0" value="95" oninput="syncForm()"/></div>
+        </div>
+        <div class="field"><label>BHK</label><div class="bhk-row" id="bhk-row"><span class="bhk-cb" data-bhk="1BHK">1BHK</span><span class="bhk-cb on" data-bhk="2BHK">2BHK</span><span class="bhk-cb" data-bhk="3BHK">3BHK</span><span class="bhk-cb" data-bhk="4BHK+">4BHK+</span></div></div>
+        <div class="field"><label>Ready to move</label><select id="f-rtm" onchange="syncForm()"><option value="either">Either</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+        <div class="field"><label>How soon do you want to buy?</label><select id="f-buyTimeline" onchange="syncForm()"><option value="">—</option><option value="1m">Within 1 month</option><option value="3m">1–3 months</option><option value="6m">3–6 months</option><option value="6m+">6+ months</option><option value="exploring" selected>Just exploring</option></select></div>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Behavior</div>
+        <div class="behavior-row"><span class="beh-lbl">Contacted developer</span><div class="toggle" id="t-contact" onclick="toggleContact()"></div></div>
+        <div class="behavior-row"><span class="beh-lbl">Visited site</span><div class="toggle" id="t-visited" onclick="toggleVisited()"></div></div>
+        <div class="field"><label>Price sensitivity</label><select id="f-priceSens" onchange="syncForm()"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Inferred stage</div>
+        <p class="session-help" style="margin:0;font-size:12px;color:var(--text3);">Stage is inferred from location openness, budget, BHK, possession, price sensitivity, buy timeline, open to nearby, contact and visit (combined). Shown in preview header.</p>
+        <div id="inferred-stage-display" style="margin-top:6px;font-weight:600;font-size:13px;">—</div>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Saved sessions</div>
+        <p class="session-help">Use <strong>+</strong> at top to start fresh. Save or duplicate below. Open any saved session by clicking it in the list.</p>
+        <div class="session-actions">
+          <button type="button" class="btn btn-primary" title="Save current form to the cloud (create or update)" onclick="saveSession()">Save</button>
+          <button type="button" class="btn btn-green" title="Copy current session as a new saved session" onclick="duplicateSession()">Duplicate</button>
+        </div>
+        <ul class="session-legend">
+          <li><strong>+</strong> (top) — New session: clear the form and start fresh.</li>
+          <li><strong>Save</strong> — Store the current setup in the cloud. Updates the open session or creates a new one.</li>
+          <li><strong>Duplicate</strong> — Copy the current session into a new saved session so you can tweak a variant.</li>
+        </ul>
+        <div class="session-list" id="session-list">Loading…</div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <button type="button" class="btn btn-primary btn-apply" onclick="applyToPreview()">Apply</button>
+    </div>
+  </aside>
+  <main class="preview-panel">
+    <div class="preview-header">
+      <span class="preview-title" id="preview-title">Preview</span>
+      <span class="preview-meta" id="preview-meta">Stage 2 · Locality Awareness</span>
+    </div>
+    <div class="preview-body">
+      <div class="phone-outer">
+        <div class="phone-inner">
+          <iframe id="preview-iframe" class="phone-iframe" title="Homepage preview" src="../homepage/index.html"></iframe>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="toast"></div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+  const STAGE_NAMES = { 1:'Discovery', 2:'Locality Awareness', 3:'Comparison', 4:'Shortlist', 5:'Post-Visit' };
+  let sb = null;
+  let activeSessionId = null;
+  let sessions = [];
+  let profile = getDefaultProfile();
+
+  function getDefaultProfile() {
+    return {
+      user: { name: '', age: null, occupation: '', worksNear: '' },
+      stage: 2,
+      lastVisitDaysAgo: 3,
+      location: { primary: '', secondary: null, openToNearby: false, city: null, primaryMeta: null, secondaryMeta: null, adjacentLocalities: [] },
+      filters: { budgetMin: 70, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
+      behavior: { savedProperties: [], contactedDeveloper: false, visitedSite: false, priceSensitivity: 'medium' },
+      openAIData: null
+    };
+  }
+
+  function initSupabase() {
+    const url = window.SUPABASE_URL || '';
+    const key = window.SUPABASE_ANON_KEY || '';
+    const dot = document.getElementById('db-dot');
+    const lbl = document.getElementById('db-label');
+    if (!url || !key) {
+      lbl.textContent = 'Supabase: add config.js (see config.example.js)';
+      return;
+    }
+    try {
+      sb = supabase.createClient(url, key);
+      lbl.textContent = 'Supabase: connecting…';
+      sb.from('sessions').select('id', { count: 'exact', head: true }).then(({ error }) => {
+        if (error) {
+          dot.classList.add('error');
+          lbl.textContent = 'Supabase: ' + error.message;
+        } else {
+          dot.classList.add('connected');
+          lbl.textContent = 'Supabase: connected';
+          loadSessionsFromDB();
+        }
+      });
+    } catch (e) {
+      dot.classList.add('error');
+      lbl.textContent = 'Supabase: ' + e.message;
+    }
+  }
+
+  async function loadSessionsFromDB() {
+    if (!sb) return;
+    const { data, error } = await sb.from('sessions').select('*').order('updated_at', { ascending: false }).limit(50);
+    if (error) { console.error(error); return; }
+    sessions = (data || []).map(r => ({ id: r.id, name: r.name, profile: r.profile, updated_at: r.updated_at }));
+    renderSessionList();
+  }
+
+  function renderSessionList() {
+    const el = document.getElementById('session-list');
+    if (!sessions.length) { el.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:8px 0">No saved sessions</div>'; return; }
+    el.innerHTML = sessions.map(s => `
+      <div class="session-item ${s.id === activeSessionId ? 'active' : ''}" data-id="${s.id}">
+        <div style="flex:1;min-width:0">
+          <div class="si-name">${escapeHtml(s.name)}</div>
+          <div class="si-meta">Stage ${s.profile && s.profile.stage ? s.profile.stage : '—'}</div>
+        </div>
+        <div class="si-acts">
+          <button type="button" class="si-act" onclick="event.stopPropagation();loadSession('${s.id}')">Load</button>
+          <button type="button" class="si-act" onclick="event.stopPropagation();duplicateSessionFrom('${s.id}')">Copy</button>
+        </div>
+      </div>
+    `).join('');
+    el.querySelectorAll('.session-item').forEach(item => {
+      item.addEventListener('click', function() { loadSession(this.dataset.id); });
+    });
+  }
+
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function isCityName(text) {
+    if (!text || !text.trim()) return false;
+    var t = text.trim().toLowerCase();
+    return t === 'noida' || t === 'bangalore' || t === 'bengaluru' || t === 'gurgaon' || t === 'gurugram' || t === 'mumbai' || t === 'pune' || t === 'ghaziabad' || t === 'faridabad' || t === 'hyderabad' || t === 'chennai' || t === 'delhi' || t === 'greater noida';
+  }
+  function inferStageFromBehavior(p) {
+    const b = p.behavior || {};
+    const loc = p.location || {};
+    const f = p.filters || {};
+    const hasPrimary = !!(loc.primary && loc.primary.trim());
+    const hasSecondary = !!(loc.secondary && loc.secondary.trim());
+    const openToNearby = !!loc.openToNearby;
+    const primaryIsCity = loc.primaryType === 'city' || isCityName(loc.primary);
+    const contacted = !!b.contactedDeveloper;
+    const visited = !!b.visitedSite;
+    const priceSens = b.priceSensitivity || 'medium';
+    const buyTimeline = f.buyTimeline || 'exploring';
+
+    var min = f.budgetMin != null ? f.budgetMin : 70, max = f.budgetMax != null ? f.budgetMax : 95;
+    var bhk = f.bhk && f.bhk.length ? f.bhk : ['2BHK'];
+    var rtm = f.readyToMove || 'either';
+    var refinedBudget = (max - min) < 25 || min !== 70 || max !== 95;
+    var refinedBHK = bhk.length !== 1 || bhk[0] !== '2BHK';
+    var possessionSpecific = rtm === 'yes' || rtm === 'no';
+    var soonIntent = buyTimeline === '1m' || buyTimeline === '3m';
+
+    var base = 1;
+    if (!hasPrimary) base = 1;
+    else if (primaryIsCity) base = 1;
+    else if (hasPrimary && hasSecondary) base = 3;
+    else {
+      var highPriceSensitivity = priceSens === 'high';
+      var lowPriceSensitivity = priceSens === 'low';
+      if (lowPriceSensitivity && !refinedBudget && !refinedBHK && !possessionSpecific) base = 2;
+      else if (refinedBudget || refinedBHK || possessionSpecific || highPriceSensitivity) base = 3;
+      else if (openToNearby && (refinedBudget || refinedBHK || highPriceSensitivity)) base = 3;
+      else if (openToNearby) base = 2;
+      else base = 2;
+    }
+
+    if (visited) {
+      if (base >= 3) return 5;
+      if (base === 2) return 4;
+      return 3;
+    }
+    if (contacted) {
+      if (base >= 3) return 4;
+      if (base === 2) return soonIntent ? 4 : 3;
+      return soonIntent ? 3 : 2;
+    }
+    if (soonIntent && base === 2) return 3;
+    return base;
+  }
+
+  function collectProfile() {
+    const bhk = [];
+    document.querySelectorAll('.bhk-cb.on').forEach(cb => bhk.push(cb.dataset.bhk));
+    profile = {
+      user: {
+        name: document.getElementById('f-name').value.trim() || null,
+        age: parseInt(document.getElementById('f-age').value, 10) || null,
+        occupation: document.getElementById('f-occ').value.trim() || null,
+        worksNear: document.getElementById('f-worksNear').value.trim() || null
+      },
+      stage: 2,
+      lastVisitDaysAgo: parseInt(document.getElementById('f-lastVisit').value, 10) || 0,
+      location: {
+        primary: document.getElementById('f-primary').value.trim() || null,
+        secondary: document.getElementById('t-open-nearby').classList.contains('on') ? (document.getElementById('f-secondary').value.trim() || null) : null,
+        openToNearby: document.getElementById('t-open-nearby').classList.contains('on'),
+        city: profile.location && profile.location.city ? profile.location.city : null,
+        primaryType: profile.location && profile.location.primaryType || null,
+        secondaryType: profile.location && profile.location.secondaryType || null,
+        primaryMeta: profile.location && profile.location.primaryMeta ? profile.location.primaryMeta : null,
+        secondaryMeta: profile.location && profile.location.secondaryMeta ? profile.location.secondaryMeta : null,
+        adjacentLocalities: profile.location && profile.location.adjacentLocalities ? profile.location.adjacentLocalities : []
+      },
+      filters: {
+        budgetMin: parseInt(document.getElementById('f-bmin').value, 10) || 0,
+        budgetMax: parseInt(document.getElementById('f-bmax').value, 10) || 0,
+        bhk: bhk.length ? bhk : ['2BHK'],
+        readyToMove: document.getElementById('f-rtm').value,
+        buyTimeline: document.getElementById('f-buyTimeline').value || 'exploring'
+      },
+      behavior: {
+        savedProperties: profile.behavior && profile.behavior.savedProperties ? profile.behavior.savedProperties : [],
+        contactedDeveloper: document.getElementById('t-contact').classList.contains('on'),
+        visitedSite: document.getElementById('t-visited').classList.contains('on'),
+        priceSensitivity: document.getElementById('f-priceSens').value
+      },
+      openAIData: profile.openAIData || null
+    };
+    profile.stage = inferStageFromBehavior(profile);
+    return profile;
+  }
+
+  function updateInferredStageDisplay() {
+    const el = document.getElementById('inferred-stage-display');
+    if (el) el.textContent = 'Stage ' + profile.stage + ' · ' + (STAGE_NAMES[profile.stage] || '');
+  }
+
+  function toggleOpenNearby() {
+    document.getElementById('t-open-nearby').classList.toggle('on');
+    document.getElementById('loc-extra').style.display = document.getElementById('t-open-nearby').classList.contains('on') ? 'block' : 'none';
+    syncForm();
+  }
+
+  function fillForm(p) {
+    if (!p) return;
+    const u = p.user || {};
+    document.getElementById('f-name').value = u.name || '';
+    document.getElementById('f-age').value = u.age != null ? u.age : '';
+    document.getElementById('f-occ').value = u.occupation || '';
+    document.getElementById('f-worksNear').value = u.worksNear || '';
+    profile = JSON.parse(JSON.stringify(p));
+    document.getElementById('f-lastVisit').value = p.lastVisitDaysAgo != null ? p.lastVisitDaysAgo : 0;
+    const loc = p.location || {};
+    document.getElementById('f-primary').value = loc.primary || '';
+    document.getElementById('f-secondary').value = loc.secondary || '';
+    const hasSec = !!(loc.secondary && loc.secondary.trim());
+    const openNearby = !!loc.openToNearby || hasSec;
+    document.getElementById('t-open-nearby').classList.toggle('on', openNearby);
+    document.getElementById('loc-extra').style.display = openNearby ? 'block' : 'none';
+    const f = p.filters || {};
+    document.getElementById('f-bmin').value = f.budgetMin != null ? f.budgetMin : 70;
+    document.getElementById('f-bmax').value = f.budgetMax != null ? f.budgetMax : 95;
+    document.querySelectorAll('.bhk-cb').forEach(cb => { cb.classList.toggle('on', (f.bhk || []).indexOf(cb.dataset.bhk) >= 0); });
+    document.getElementById('f-rtm').value = f.readyToMove || 'either';
+    document.getElementById('f-buyTimeline').value = f.buyTimeline || 'exploring';
+    const b = p.behavior || {};
+    document.getElementById('t-contact').classList.toggle('on', !!b.contactedDeveloper);
+    document.getElementById('t-visited').classList.toggle('on', !!b.visitedSite);
+    document.getElementById('f-priceSens').value = b.priceSensitivity || 'medium';
+    collectProfile();
+    updateInferredStageDisplay();
+    updatePreviewMeta();
+  }
+
+  function toggleContact() { document.getElementById('t-contact').classList.toggle('on'); syncForm(); }
+  function toggleVisited() { document.getElementById('t-visited').classList.toggle('on'); syncForm(); }
+
+  document.getElementById('bhk-row').addEventListener('click', function(e) {
+    const cb = e.target.closest('.bhk-cb');
+    if (cb) { cb.classList.toggle('on'); syncForm(); }
+  });
+
+  var pushToPreviewTimer = null;
+  async function sendConfigToPreview() {
+    collectProfile();
+    var hasLocationInput = (profile.location && profile.location.primary) || (profile.location && profile.location.secondary) || (profile.user && profile.user.worksNear);
+    if (window.OPENAI_API_KEY && hasLocationInput) {
+      try { await resolveLocationWithOpenAI(); } catch (_) {}
+      try { await fetchRealDataWithOpenAI(); } catch (_) {}
+    }
+    collectProfile();
+    var payload = Object.assign({}, profile);
+    if (window.NINETY_NINE_ACRES_API_BASE) payload.apiBase = window.NINETY_NINE_ACRES_API_BASE;
+    var iframe = document.getElementById('preview-iframe');
+    if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'CONFIG_UPDATE', config: payload }, '*');
+  }
+  function schedulePushToPreview() {
+    clearTimeout(pushToPreviewTimer);
+    pushToPreviewTimer = setTimeout(sendConfigToPreview, 450);
+  }
+  function syncForm() {
+    collectProfile();
+    updateInferredStageDisplay();
+    updatePreviewMeta();
+    schedulePushToPreview();
+  }
+
+  function inferCityFromLocality(text) {
+    if (!text || !text.trim()) return null;
+    var t = text.trim().toLowerCase();
+    if (t.indexOf('sarjapur') !== -1 || t.indexOf('koramangala') !== -1 || t.indexOf('whitefield') !== -1 || t.indexOf('bellandur') !== -1 || t.indexOf('hsr') !== -1 || t.indexOf('marathahalli') !== -1 || t.indexOf('indiranagar') !== -1 || t.indexOf('bangalore') !== -1) return 'Bangalore';
+    if (t.indexOf('dlf') !== -1 || t.indexOf('gurgaon') !== -1 || t.indexOf('gurugram') !== -1 || t.indexOf('cyber') !== -1) return 'Gurgaon';
+    if (t.indexOf('sector') !== -1 && (t.indexOf('noida') !== -1 || t.indexOf('137') !== -1 || t.indexOf('143') !== -1 || t.indexOf('50') !== -1)) return 'Noida';
+    if (t.indexOf('noida') !== -1) return 'Noida';
+    if (t.indexOf('ghaziabad') !== -1) return 'Ghaziabad';
+    if (t.indexOf('faridabad') !== -1) return 'Faridabad';
+    if (t.indexOf('mumbai') !== -1 || t.indexOf('thane') !== -1) return 'Mumbai';
+    return null;
+  }
+
+  async function resolveLocationWithOpenAI() {
+    const apiKey = window.OPENAI_API_KEY;
+    const primary = (profile.location && profile.location.primary) || '';
+    const secondary = (profile.location && profile.location.secondary) || '';
+    const worksNear = (profile.user && profile.user.worksNear) || '';
+    const inputs = [primary, secondary, worksNear].filter(Boolean);
+    if (inputs.length === 0) return;
+
+    var resolvedCity = inferCityFromLocality(primary) || inferCityFromLocality(secondary) || inferCityFromLocality(worksNear);
+    if (resolvedCity) profile.location.city = resolvedCity;
+    if (primary) {
+      profile.location.primary = primary.trim();
+      if (!profile.location.primaryType) profile.location.primaryType = isCityName(primary.trim()) ? 'city' : 'locality';
+    }
+    if (secondary) profile.location.secondary = secondary.trim() || null;
+    if (secondary && !profile.location.secondaryType) profile.location.secondaryType = isCityName(secondary.trim()) ? 'city' : 'locality';
+    if (worksNear && profile.user) profile.user.worksNear = worksNear.trim();
+
+    if (!apiKey) return;
+    const prompt = `You are a real estate location expert for India. Map the given location inputs to city and classify each as "city" (whole city e.g. Noida, Bangalore) or "locality" (area/sector within a city e.g. Sector 137, Sarjapur).
+
+CRITICAL: Sarjapur, Koramangala, Whitefield, Sector 137, Sector 143, DLF Phase 1 → locality. Noida, Bangalore, Gurgaon, Mumbai → city.
+Return city for the area: Sarjapur/Koramangala/Whitefield → Bangalore; Sector 137/143/50, Noida Expressway → Noida; DLF, Cyber City → Gurgaon.
+
+Given inputs - primary: "${primary}", secondary: "${secondary || ''}", works near: "${worksNear}".
+Return ONLY a valid JSON object, no markdown:
+{"city":"Bangalore|Noida|Gurgaon|Mumbai|Ghaziabad|Faridabad","primary":"exact primary string","secondary":null or "exact secondary string","worksNear":null or "exact string","primaryType":"city or locality","secondaryType":null or "city or locality"}
+Use primaryType "city" only when the primary is a city name (Noida, Bangalore, Gurgaon, Mumbai, etc.). Use "locality" for sectors, areas, neighbourhoods. Return only the JSON.`;
+    try {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 220,
+          temperature: 0.1
+        })
+      });
+      if (!res.ok) throw new Error('OpenAI ' + res.status);
+      const data = await res.json();
+      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}') + 1;
+      const json = start >= 0 && end > start ? JSON.parse(text.slice(start, end)) : {};
+      if (json.city) profile.location.city = json.city;
+      if (json.primary != null) profile.location.primary = (json.primary || profile.location.primary || '').trim() || null;
+      if (json.secondary != null) profile.location.secondary = (json.secondary || '').trim() || null;
+      if (json.worksNear != null && profile.user) profile.user.worksNear = (json.worksNear || '').trim() || null;
+      if (json.primaryType === 'city' || json.primaryType === 'locality') profile.location.primaryType = json.primaryType;
+      if (json.secondaryType === 'city' || json.secondaryType === 'locality') profile.location.secondaryType = json.secondaryType;
+    } catch (e) {
+      console.warn('OpenAI location resolve failed:', e.message);
+    }
+    if (!profile.location.primaryType && profile.location.primary) profile.location.primaryType = isCityName(profile.location.primary) ? 'city' : 'locality';
+    if (!profile.location.secondaryType && profile.location.secondary) profile.location.secondaryType = isCityName(profile.location.secondary) ? 'city' : 'locality';
+  }
+
+  async function fetchRealDataWithOpenAI() {
+    const apiKey = window.OPENAI_API_KEY;
+    if (!apiKey) { profile.openAIData = null; return; }
+    const city = profile.location.city || 'Noida';
+    const loc = profile.location.primary || city;
+    const bhk = (profile.filters.bhk && profile.filters.bhk[0]) ? profile.filters.bhk[0] : '2BHK';
+    const minL = profile.filters.budgetMin != null ? profile.filters.budgetMin : 70;
+    const maxL = profile.filters.budgetMax != null ? profile.filters.budgetMax : 95;
+    const rtm = profile.filters.readyToMove === 'yes' ? ' ready to move only' : '';
+    const prompt = `You are a real estate data expert for India. For city "${city}" and locality "${loc}", return REAL market-relevant data as JSON only, no markdown.
+
+1. localities: array of 6-8 real locality/area names in or near ${city} that buyers search (e.g. Sector 137, Koramangala). Each: { "name": "Locality Name", "avgPricePerSqft": number in thousands (e.g. 12.5) }.
+
+2. properties: array of 6-8 realistic residential listings. Each: { "name": "Project or building name", "location": "Locality, City", "price": "₹XXL", "priceNum": number in lakhs, "bhk": "2 BHK", "sqft": "1,050 sq ft", "status": "Ready to move" or "Under construction", "ready_to_move": boolean }. Use budget ${minL}-${maxL}L and ${bhk}${rtm}. Base on real projects/localities in ${city}.
+
+Return ONLY valid JSON: {"localities":[{"name":"...","avgPricePerSqft":...},...],"properties":[{"name":"...","location":"...","price":"...","priceNum":...,"bhk":"...","sqft":"...","status":"...","ready_to_move":...},...]}`;
+    try {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+        body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], max_tokens: 1200, temperature: 0.3 })
+      });
+      if (!res.ok) throw new Error('OpenAI ' + res.status);
+      const data = await res.json();
+      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}') + 1;
+      const json = start >= 0 && end > start ? JSON.parse(text.slice(start, end)) : {};
+      const localities = Array.isArray(json.localities) ? json.localities : [];
+      const properties = Array.isArray(json.properties) ? json.properties : [];
+      profile.openAIData = { localities: localities, properties: properties };
+    } catch (e) {
+      console.warn('OpenAI real data failed:', e.message);
+      profile.openAIData = null;
+    }
+  }
+
+  async function applyToPreview() {
+    collectProfile();
+    try {
+      await resolveLocationWithOpenAI();
+    } catch (_) {}
+    if (window.OPENAI_API_KEY) {
+      try {
+        await fetchRealDataWithOpenAI();
+      } catch (_) {}
+    }
+    updatePreviewMeta();
+    sendConfigToPreview();
+    showToast('Changes applied to preview');
+  }
+
+  function updatePreviewMeta() {
+    document.getElementById('preview-title').textContent = profile.user && profile.user.name ? profile.user.name + ' · Preview' : 'Preview';
+    document.getElementById('preview-meta').textContent = 'Stage ' + profile.stage + ' · ' + (STAGE_NAMES[profile.stage] || '');
+  }
+
+  function newSession() {
+    activeSessionId = null;
+    profile = getDefaultProfile();
+    fillForm(profile);
+    syncForm(); // infer stage from default form (e.g. no primary → stage 1)
+    showToast('New session');
+  }
+
+  async function saveSession() {
+    collectProfile();
+    const name = (profile.user && profile.user.name) ? profile.user.name + ' · Stage ' + profile.stage : 'Session ' + (sessions.length + 1);
+    if (!sb) { showToast('Supabase not configured'); return; }
+    try {
+      if (activeSessionId) {
+        await sb.from('sessions').update({ name, profile, updated_at: new Date().toISOString() }).eq('id', activeSessionId);
+        showToast('Session updated');
+      } else {
+        const { data, error } = await sb.from('sessions').insert({ name, profile }).select().single();
+        if (error) throw error;
+        activeSessionId = data.id;
+        sessions.unshift({ id: data.id, name, profile, updated_at: data.updated_at });
+        renderSessionList();
+        showToast('Session saved');
+      }
+      loadSessionsFromDB();
+    } catch (e) {
+      showToast('Error: ' + e.message);
+      console.error(e);
+    }
+  }
+
+  function loadSession(id) {
+    const s = sessions.find(x => x.id === id);
+    if (!s) return;
+    activeSessionId = s.id;
+    fillForm(s.profile);
+    applyToPreview();
+    renderSessionList();
+    showToast('Loaded: ' + s.name);
+  }
+
+  function duplicateSession() {
+    if (!activeSessionId) { saveSession(); return; }
+    duplicateSessionFrom(activeSessionId);
+  }
+
+  async function duplicateSessionFrom(id) {
+    const s = sessions.find(x => x.id === id);
+    if (!s || !sb) return;
+    activeSessionId = null;
+    fillForm(s.profile);
+    syncForm();
+    sendConfigToPreview();
+    const name = (s.name || 'Copy') + ' (copy)';
+    try {
+      const { data, error } = await sb.from('sessions').insert({ name, profile: s.profile }).select().single();
+      if (error) throw error;
+      activeSessionId = data.id;
+      await loadSessionsFromDB();
+      showToast('Duplicated');
+    } catch (e) {
+      showToast('Error: ' + e.message);
+    }
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(window._toastT);
+    window._toastT = setTimeout(() => el.classList.remove('show'), 2500);
+  }
+
+  window.newSession = newSession;
+  window.saveSession = saveSession;
+  window.loadSession = loadSession;
+  window.duplicateSession = duplicateSession;
+  window.duplicateSessionFrom = duplicateSessionFrom;
+  window.toggleContact = toggleContact;
+  window.toggleOpenNearby = toggleOpenNearby;
+  window.toggleVisited = toggleVisited;
+  window.syncForm = syncForm;
+  window.applyToPreview = applyToPreview;
+
+  function setPanelView(view) {
+    var layout = document.getElementById('layout');
+    var toggle = document.getElementById('view-toggle');
+    if (!layout || !toggle) return;
+    layout.classList.remove('layout--show-form', 'layout--show-preview');
+    layout.classList.add(view === 'preview' ? 'layout--show-preview' : 'layout--show-form');
+    toggle.querySelectorAll('.view-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.view === view);
+    });
+    try { sessionStorage.setItem('panelView', view); } catch (e) {}
+  }
+  window.setPanelView = setPanelView;
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+  function init() {
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      var saved = null;
+      try { saved = sessionStorage.getItem('panelView'); } catch (e) {}
+      if (saved === 'form' || saved === 'preview') setPanelView(saved);
+    }
+    initSupabase();
+    fillForm(profile);
+    syncForm();
+    var iframe = document.getElementById('preview-iframe');
+    if (iframe) iframe.addEventListener('load', function() { sendConfigToPreview(); });
+  }
+})();
+</script>
+</body>
+</html>

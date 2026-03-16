@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>99acres</title>
+<style>
+:root {
+  --orange: #FF6B35;
+  --blue: #2563EB;
+  --blue-bg: #EBF1FE;
+  --green: #16A34A;
+  --green-bg: #F0FDF4;
+  --red: #DC2626;
+  --amber: #D97706;
+  --text: #111111;
+  --text2: #555555;
+  --text3: #999999;
+  --bg: #F0F0F0;
+  --card: #FFFFFF;
+  --border: rgba(0,0,0,0.09);
+  --r: 12px;
+  --r-sm: 8px;
+  --r-xs: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; -webkit-font-smoothing: antialiased; }
+body { padding-bottom: 20px; min-height: 100vh; }
+
+/* ── Topnav ── */
+.topnav { background: #fff; padding: 10px 14px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
+.logo { font-size: 20px; font-weight: 900; color: var(--blue); flex-shrink: 0; letter-spacing: -0.5px; line-height: 1; }
+.logo span { color: var(--blue); }
+.nav-search { flex: 1; background: #F2F2F2; border-radius: 20px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text3); min-width: 0; cursor: pointer; }
+.nav-search #nav-search-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-search .si { font-size: 16px; flex-shrink: 0; color: var(--text3); }
+.nav-btn { flex-shrink: 0; background: var(--blue); color: #fff; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+
+/* ── Context chips ── */
+.context-chips { display: flex; gap: 7px; padding: 10px 14px 6px; overflow-x: auto; scrollbar-width: none; background: #fff; border-bottom: 1px solid var(--border); }
+.context-chips::-webkit-scrollbar { display: none; }
+.ctx-chip { flex-shrink: 0; display: flex; align-items: center; gap: 5px; background: #F2F2F2; border: 1.5px solid #E0E0E0; border-radius: 20px; padding: 5px 11px; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; }
+.ctx-chip .x { color: var(--text3); font-size: 13px; line-height: 1; }
+
+/* ── Section wrapper ── */
+.sec { background: #fff; margin-bottom: 8px; }
+.sec-pad { padding: 16px 14px 12px; }
+.sec-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.sec-sub { font-size: 13px; color: var(--text2); margin-bottom: 10px; }
+.sec-link { font-size: 12px; font-weight: 700; color: var(--blue); cursor: pointer; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.divider { height: 1px; background: var(--border); margin: 0 14px; }
+
+/* ── Property card ── */
+.prop { background: var(--card); border-radius: var(--r); overflow: hidden; margin-bottom: 8px; }
+.prop-h { flex-shrink: 0; width: 260px; margin-bottom: 0; }
+.prop-h .prop-img { height: 130px; }
+.prop-img { position: relative; width: 100%; height: 170px; background: linear-gradient(135deg, #D0DFF0 0%, #B8CCE0 100%); overflow: hidden; }
+.prop-img img { width: 100%; height: 100%; object-fit: cover; }
+.prop-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 40px; opacity: 0.35; }
+.badge-rera { position: absolute; top: 9px; left: 9px; display: flex; align-items: center; gap: 3px; background: rgba(20,20,20,0.72); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 5px; backdrop-filter: blur(3px); }
+.badge-viewed { position: absolute; top: 9px; left: 9px; background: rgba(20,20,20,0.72); color: #fff; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 5px; backdrop-filter: blur(3px); }
+.badge-most { position: absolute; top: 9px; right: 42px; background: var(--amber); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px; backdrop-filter: blur(3px); }
+.badge-new { position: absolute; top: 9px; left: 9px; background: var(--blue); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 5px; }
+.prop-heart { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: rgba(255,255,255,0.92); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
+.prop-possession { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.45); color: #fff; font-size: 11px; font-weight: 600; padding: 5px 10px; }
+.prop-body { padding: 12px 12px 8px; }
+.prop-price { font-size: 20px; font-weight: 900; color: var(--text); line-height: 1.1; }
+.prop-price-sub { font-size: 12px; color: var(--text2); font-weight: 600; margin-top: 2px; margin-bottom: 6px; }
+.prop-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 1px; }
+.prop-dev { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+.prop-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+.ptag { background: #F5F5F5; border-radius: 5px; padding: 3px 8px; font-size: 11px; color: var(--text2); font-weight: 500; }
+.ptag.rtm { background: #F0FDF4; color: var(--green); font-weight: 700; }
+.ptag.uc { background: #FFF7ED; color: var(--amber); font-weight: 700; }
+.ptag.new { background: var(--blue-bg); color: var(--blue); font-weight: 700; }
+.prop-landmark { font-size: 11px; color: var(--text3); margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap; }
+.prop-landmark span { display: flex; align-items: center; gap: 3px; }
+.prop-footer { padding: 10px 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+.pf-contact { flex: 1; padding: 9px 0; border-radius: 24px; font-size: 13px; font-weight: 700; text-align: center; color: var(--blue); background: var(--blue-bg); cursor: pointer; }
+.pf-viewnumber { flex: 1; padding: 9px 0; border-radius: 24px; font-size: 13px; font-weight: 700; text-align: center; color: #fff; background: var(--blue); cursor: pointer; }
+
+/* ── 2-col property grid ── */
+.prop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 14px; }
+.prop-sm { background: var(--card); border-radius: var(--r-sm); overflow: hidden; }
+.prop-sm-img { height: 110px; background: linear-gradient(135deg, #D0DFF0, #B8CCE0); position: relative; overflow: hidden; }
+.prop-sm-img img { width: 100%; height: 100%; object-fit: cover; }
+.prop-sm-body { padding: 8px; }
+.prop-sm-price { font-size: 15px; font-weight: 800; color: var(--text); }
+.prop-sm-name { font-size: 11px; color: var(--text2); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prop-sm-loc { font-size: 10px; color: var(--text3); }
+.prop-sm-tag { margin-top: 4px; }
+.prop-sm-landmark { font-size: 10px; color: var(--text3); margin-top: 4px; }
+
+/* ── Horizontal scroll ── */
+.hscroll { display: flex; gap: 10px; overflow-x: auto; padding: 0 14px 8px; scrollbar-width: none; }
+.hscroll::-webkit-scrollbar { display: none; }
+
+/* ── Horizontal property card ── */
+.hprop { flex-shrink: 0; width: 185px; background: var(--card); border-radius: var(--r-sm); overflow: hidden; }
+.hprop-img { height: 105px; background: linear-gradient(135deg, #D0DFF0, #B8CCE0); position: relative; overflow: hidden; }
+.hprop-img img { width: 100%; height: 100%; object-fit: cover; }
+.hprop-body { padding: 8px; }
+.hprop-price { font-size: 14px; font-weight: 800; color: var(--text); }
+.hprop-name { font-size: 11px; font-weight: 600; color: var(--text2); }
+.hprop-loc { font-size: 10px; color: var(--text3); }
+.hprop-tag { font-size: 10px; font-weight: 700; margin-top: 3px; }
+
+/* ── Locality card ── */
+.loc-card { flex-shrink: 0; width: 190px; background: var(--card); border-radius: var(--r-sm); padding: 11px; border: 1px solid var(--border); }
+.loc-card-name { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.loc-card-range { font-size: 11px; color: var(--text3); margin-bottom: 8px; }
+.loc-card-stat { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.loc-stat-l { font-size: 11px; color: var(--text2); }
+.loc-stat-r { font-size: 11px; font-weight: 700; color: var(--text); }
+.loc-stat-r.up { color: var(--green); }
+.loc-card-footer { margin-top: 7px; font-size: 11px; font-weight: 700; color: var(--blue); border-top: 1px solid var(--border); padding-top: 6px; cursor: pointer; }
+.loc-suggest-card { flex-shrink: 0; width: 170px; background: var(--card); border-radius: var(--r-sm); padding: 12px; border: 1px solid var(--border); }
+.lsc-name { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.lsc-range { font-size: 12px; color: var(--text2); font-weight: 600; margin-bottom: 8px; }
+.lsc-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.lsc-footer { font-size: 12px; font-weight: 700; color: var(--blue); margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); cursor: pointer; }
+
+/* ── Preference chooser ── */
+.pref-row { display: flex; gap: 7px; flex-wrap: wrap; padding: 0 14px 12px; }
+.pref-chip { background: #F5F5F5; border: 1.5px solid #E5E5E5; border-radius: 20px; padding: 7px 13px; font-size: 12px; font-weight: 600; color: var(--text2); cursor: pointer; }
+.pref-chip.active { border-color: var(--blue); color: var(--blue); background: var(--blue-bg); }
+.pref-add { background: transparent; border: 1.5px dashed #C0C0C0; border-radius: 20px; padding: 7px 13px; font-size: 12px; color: var(--text3); cursor: pointer; }
+
+/* ── Consideration set ── */
+.consid-option { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); cursor: pointer; }
+.consid-option:last-child { border-bottom: none; }
+.consid-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #D0D0D0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.consid-radio.sel { border-color: var(--blue); background: var(--blue); }
+.consid-radio.sel::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+.consid-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.consid-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+/* ── Head-to-head table ── */
+.h2h-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 0 0 0; }
+.h2h-head { background: var(--text); color: #fff; }
+.h2h-head th { padding: 10px 12px; font-weight: 800; font-size: 13px; text-align: left; }
+.h2h-head th:not(:first-child) { text-align: center; }
+.h2h-row td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.h2h-row:last-child td { border-bottom: none; }
+.h2h-row td:first-child { font-size: 11px; color: var(--text3); font-weight: 600; width: 30%; }
+.h2h-row td:not(:first-child) { font-weight: 700; color: var(--text); text-align: center; }
+.h2h-row td .win { color: var(--green); }
+.h2h-row td .lose { color: var(--text3); font-weight: 500; }
+.h2h-section-head { background: #F8F8F8; }
+.h2h-section-head td { padding: 7px 12px; font-size: 10px; font-weight: 800; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid var(--border); }
+
+/* ── Landmark table ── */
+.lm-table-wrap { border: 1px solid var(--border); border-radius: var(--r-sm); overflow: hidden; margin: 0 14px 12px; }
+.lm-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.lm-table thead th { background: #F5F5F5; padding: 8px 10px; font-weight: 800; font-size: 11px; color: var(--text2); text-align: left; border-bottom: 1px solid var(--border); }
+.lm-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.lm-table tr:last-child td { border-bottom: none; }
+.lm-table td:first-child { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; width: 22%; }
+.lm-table td:not(:first-child) { font-size: 12px; color: var(--text); font-weight: 500; }
+
+/* ── Tradeoff card ── */
+.tradeoff { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: var(--r); padding: 14px; margin: 0 14px 12px; }
+.tradeoff-q { font-size: 14px; font-weight: 700; color: #92400E; margin-bottom: 10px; line-height: 1.4; }
+.tradeoff-btns { display: flex; gap: 8px; }
+.tradeoff-btn { flex: 1; padding: 10px 8px; border-radius: var(--r-sm); font-size: 13px; font-weight: 700; text-align: center; cursor: pointer; border: 1.5px solid #D97706; color: #92400E; background: #fff; }
+.tradeoff-btn.sel { background: #D97706; color: #fff; border-color: #D97706; }
+
+/* ── Experts ── */
+.expert-card { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); }
+.expert-card:last-child { border-bottom: none; }
+.expert-av { width: 40px; height: 40px; border-radius: 50%; background: var(--blue-bg); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: var(--blue); flex-shrink: 0; }
+.expert-info { flex: 1; }
+.expert-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.expert-area { font-size: 11px; color: var(--text3); }
+.expert-btn { background: #F0F0F0; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 700; color: var(--text); cursor: pointer; }
+
+/* ── Decision Spotlight ── */
+.spotlight { border-radius: var(--r); overflow: hidden; margin: 8px 14px 8px; border: 2px solid #FF6B35; }
+.spotlight-header { background: linear-gradient(90deg, #FF6B35, #FF8C5A); padding: 9px 12px; display: flex; align-items: center; gap: 8px; }
+.sph-title { font-size: 13px; font-weight: 800; color: #fff; }
+.sph-badge { background: rgba(255,255,255,0.25); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.spotlight-body { background: #fff; padding: 12px; }
+.sp-stat-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.sp-stat { flex: 1; background: #FFF7F5; border-radius: 6px; padding: 7px 9px; text-align: center; }
+.sp-stat-val { font-size: 13px; font-weight: 800; color: var(--orange); }
+.sp-stat-lbl { font-size: 10px; color: var(--text3); margin-top: 1px; }
+.sp-urgency { background: #FFF3CD; border-radius: 6px; padding: 7px 10px; font-size: 12px; color: #856404; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+.sp-prop-detail { display: flex; flex-direction: column; gap: 3px; margin-bottom: 10px; }
+.sp-prop-name { font-size: 16px; font-weight: 800; color: var(--text); }
+.sp-prop-price { font-size: 20px; font-weight: 900; color: var(--text); }
+.sp-prop-sub { font-size: 12px; color: var(--text3); }
+.sp-landmarks { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.sp-lm { font-size: 11px; color: var(--text2); display: flex; align-items: center; gap: 3px; }
+.sp-ctarow { display: flex; gap: 8px; }
+.sp-cta-no { flex: 1; padding: 10px; border-radius: 24px; font-size: 13px; font-weight: 700; text-align: center; border: 1.5px solid var(--border); color: var(--text2); cursor: pointer; }
+.sp-cta-yes { flex: 2; padding: 10px; border-radius: 24px; font-size: 13px; font-weight: 700; text-align: center; background: var(--green); color: #fff; cursor: pointer; }
+
+/* ── Social proof bar ── */
+.social-bar { background: var(--blue-bg); padding: 10px 14px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #1E3A8A; }
+.social-bar .si { font-size: 16px; }
+
+/* ── Spotlight insight note ── */
+.sp-insight { background: #F5F3FF; border-radius: var(--r-sm); padding: 9px 11px; margin-bottom: 10px; font-size: 12px; color: #5B21B6; font-style: italic; line-height: 1.5; }
+
+/* ── Still Considering ── */
+.sc-card { padding: 11px 14px; border-bottom: 1px solid var(--border); }
+.sc-card:last-child { border-bottom: none; }
+.sc-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.sc-meta-left { font-size: 11px; color: var(--text3); line-height: 1.4; }
+.sc-meta-left b { color: var(--text2); font-weight: 600; }
+.sc-drop-badge { background: #FEF2F2; color: var(--red); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; border: 1px solid #FECACA; flex-shrink: 0; }
+.sc-save-btn { align-self: flex-start; margin-top: 2px; flex-shrink: 0; background: transparent; border: 1.5px solid var(--border); border-radius: 6px; padding: 4px 11px; font-size: 11px; font-weight: 700; color: var(--text2); cursor: pointer; }
+.sc-card-inner { display: flex; gap: 10px; }
+.sc-friend-q { background: #F8F6FF; border-radius: var(--r-sm); padding: 9px 11px; margin-top: 8px; }
+.sc-friend-q-text { font-size: 12px; color: var(--text2); margin-bottom: 7px; font-style: italic; }
+.sc-friend-btns { display: flex; gap: 6px; }
+.sc-friend-btn { padding: 4px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1.5px solid; }
+.sc-friend-btn.yes { color: var(--green); border-color: var(--green); background: transparent; }
+.sc-friend-btn.no { color: var(--red); border-color: var(--red); background: transparent; }
+.sc-friend-btn.det { color: var(--blue); border-color: transparent; font-size: 11px; padding: 4px 6px; }
+.badge-shared { position: absolute; bottom: 9px; left: 9px; background: rgba(20,20,20,0.72); color: #fff; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 5px; backdrop-filter: blur(3px); }
+.prop-note-wrap { margin-top: 7px; }
+.prop-note-display { font-size: 11px; color: var(--text2); font-style: italic; background: #FFFBEB; border-radius: 5px; padding: 5px 8px; margin-bottom: 5px; border-left: 2px solid var(--amber); }
+.prop-note-input { width: 100%; font-size: 11px; color: var(--text2); background: #F8F8F8; border: 1px solid var(--border); border-radius: 5px; padding: 5px 8px; resize: none; height: 32px; font-family: inherit; outline: none; }
+.prop-note-input:focus { border-color: var(--blue); background: #fff; height: 52px; }
+.prop-note-input.hidden { display: none; }
+.card-actions { display: flex; align-items: center; gap: 12px; margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--border); }
+.card-act { font-size: 11px; color: var(--text3); cursor: pointer; display: flex; align-items: center; gap: 3px; }
+.card-act.active { color: var(--red); }
+.sc-thumb { width: 70px; height: 60px; border-radius: var(--r-sm); background: linear-gradient(135deg, #D0DFF0, #B8CCE0); overflow: hidden; flex-shrink: 0; }
+.sc-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.sc-info { flex: 1; min-width: 0; }
+.sc-price { font-size: 16px; font-weight: 800; color: var(--text); }
+.sc-name { font-size: 12px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-vs { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.sc-vs .save { color: var(--green); font-weight: 700; }
+.sc-vs .more { color: var(--red); font-weight: 700; }
+.sc-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.sc-q { font-size: 12px; color: var(--text3); flex: 1; }
+.sc-yn { display: flex; gap: 6px; }
+.sc-btn { padding: 4px 12px; border-radius: 14px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1.5px solid; }
+.sc-btn.yes { color: var(--green); border-color: var(--green); }
+.sc-btn.no { color: var(--red); border-color: var(--red); }
+.sc-btn.det { color: var(--blue); border-color: transparent; font-size: 11px; padding: 4px 8px; }
+
+/* ── Visit planner ── */
+.visit-planner { background: var(--blue); border-radius: var(--r); padding: 14px; margin: 0 14px 8px; display: flex; gap: 10px; align-items: center; }
+.vp-text { flex: 1; color: #fff; }
+.vp-title { font-size: 14px; font-weight: 800; margin-bottom: 3px; }
+.vp-sub { font-size: 11px; opacity: 0.8; }
+.vp-btn { background: #fff; color: var(--blue); border-radius: 20px; padding: 8px 14px; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+
+/* ── Tool card ── */
+.tool-row { display: flex; gap: 8px; padding: 0 14px 4px; flex-wrap: wrap; }
+.tool-card { flex: 1; min-width: calc(50% - 4px); background: var(--card); border-radius: var(--r-sm); padding: 11px 10px; border: 1px solid var(--border); cursor: pointer; }
+.tool-icon { font-size: 22px; margin-bottom: 5px; }
+.tool-name { font-size: 12px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.tool-desc { font-size: 10px; color: var(--text3); line-height: 1.35; }
+
+/* ── Article card ── */
+.article-card { display: flex; gap: 10px; align-items: center; padding: 11px 14px; border-bottom: 1px solid var(--border); cursor: pointer; }
+.article-card:last-child { border-bottom: none; }
+.article-thumb { width: 72px; height: 56px; border-radius: var(--r-sm); background: linear-gradient(135deg, #D0DFF0, #B8CCE0); overflow: hidden; flex-shrink: 0; }
+.article-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.article-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35; margin-bottom: 3px; }
+.article-date { font-size: 11px; color: var(--text3); }
+
+/* ── New launch card ── */
+.nl-wrap { background: #FAF6EE; border-radius: var(--r); border: 1px solid rgba(255,180,0,0.2); padding: 12px; margin: 0 14px 8px; }
+.nl-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.nl-icon { width: 34px; height: 34px; background: linear-gradient(135deg, #F59E0B, #D97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+.nl-title { font-size: 14px; font-weight: 800; }
+.nl-sub { font-size: 11px; color: var(--text3); }
+.nl-card { background: #fff; border-radius: var(--r-sm); padding: 11px; }
+.nl-new-label { text-align: center; font-size: 10px; color: var(--text3); letter-spacing: 1px; margin-bottom: 8px; }
+.nl-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+.nl-thumb { width: 44px; height: 44px; border-radius: 7px; background: linear-gradient(135deg, #D0DFF0, #B8CCE0); overflow: hidden; flex-shrink: 0; }
+.nl-name { font-size: 13px; font-weight: 800; color: var(--text); }
+.nl-loc { font-size: 11px; color: var(--text3); }
+.nl-details-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px; font-weight: 800; }
+.nl-sep { color: var(--border); }
+.nl-bhk { font-size: 12px; font-weight: 500; color: var(--text2); }
+.nl-rera { display: inline-flex; align-items: center; gap: 4px; background: var(--blue-bg); color: var(--blue); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+.nl-footer { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); align-items: center; }
+.nl-footer-text { flex: 1; font-size: 11px; color: var(--text2); }
+.nl-cta { background: var(--blue); color: #fff; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+/* ── Help links ── */
+.help-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 0 14px 4px; }
+.help-card { background: var(--blue-bg); border-radius: var(--r-sm); padding: 10px 8px; text-align: center; cursor: pointer; }
+.help-icon { font-size: 20px; margin-bottom: 4px; }
+.help-label { font-size: 11px; font-weight: 700; color: var(--blue); line-height: 1.3; }
+
+/* ── Price trend ── */
+.price-trend { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; cursor: pointer; }
+.pt-left { display: flex; align-items: center; gap: 10px; }
+.pt-circle { width: 38px; height: 38px; border-radius: 50%; background: var(--green-bg); display: flex; align-items: center; justify-content: center; font-size: 17px; }
+.pt-val { font-size: 15px; font-weight: 800; color: var(--green); }
+.pt-lbl { font-size: 11px; color: var(--text3); }
+.pt-arrow { font-size: 18px; color: var(--text3); }
+
+/* ── Budget nudge ── */
+.budget-nudge { background: var(--card); border-radius: var(--r); padding: 13px; margin: 0 0 0; }
+.bn-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.bn-bar-bg { background: #F0F0F0; border-radius: 4px; height: 6px; margin-bottom: 5px; }
+.bn-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--blue-bg), var(--blue)); }
+.bn-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); margin-bottom: 10px; }
+.yn-row { display: flex; gap: 8px; }
+.yn-btn { flex: 1; padding: 8px; border-radius: var(--r-sm); font-size: 13px; font-weight: 700; text-align: center; cursor: pointer; }
+.yn-yes { background: var(--blue); color: #fff; }
+.yn-no { background: #F5F5F5; color: var(--text2); }
+
+/* ── Hero ── */
+.hero-s1 { background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 60%, #3B82F6 100%); padding: 22px 16px 18px; color: #fff; margin-bottom: 8px; }
+.hero-s1 h1 { font-size: 24px; font-weight: 800; line-height: 1.25; margin-bottom: 8px; }
+.hero-s1 p { font-size: 13px; opacity: 0.75; margin-bottom: 14px; }
+.hero-search-big { background: #fff; border-radius: 24px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; color: var(--text3); font-size: 14px; }
+.hero-search-big span { flex: 1; }
+
+/* ── Empty / loading ── */
+.empty { padding: 50px 24px; text-align: center; }
+.empty-icon { font-size: 44px; opacity: 0.35; margin-bottom: 12px; }
+.empty-title { font-size: 17px; font-weight: 700; color: var(--text2); margin-bottom: 6px; }
+.empty-sub { font-size: 13px; color: var(--text3); line-height: 1.5; }
+.skel { background: linear-gradient(90deg, #EBEBEB 25%, #E3E3E3 50%, #EBEBEB 75%); background-size: 200%; animation: sh 1.4s infinite; border-radius: 6px; }
+@keyframes sh { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+
+/* ── Sticky CTA — removed ── */
+.cta-btn { flex: 1; padding: 12px; border-radius: 24px; font-size: 14px; font-weight: 700; text-align: center; cursor: pointer; border: none; }
+.cta-sec { background: var(--blue-bg); color: var(--blue); }
+.cta-pri { background: var(--blue); color: #fff; }
+
+/* ── Nearby locality comparison ── */
+.nearby-cmp { display: flex; gap: 8px; padding: 0 14px 4px; }
+.ncmp-card { flex: 1; background: var(--card); border-radius: var(--r-sm); padding: 10px; border: 1px solid var(--border); }
+.ncmp-name { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.ncmp-range { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+.ncmp-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.ncmp-l { font-size: 10px; color: var(--text3); }
+.ncmp-r { font-size: 10px; font-weight: 700; color: var(--text); }
+.ncmp-r.up { color: var(--green); }
+.ncmp-footer { margin-top: 7px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 10px; color: var(--text3); }
+
+/* ── Upcoming developments ── */
+.upcoming-card { flex-shrink: 0; width: 175px; background: var(--card); border-radius: var(--r-sm); overflow: hidden; }
+.upcoming-img { height: 100px; background: linear-gradient(135deg, #D0DFF0, #B8CCE0); position: relative; overflow: hidden; }
+.upcoming-img img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+.upcoming-body { padding: 8px; }
+.upcoming-title { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.3; margin-bottom: 2px; }
+.upcoming-date { font-size: 10px; color: var(--text3); }
+
+/* ── Post-visit tools ── */
+.pv-tool { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--border); cursor: pointer; }
+.pv-tool:last-child { border-bottom: none; }
+.pv-tool-icon { width: 42px; height: 42px; border-radius: var(--r-sm); background: var(--blue-bg); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.pv-tool-info { flex: 1; }
+.pv-tool-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.pv-tool-desc { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.pv-tool-arr { font-size: 18px; color: var(--text3); }
+
+/* ── Group label ── */
+.group-label { font-size: 13px; font-weight: 800; color: var(--text); padding: 10px 14px 4px; display: flex; align-items: center; gap: 6px; }
+.group-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+.group-dot.orange { background: var(--orange); }
+
+/* ── Feedback row ── */
+.helpful-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; font-size: 12px; color: var(--text3); }
+.helpful-btns { display: flex; gap: 12px; }
+.helpful-btn { cursor: pointer; display: flex; align-items: center; gap: 4px; }
+
+/* ── Quick links ── */
+.ql-wrap { display: flex; gap: 7px; flex-wrap: wrap; padding: 0 14px 4px; }
+.ql-btn { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 6px 13px; font-size: 12px; font-weight: 600; color: var(--blue); cursor: pointer; }
+
+/* ── Tap feedback for all interactive elements ── */
+.prop-heart:active, .pf-contact:active, .pf-viewnumber:active,
+.yn-btn:active, .sc-btn:active, .tradeoff-btn:active,
+.pref-chip:active, .ctx-chip:active, .ql-btn:active,
+.cta-btn:active, .sp-cta-yes:active, .sp-cta-no:active,
+.sc-save-btn:active, .sc-friend-btn:active, .expert-btn:active,
+.helpful-btn:active, .nl-cta:active, .nav-btn:active {
+  opacity: 0.72; transform: scale(0.97); transition: transform 0.08s, opacity 0.08s;
+}
+
+/* ── Heart toggle state ── */
+.prop-heart { transition: color 0.15s, background 0.15s; }
+.prop-heart.saved { color: var(--red); background: rgba(255,255,255,0.97); }
+
+/* ── Chip × hover ── */
+.ctx-chip .x:hover { color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- Top nav -->
+<div class="topnav">
+  <div class="logo">99<span>acres</span></div>
+  <div class="nav-search">
+    <span class="si">⌕</span>
+    <span id="nav-search-text">Search City/Locality...</span>
+  </div>
+</div>
+
+<!-- Main content -->
+<div id="page"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../panel/config.js" onerror=""></script>
+<script>
+// ── Built-in fallback ──────────────────────────────────────────────────────────
+// ── Mock data for 10 popular Indian cities ────────────────────────────────────
+const MOCK_DATA = {
+
+  noida: {
+    properties: [
+      { name:'ATS Tourmaline – Tower A', dev:'ATS', location:'Sector 109, Noida', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Tech Mahindra · 800m Aqua Line metro' },
+      { name:'Godrej Properties Phase 2', dev:'Godrej', location:'Sector 137, Noida Expressway', price:'₹79.5L', sqft:'975 sq ft', bhk:'2 BHK', status:'Possession Dec 2026', ready_to_move:false, lm:'25 mins from office · 1.2km metro' },
+      { name:'Gaur City 2', dev:'Gaursons', location:'Sector 16C, Greater Noida West', price:'₹62L', sqft:'885 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'30 mins from office · 3km metro' },
+      { name:'Mahagun Mywoods', dev:'Mahagun', location:'Sector 16C, Greater Noida West', price:'₹75L', sqft:'1,150 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'28 mins from office · 2.8km metro' },
+      { name:'Supertech Ecovillage', dev:'Supertech', location:'Sector 137, Noida', price:'₹84.5L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'12 mins from Tech Mahindra · 900m metro' },
+      { name:'ATS Pristine – Tower C', dev:'ATS', location:'Sector 137, Noida', price:'₹1.1 Cr', sqft:'1,340 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Tech Mahindra · 700m metro' },
+    ],
+    localities: [
+      { name:'Sector 137', bhkRange:'₹84L–1.1Cr · 2BHK', avgPsqft:8200, yoy:12, metro:'Aqua Line · 800m', conn:'Noida Expressway', count:'1.3k properties' },
+      { name:'Sector 143', bhkRange:'₹75–95L · 2BHK', avgPsqft:7400, yoy:14, metro:'Aqua Line · 1.2km', conn:'Yamuna Expressway', count:'980 properties' },
+      { name:'Sector 150', bhkRange:'₹95L–1.2Cr · 2BHK', avgPsqft:9100, yoy:22, metro:'2km from metro', conn:'Noida Expressway', count:'560 properties' },
+      { name:'Sector 128', bhkRange:'₹78L–1Cr · 2BHK', avgPsqft:7800, yoy:16, metro:'~1km from metro', conn:'Noida Expressway', count:'720 properties' },
+      { name:'Sector 93A', bhkRange:'₹65–85L · 2BHK', avgPsqft:6900, yoy:12, metro:'1.5km from metro', conn:'Sec 18 nearby', count:'850 properties' },
+      { name:'Greater Noida West', bhkRange:'₹55–80L · 2BHK', avgPsqft:5800, yoy:20, metro:'3km from metro', conn:'NH-9', count:'2.1k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Sector 128', delta:-8, label:'₹8L cheaper', metro:'1km metro', summary:'Similar Expressway corridor' },
+      { name:'Sector 93A', delta:-15, label:'₹15L cheaper', metro:'1.5km metro', summary:'Established residential zone' },
+      { name:'Greater Noida West', delta:-22, label:'₹22L cheaper', metro:'3km metro', summary:'High appreciation, farther commute' },
+      { name:'Sector 150', delta:8, label:'₹8L premium', metro:'2km metro', summary:'Premium planned township' },
+    ],
+    landmarks: {
+      primary:   { metro:'Botanical Garden (Blue Line)', hospital:'Fortis Hospital', school:'DPS Sec 132 / KV School', mall:'City Mall' },
+      secondary: { metro:'Sec 143 (Aqua Line)', hospital:'Jaypee Hospital', school:'Wishtown School', mall:'Sec 143 Market' },
+    }
+  },
+
+  gurgaon: {
+    properties: [
+      { name:'Emaar Palm Heights', dev:'Emaar', location:'Sector 77, Gurgaon', price:'₹1.82 Cr', sqft:'1,450 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Cyber City · 1.2km Yellow Line metro' },
+      { name:'Godrej Meridien', dev:'Godrej', location:'Sector 106, Gurgaon', price:'₹1.44 Cr', sqft:'1,275 sq ft', bhk:'3 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'20 mins from Golf Course Road · 2km metro' },
+      { name:'M3M Crown', dev:'M3M', location:'Sector 111, Gurgaon', price:'₹2.1 Cr', sqft:'1,680 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Udyog Vihar · 1.8km metro' },
+      { name:'Sobha City Tower', dev:'Sobha', location:'Sector 108, Gurgaon', price:'₹1.62 Cr', sqft:'1,395 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'18 mins from Cyber Hub · 1.5km metro' },
+      { name:'Bestech Park View', dev:'Bestech', location:'Sector 57, Gurgaon', price:'₹1.24 Cr', sqft:'1,190 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Golf Course Rd · 900m metro' },
+      { name:'Silverglades Legacy', dev:'Silverglades', location:'Sector 59, Gurgaon', price:'₹1.55 Cr', sqft:'1,320 sq ft', bhk:'3 BHK', status:'Possession Mar 2027', ready_to_move:false, lm:'8 mins from Golf Course Ext Rd · 1.1km metro' },
+    ],
+    localities: [
+      { name:'Golf Course Road', bhkRange:'₹1.8–3.5Cr · 3BHK', avgPsqft:14500, yoy:18, metro:'Yellow Line · 600m', conn:'NH-48', count:'1.8k properties' },
+      { name:'Sector 67 / 68', bhkRange:'₹1.2–2Cr · 3BHK', avgPsqft:9800, yoy:16, metro:'Yellow Line · 1.5km', conn:'Sohna Road', count:'1.1k properties' },
+      { name:'Sohna Road', bhkRange:'₹95L–1.5Cr · 2BHK', avgPsqft:8200, yoy:14, metro:'2.5km from metro', conn:'Golf Course Ext', count:'2.3k properties' },
+      { name:'New Gurgaon (Sec 80–95)', bhkRange:'₹85L–1.4Cr · 3BHK', avgPsqft:7400, yoy:20, metro:'3km from metro', conn:'Dwarka Expressway', count:'3.2k properties' },
+      { name:'Dwarka Expressway', bhkRange:'₹90L–1.6Cr · 3BHK', avgPsqft:8600, yoy:22, metro:'1km from metro', conn:'NH-48', count:'2.7k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'New Gurgaon', delta:-18, label:'₹18L cheaper', metro:'3km metro', summary:'Fast-developing, high appreciation' },
+      { name:'Sohna Road', delta:-10, label:'₹10L cheaper', metro:'2.5km metro', summary:'Established mid-segment zone' },
+      { name:'Manesar', delta:-30, label:'₹30L cheaper', metro:'8km metro', summary:'Industrial corridor, lower prices' },
+      { name:'Golf Course Ext', delta:12, label:'₹12L premium', metro:'1km metro', summary:'Premium lifestyle zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'HUDA City Centre (Yellow)', hospital:'Medanta Hospital', school:'DPS International', mall:'Ambience Mall' },
+      secondary: { metro:'Sikanderpur (Yellow)', hospital:'Artemis Hospital', school:'GD Goenka School', mall:'MGF Metropolitan' },
+    }
+  },
+
+  mumbai: {
+    properties: [
+      { name:'Lodha Azzuro', dev:'Lodha', location:'Thane West, Mumbai', price:'₹1.24 Cr', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'25 mins from BKC · Thane railway station 1.2km' },
+      { name:'Godrej Origins', dev:'Godrej', location:'Thane West, Mumbai', price:'₹1.42 Cr', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'30 mins from Andheri · 1.5km station' },
+      { name:'Rustomjee Seasons', dev:'Rustomjee', location:'Bandra East, Mumbai', price:'₹3.2 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from BKC · Bandra station 800m' },
+      { name:'L&T Seawoods Residences', dev:'L&T', location:'Navi Mumbai', price:'₹1.12 Cr', sqft:'980 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Seawoods station · 15 mins from CBD Belapur' },
+      { name:'Kalpataru Magnus', dev:'Kalpataru', location:'Borivali West, Mumbai', price:'₹1.58 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'Borivali station 700m · NH-8 nearby' },
+      { name:'Runwal Forests', dev:'Runwal', location:'Kanjurmarg East, Mumbai', price:'₹1.32 Cr', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Kanjurmarg station 400m · 20 mins from BKC' },
+    ],
+    localities: [
+      { name:'Thane West', bhkRange:'₹1.1–2Cr · 2BHK', avgPsqft:11500, yoy:14, metro:'Metro Line 4 nearby', conn:'Eastern Express Hwy', count:'4.2k properties' },
+      { name:'Powai', bhkRange:'₹1.8–3.5Cr · 2BHK', avgPsqft:18000, yoy:10, metro:'Metro Line 6 · 1km', conn:'Eastern Express Hwy', count:'1.4k properties' },
+      { name:'Andheri West', bhkRange:'₹1.6–3Cr · 2BHK', avgPsqft:20000, yoy:8, metro:'Yellow Line · 500m', conn:'WEH', count:'2.1k properties' },
+      { name:'Navi Mumbai', bhkRange:'₹90L–1.8Cr · 2BHK', avgPsqft:8500, yoy:18, metro:'Metro Line 1 nearby', conn:'Palm Beach Rd', count:'5.6k properties' },
+      { name:'Mulund West', bhkRange:'₹1.2–2.2Cr · 2BHK', avgPsqft:12500, yoy:12, metro:'Metro Line 4 upcoming', conn:'LBS Road', count:'1.8k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Navi Mumbai', delta:-25, label:'₹25L cheaper', metro:'Metro upcoming', summary:'Airport boost · high growth' },
+      { name:'Mulund', delta:-12, label:'₹12L cheaper', metro:'Metro Line 4', summary:'Established, well-connected' },
+      { name:'Dombivli', delta:-35, label:'₹35L cheaper', metro:'Railway station', summary:'Affordable, longer commute' },
+      { name:'Bandra / Khar', delta:80, label:'₹80L premium', metro:'Western line', summary:'Premium coastal location' },
+    ],
+    landmarks: {
+      primary:   { metro:'Ghatkopar (Yellow Line)', hospital:'Jupiter Hospital, Thane', school:'Podar International', mall:'Viviana Mall' },
+      secondary: { metro:'Seawoods–Darave', hospital:'MGM Hospital, Vashi', school:'DY Patil School', mall:'Seawoods Grand Central' },
+    }
+  },
+
+  bangalore: {
+    properties: [
+      { name:'Prestige Falcon City', dev:'Prestige', location:'Konanakunte, Bangalore', price:'₹1.08 Cr', sqft:'1,250 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Electronic City · 2km Banashankari metro' },
+      { name:'Brigade Utopia', dev:'Brigade', location:'Whitefield, Bangalore', price:'₹96L', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Aug 2026', ready_to_move:false, lm:'15 mins from Manyata Tech Park · 1.5km metro' },
+      { name:'Sobha Dream Acres', dev:'Sobha', location:'Panathur, Whitefield', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from EPIP Zone · Whitefield metro 1.2km' },
+      { name:'Purva Atmosphere', dev:'Puravankara', location:'Hebbal, Bangalore', price:'₹1.32 Cr', sqft:'1,380 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Manyata Tech · Hebbal flyover' },
+      { name:'Assetz 63° East', dev:'Assetz', location:'Whitefield, Bangalore', price:'₹85L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'10 mins from ITPL · 1km metro' },
+      { name:'Godrej Splendour', dev:'Godrej', location:'Whitefield, Bangalore', price:'₹82L', sqft:'990 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'18 mins from Marathahalli · Kadugodi metro 900m' },
+    ],
+    localities: [
+      { name:'Whitefield', bhkRange:'₹80L–1.5Cr · 2BHK', avgPsqft:7800, yoy:18, metro:'Purple Line · 1km', conn:'Old Madras Road', count:'4.8k properties' },
+      { name:'Sarjapur Road', bhkRange:'₹75L–1.4Cr · 2BHK', avgPsqft:7200, yoy:20, metro:'Metro Phase 3', conn:'Outer Ring Road', count:'3.6k properties' },
+      { name:'Koramangala', bhkRange:'₹1.4–2.8Cr · 2BHK', avgPsqft:14500, yoy:10, metro:'Green Line · 1.5km', conn:'Inner Ring Road', count:'1.2k properties' },
+      { name:'Hebbal', bhkRange:'₹1.1–2Cr · 3BHK', avgPsqft:10500, yoy:16, metro:'Metro Phase 2', conn:'NH-44', count:'1.8k properties' },
+      { name:'Electronic City', bhkRange:'₹55–90L · 2BHK', avgPsqft:5200, yoy:14, metro:'Metro Phase 2', conn:'Hosur Road', count:'2.9k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Electronic City', delta:-20, label:'₹20L cheaper', metro:'Metro upcoming', summary:'IT hub, lower prices' },
+      { name:'Sarjapur Road', delta:-8, label:'₹8L cheaper', metro:'Metro Phase 3', summary:'High growth, ORR access' },
+      { name:'Marathahalli', delta:-5, label:'₹5L cheaper', metro:'Purple Line', summary:'Established IT corridor' },
+      { name:'Koramangala', delta:40, label:'₹40L premium', metro:'Green Line', summary:'Premium lifestyle zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Whitefield (Purple Line)', hospital:'Manipal Hospital', school:'Delhi Public School', mall:'Phoenix Marketcity' },
+      secondary: { metro:'Marathahalli (upcoming)', hospital:'Columbia Asia', school:'Inventure Academy', mall:'Orion East Mall' },
+    }
+  },
+
+  pune: {
+    properties: [
+      { name:'Godrej Woodsville', dev:'Godrej', location:'Hinjewadi Phase 2, Pune', price:'₹78L', sqft:'925 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'5 mins from Infosys Campus · Metro Phase 1 nearby' },
+      { name:'Kolte-Patil Life Republic', dev:'Kolte-Patil', location:'Hinjewadi, Pune', price:'₹72L', sqft:'875 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from IT Park · 20 mins from Baner' },
+      { name:'Paranjape Trident', dev:'Paranjape', location:'Baner, Pune', price:'₹1.12 Cr', sqft:'1,200 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Balewadi · Baner-Pashan Link Rd' },
+      { name:'Rohan Harita', dev:'Rohan', location:'Wakad, Pune', price:'₹85L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Hinjewadi IT Park · Wakad Chowk' },
+      { name:'Kohinoor Grandeur', dev:'Kohinoor', location:'Wakad, Pune', price:'₹92L', sqft:'1,075 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'15 mins from Infosys · 1km from Wakad Chowk' },
+      { name:'Gera Song of Joy', dev:'Gera', location:'Kharadi, Pune', price:'₹88L', sqft:'1,045 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from EON IT Park · NH-60 access' },
+    ],
+    localities: [
+      { name:'Hinjewadi', bhkRange:'₹65–1.2Cr · 2BHK', avgPsqft:7200, yoy:18, metro:'Metro Phase 1 · 1km', conn:'Mumbai-Pune Hwy', count:'3.4k properties' },
+      { name:'Baner / Balewadi', bhkRange:'₹90L–1.6Cr · 2BHK', avgPsqft:9800, yoy:14, metro:'Metro Phase 1', conn:'Baner-Pashan Rd', count:'2.1k properties' },
+      { name:'Kharadi', bhkRange:'₹80L–1.4Cr · 2BHK', avgPsqft:8600, yoy:16, metro:'Metro Phase 2', conn:'NH-60', count:'2.8k properties' },
+      { name:'Wakad', bhkRange:'₹72–1.2Cr · 2BHK', avgPsqft:8000, yoy:15, metro:'Metro Phase 1 · 1.5km', conn:'Mumbai-Pune Hwy', count:'1.9k properties' },
+      { name:'Viman Nagar', bhkRange:'₹1–1.8Cr · 2BHK', avgPsqft:11200, yoy:10, metro:'Near airport', conn:'Nagar Road', count:'1.3k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Wakad', delta:-10, label:'₹10L cheaper', metro:'Metro Phase 1', summary:'IT corridor, slightly farther' },
+      { name:'Punawale', delta:-18, label:'₹18L cheaper', metro:'Metro upcoming', summary:'New development, affordable' },
+      { name:'Undri', delta:-22, label:'₹22L cheaper', metro:'No metro yet', summary:'Upcoming residential hub' },
+      { name:'Baner', delta:15, label:'₹15L premium', metro:'Metro Phase 1', summary:'Established lifestyle zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Hinjewadi Phase 1 (Metro)', hospital:'Lifepoint Hospital', school:'Indus International', mall:'Xion Mall' },
+      secondary: { metro:'Wakad (Metro Phase 1)', hospital:'Ruby Hall Clinic', school:'DPS Pune', mall:'Westend Mall' },
+    }
+  },
+
+  hyderabad: {
+    properties: [
+      { name:'My Home Vihanga', dev:'My Home', location:'Bachupally, Hyderabad', price:'₹1.1 Cr', sqft:'1,320 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from HITEC City · Miyapur metro 2km' },
+      { name:'Incor Carmel Heights', dev:'Incor', location:'Miyapur, Hyderabad', price:'₹82L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Miyapur metro · 15 mins from HITEC' },
+      { name:'Aparna HillPark', dev:'Aparna', location:'Miyapur, Hyderabad', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'10 mins from Miyapur · TSRTC bus depot nearby' },
+      { name:'Prestige High Fields', dev:'Prestige', location:'Gachibowli, Hyderabad', price:'₹1.42 Cr', sqft:'1,480 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Amazon HQ · 1.2km metro' },
+      { name:'Sumadhura Folium', dev:'Sumadhura', location:'Kondapur, Hyderabad', price:'₹95L', sqft:'1,185 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'12 mins from HITEC City · Kothaguda metro 1km' },
+      { name:'Sattva Magnus', dev:'Sattva', location:'Gachibowli, Hyderabad', price:'₹1.22 Cr', sqft:'1,350 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Microsoft · Gachibowli junction' },
+    ],
+    localities: [
+      { name:'Gachibowli', bhkRange:'₹1.1–2.5Cr · 3BHK', avgPsqft:9200, yoy:16, metro:'Metro Green Line · 1km', conn:'ORR', count:'2.4k properties' },
+      { name:'Kondapur', bhkRange:'₹85L–1.8Cr · 2BHK', avgPsqft:8400, yoy:18, metro:'Metro Green Line · 1km', conn:'Jubilee Hills Rd', count:'2.1k properties' },
+      { name:'Miyapur', bhkRange:'₹70–1.2Cr · 2BHK', avgPsqft:6800, yoy:20, metro:'Metro Blue Line · 500m', conn:'NH-9', count:'2.9k properties' },
+      { name:'Kokapet', bhkRange:'₹1–1.8Cr · 3BHK', avgPsqft:8800, yoy:22, metro:'Metro upcoming · 2km', conn:'ORR', count:'1.6k properties' },
+      { name:'Narsingi', bhkRange:'₹80L–1.4Cr · 3BHK', avgPsqft:7200, yoy:19, metro:'Metro Phase 2', conn:'ORR / Financial Dist', count:'1.8k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Miyapur', delta:-15, label:'₹15L cheaper', metro:'Blue Line metro', summary:'Metro-connected, affordable' },
+      { name:'Narsingi', delta:-10, label:'₹10L cheaper', metro:'Metro upcoming', summary:'Financial District access' },
+      { name:'Tellapur', delta:-20, label:'₹20L cheaper', metro:'Metro upcoming', summary:'Fast-developing suburb' },
+      { name:'Kokapet', delta:10, label:'₹10L premium', metro:'Metro Phase 2', summary:'Premium ORR corridor' },
+    ],
+    landmarks: {
+      primary:   { metro:'Gachibowli (Green Line)', hospital:'KIMS Hospital', school:'Oakridge International', mall:'Sarath City Capital Mall' },
+      secondary: { metro:'Kothaguda (Green Line)', hospital:'Continental Hospital', school:'Chirec Public School', mall:'Inorbit Mall' },
+    }
+  },
+
+  chennai: {
+    properties: [
+      { name:'Casagrand Primrose', dev:'Casagrand', location:'OMR, Chennai', price:'₹75L', sqft:'980 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Sholinganallur IT Park · MRTS nearby' },
+      { name:'Appaswamy Platina', dev:'Appaswamy', location:'Porur, Chennai', price:'₹82L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from DLF IT Park · Porur junction' },
+      { name:'TVH Lumbini Square', dev:'TVH', location:'Sholinganallur, Chennai', price:'₹88L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'5 mins from TCS · OMR 500m' },
+      { name:'Radiance Mercury', dev:'Radiance', location:'Perumbakkam, Chennai', price:'₹72L', sqft:'935 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Velachery · Outer Ring Road' },
+      { name:'Mahindra Eden', dev:'Mahindra', location:'Perungudi, Chennai', price:'₹95L', sqft:'1,145 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from RMZ Millenia · Perungudi 700m' },
+      { name:'VBHC Serene Town', dev:'VBHC', location:'Oragadam, Chennai', price:'₹62L', sqft:'880 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Mahindra City · NH-32' },
+    ],
+    localities: [
+      { name:'Sholinganallur (OMR)', bhkRange:'₹75–1.4Cr · 2BHK', avgPsqft:7800, yoy:14, metro:'Metro Phase 2 · 1.5km', conn:'Old Mahabalipuram Road', count:'3.1k properties' },
+      { name:'Perumbakkam', bhkRange:'₹65–1Cr · 2BHK', avgPsqft:6500, yoy:16, metro:'Metro Phase 2', conn:'ORR', count:'2.4k properties' },
+      { name:'Porur', bhkRange:'₹80L–1.5Cr · 2BHK', avgPsqft:8200, yoy:12, metro:'Metro Phase 2 · 1km', conn:'Chennai Bypass', count:'1.8k properties' },
+      { name:'Velachery', bhkRange:'₹95L–1.8Cr · 2BHK', avgPsqft:10500, yoy:10, metro:'Green Line · 500m', conn:'Inner Ring Road', count:'1.5k properties' },
+      { name:'Pallikaranai', bhkRange:'₹60–95L · 2BHK', avgPsqft:6200, yoy:18, metro:'Metro Phase 2', conn:'OMR junction', count:'2.2k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Perumbakkam', delta:-12, label:'₹12L cheaper', metro:'Metro Phase 2', summary:'Fast-growing OMR suburb' },
+      { name:'Pallikaranai', delta:-18, label:'₹18L cheaper', metro:'Metro upcoming', summary:'Affordable, high growth' },
+      { name:'Oragadam', delta:-25, label:'₹25L cheaper', metro:'No metro yet', summary:'Industrial zone, affordable' },
+      { name:'Velachery', delta:15, label:'₹15L premium', metro:'Green Line', summary:'Established metro-connected zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Sholinganallur (Metro Phase 2)', hospital:'Gleneagles Global Health', school:'PSBB Learning Leadership', mall:'Phoenix Marketcity' },
+      secondary: { metro:'Perumbakkam (Metro upcoming)', hospital:'Fortis Malar Hospital', school:'Chettinad Vidyashram', mall:'Express Avenue' },
+    }
+  },
+
+  delhi: {
+    properties: [
+      { name:'DDA LIG Flats', dev:'DDA', location:'Dwarka Sector 12, Delhi', price:'₹1.18 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Dwarka Sector 12 metro · NH-48 nearby' },
+      { name:'Ansal Elegance', dev:'Ansal API', location:'Rohini Sector 24, Delhi', price:'₹1.12 Cr', sqft:'1,080 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Rohini West metro · 20 mins from Connaught Place' },
+      { name:'Omaxe Heights', dev:'Omaxe', location:'Rohini Sector 10, Delhi', price:'₹92L', sqft:'950 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from metro · DSP cricket ground nearby' },
+      { name:'Tata Housing Primanti', dev:'Tata Housing', location:'Dwarka Sector 23, Delhi', price:'₹1.52 Cr', sqft:'1,280 sq ft', bhk:'3 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'Dwarka Sec 23 metro · 15 mins from airport' },
+      { name:'NBCC Green View', dev:'NBCC', location:'Okhla Phase 1, Delhi', price:'₹1.42 Cr', sqft:'1,240 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'Jasola Apollo metro 1km · 12 mins from Saket' },
+      { name:'Eldeco Aamantran', dev:'Eldeco', location:'Sector 119, Delhi NCR', price:'₹1.28 Cr', sqft:'1,195 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from South Delhi · Noida Border' },
+    ],
+    localities: [
+      { name:'Dwarka', bhkRange:'₹1–2Cr · 3BHK', avgPsqft:9800, yoy:12, metro:'Blue Line · 500m', conn:'NH-48 / Dwarka Exp', count:'2.8k properties' },
+      { name:'Rohini', bhkRange:'₹85L–1.6Cr · 3BHK', avgPsqft:8500, yoy:10, metro:'Red / Yellow Lines', conn:'Outer Ring Road', count:'3.2k properties' },
+      { name:'Saket', bhkRange:'₹2–5Cr · 3BHK', avgPsqft:18000, yoy:8, metro:'Yellow Line · 500m', conn:'Mehrauli-Badarpur Rd', count:'800 properties' },
+      { name:'Vasant Kunj', bhkRange:'₹2.5–6Cr · 3BHK', avgPsqft:22000, yoy:7, metro:'Yellow Line · 2km', conn:'Nelson Mandela Marg', count:'600 properties' },
+      { name:'Janakpuri', bhkRange:'₹1.2–2.5Cr · 3BHK', avgPsqft:11200, yoy:10, metro:'Blue Line · 400m', conn:'Outer Ring Road', count:'1.4k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Rohini', delta:-15, label:'₹15L cheaper', metro:'Red Line', summary:'Established Delhi suburb' },
+      { name:'Janakpuri', delta:-8, label:'₹8L cheaper', metro:'Blue Line', summary:'West Delhi, metro-connected' },
+      { name:'Noida Border', delta:-30, label:'₹30L cheaper', metro:'Blue Line', summary:'NCR fringe, high appreciation' },
+      { name:'Saket', delta:50, label:'₹50L premium', metro:'Yellow Line', summary:'South Delhi premium zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Dwarka Sec 12 (Blue Line)', hospital:'Venkateshwar Hospital', school:'Ryan International', mall:'Ambience Mall Dwarka' },
+      secondary: { metro:'Rohini West (Red Line)', hospital:'Fortis Shalimar Bagh', school:'DPS Rohini', mall:'Mangalam Place' },
+    }
+  },
+
+  kolkata: {
+    properties: [
+      { name:'Merlin Maxima', dev:'Merlin Group', location:'New Town Action Area II, Kolkata', price:'₹82L', sqft:'1,095 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Salt Lake Sec V · New Town metro 1km' },
+      { name:'PS Equinox', dev:'PS Group', location:'New Town AA-I, Kolkata', price:'₹75L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from IT Hub · Action Area I Rd' },
+      { name:'Hiland Park Condoville', dev:'Hiland', location:'New Town, Kolkata', price:'₹88L', sqft:'1,140 sq ft', bhk:'3 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'10 mins from Wipro · Biswa Bangla Gate 2km' },
+      { name:'Ambuja Utalika', dev:'Ambuja Realty', location:'Mukundapur, EM Bypass', price:'₹92L', sqft:'1,180 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Ruby Hospital · EM Bypass' },
+      { name:'Siddha Pines', dev:'Siddha', location:'Rajarhat, Kolkata', price:'₹65L', sqft:'940 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'25 mins from Salt Lake · Eco Park 2km' },
+      { name:'Diamond City West', dev:'Shapoorji Pallonji', location:'Tollygunge, Kolkata', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Mahanayak Uttam Kumar metro 800m · EM Bypass' },
+    ],
+    localities: [
+      { name:'New Town', bhkRange:'₹65L–1.2Cr · 2BHK', avgPsqft:6200, yoy:16, metro:'Orange Line · 1km', conn:'New Town Expressway', count:'3.8k properties' },
+      { name:'Salt Lake Sector V', bhkRange:'₹80L–1.5Cr · 2BHK', avgPsqft:7800, yoy:12, metro:'Blue Line · 1km', conn:'VIP Road', count:'1.8k properties' },
+      { name:'Rajarhat', bhkRange:'₹55–95L · 2BHK', avgPsqft:5400, yoy:18, metro:'Orange Line nearby', conn:'Rajarhat Main Rd', count:'2.9k properties' },
+      { name:'EM Bypass', bhkRange:'₹80L–1.8Cr · 3BHK', avgPsqft:8500, yoy:10, metro:'Green Line', conn:'Eastern Metropolitan Byp', count:'2.1k properties' },
+      { name:'Garia / Narendrapur', bhkRange:'₹45–80L · 2BHK', avgPsqft:4800, yoy:14, metro:'Blue Line · 500m', conn:'Diamond Harbour Road', count:'2.4k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Rajarhat', delta:-15, label:'₹15L cheaper', metro:'Orange Line', summary:'Fastest-growing suburb' },
+      { name:'Garia', delta:-20, label:'₹20L cheaper', metro:'Blue Line', summary:'South Kolkata, metro-linked' },
+      { name:'Narendrapur', delta:-28, label:'₹28L cheaper', metro:'No metro yet', summary:'Green suburb, affordable' },
+      { name:'Salt Lake Sec V', delta:12, label:'₹12L premium', metro:'Blue Line', summary:'IT hub zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'New Town (Orange Line)', hospital:'Charnock Hospital', school:'DPS New Town', mall:'City Centre 2' },
+      secondary: { metro:'Rajarhat (Orange Line)', hospital:'Desun Hospital', school:'Springdale High School', mall:'Axis Mall' },
+    }
+  },
+
+  ahmedabad: {
+    properties: [
+      { name:'Adani Shantigram – Alto', dev:'Adani Realty', location:'SG Highway, Ahmedabad', price:'₹85L', sqft:'1,150 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from GIFT City · SG Highway' },
+      { name:'Safal Prelude', dev:'Safal', location:'Satellite, Ahmedabad', price:'₹72L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Prahlad Nagar · 20 mins from Iscon' },
+      { name:'Shivalik Sharda', dev:'Shivalik', location:'Bopal, Ahmedabad', price:'₹68L', sqft:'975 sq ft', bhk:'2 BHK', status:'Possession Sep 2025', ready_to_move:false, lm:'20 mins from GIFT City · SH-17 access' },
+      { name:'Goyal My Home', dev:'Goyal & Co', location:'Thaltej, Ahmedabad', price:'₹78L', sqft:'1,060 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Prahlad Nagar · Thaltej Char Rasta' },
+      { name:'Patel Shivalik Residency', dev:'Patel Group', location:'Prahlad Nagar, Ahmedabad', price:'₹92L', sqft:'1,180 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Corporate Road · Ahmedabad BRT' },
+      { name:'Iscon Platinum', dev:'Iscon', location:'Bopal, Ahmedabad', price:'₹75L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'18 mins from SG Highway · NH-947' },
+    ],
+    localities: [
+      { name:'SG Highway', bhkRange:'₹75L–1.5Cr · 2BHK', avgPsqft:6800, yoy:16, metro:'BRTS · 500m', conn:'SG Highway / GIFT City', count:'3.2k properties' },
+      { name:'Prahlad Nagar', bhkRange:'₹85L–1.6Cr · 2BHK', avgPsqft:8200, yoy:12, metro:'Metro Line 1 · 1km', conn:'Corporate Road', count:'1.8k properties' },
+      { name:'Bopal', bhkRange:'₹60–1.1Cr · 2BHK', avgPsqft:5800, yoy:18, metro:'Metro upcoming', conn:'SH-17', count:'2.9k properties' },
+      { name:'Thaltej', bhkRange:'₹72–1.3Cr · 2BHK', avgPsqft:7200, yoy:15, metro:'Metro Line 1 · 800m', conn:'SG Highway', count:'2.2k properties' },
+      { name:'Satellite', bhkRange:'₹70L–1.4Cr · 2BHK', avgPsqft:7600, yoy:11, metro:'Metro Line 1 · 600m', conn:'Judges Bungalow Rd', count:'1.5k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Bopal', delta:-14, label:'₹14L cheaper', metro:'Metro upcoming', summary:'High growth western suburb' },
+      { name:'Shela', delta:-20, label:'₹20L cheaper', metro:'Metro upcoming', summary:'New planned township' },
+      { name:'Chandkheda', delta:-22, label:'₹22L cheaper', metro:'Metro Line 2', summary:'North Ahmedabad, affordable' },
+      { name:'Thaltej', delta:8, label:'₹8L premium', metro:'Metro Line 1', summary:'Premium SG Hwy zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Thaltej (Metro Line 1)', hospital:'HCG Hospital', school:'Udgam School', mall:'Ahmedabad One Mall' },
+      secondary: { metro:'Bopal (Metro upcoming)', hospital:'Zydus Hospital', school:'Anand Niketan', mall:'Nexus Ahmedabad' },
+    }
+  },
+};
+
+// City aliases → canonical key
+const CITY_ALIASES = {
+  'noida':'noida','greater noida':'noida','noida extension':'noida','sector 137':'noida','sector 143':'noida','sector 150':'noida','aqua line':'noida',
+  'gurgaon':'gurgaon','gurugram':'gurgaon','cyber city':'gurgaon','golf course':'gurgaon','dwarka expressway':'gurgaon',
+  'mumbai':'mumbai','thane':'mumbai','navi mumbai':'mumbai','andheri':'mumbai','borivali':'mumbai','powai':'mumbai','bandra':'mumbai',
+  'bangalore':'bangalore','bengaluru':'bangalore','whitefield':'bangalore','koramangala':'bangalore','hebbal':'bangalore','electronic city':'bangalore','sarjapur':'bangalore',
+  'pune':'pune','hinjewadi':'pune','baner':'pune','wakad':'pune','kharadi':'pune','viman nagar':'pune',
+  'hyderabad':'hyderabad','gachibowli':'hyderabad','kondapur':'hyderabad','miyapur':'hyderabad','kokapet':'hyderabad','hitec city':'hyderabad','secunderabad':'hyderabad',
+  'chennai':'chennai','omr':'chennai','sholinganallur':'chennai','porur':'chennai','velachery':'chennai','perumbakkam':'chennai',
+  'delhi':'delhi','new delhi':'delhi','delhi ncr':'delhi','ncr':'delhi','dwarka':'delhi','rohini':'delhi','saket':'delhi','vasant kunj':'delhi','janakpuri':'delhi','south delhi':'delhi',
+  'kolkata':'kolkata','calcutta':'kolkata','new town':'kolkata','salt lake':'kolkata','rajarhat':'kolkata','tollygunge':'kolkata',
+  'ahmedabad':'ahmedabad','sg highway':'ahmedabad','prahlad nagar':'ahmedabad','bopal':'ahmedabad','thaltej':'ahmedabad','satellite ahmedabad':'ahmedabad',
+};
+
+function getMockData(cfg) {
+  const loc = cfg.location || {};
+  // Check primary first (direct user input), then city (may be stale/async)
+  const candidates = [loc.primary, loc.secondary, loc.city].filter(Boolean).map(s => s.toLowerCase().trim());
+  const aliases = Object.keys(CITY_ALIASES).sort((a,b) => b.length - a.length);
+  for (const raw of candidates) {
+    for (const alias of aliases) {
+      if (raw.includes(alias)) return MOCK_DATA[CITY_ALIASES[alias]];
+    }
+  }
+  return MOCK_DATA.noida; // final default
+}
+
+// ── Property image pool (Unsplash — residential buildings) ────────────────────
+const PROP_IMAGES = [
+  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1599427303058-f04cbcf4756f?auto=format&fit=crop&w=600&q=80',
+];
+
+// Deterministic image from pool based on property name hash
+function getPropertyImage(p) {
+  if (p.image_url) return p.image_url;
+  const hash = (p.name||'x').split('').reduce(function(a,c){ return a + c.charCodeAt(0); }, 0);
+  return PROP_IMAGES[hash % PROP_IMAGES.length];
+}
+
+// Renders property image; parent element's CSS gradient shows through on failure
+function propImg(p) {
+  const url = getPropertyImage(p);
+  return `<img src="${esc(url)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'" />`;
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let config = defaultConfig();
+let data = { properties:[], localities:[], adjacentLocalities:[], landmarks:{} };
+let rawData = data; // pre-filter — used by modules that intentionally show a different subset (e.g. UC properties)
+let loading = false;
+const propNotes = {}; // keyed by property name; persists across renderPage() calls
+const propChips = {}; // keyed by property name; stores array of selected chip labels
+
+function defaultConfig() {
+  return {
+    user:{ name:'', age:null, occupation:'', worksNear:'' },
+    location:{ primary:'', secondary:null, city:'', openToNearby:false },
+    filters:{ bhk:[], budgetMin:70, budgetMax:95, readyToMove:'either', buyTimeline:'exploring' },
+    behavior:{ developerContact:'none', visitedSite:false, priceSensitivity:'medium' },
+    lastVisitDaysAgo:null, stage:1, openAIData:null, openAIKey:null, apiBase:null
+  };
+}
+
+// ── Message listener ──────────────────────────────────────────────────────────
+var _panelConnected = false;
+window.addEventListener('message', function(e) {
+  if (!e.data) return;
+  if (e.data.type === 'CONFIG_UPDATE') {
+    _panelConnected = true;
+    config = Object.assign(defaultConfig(), e.data.config);
+    fetchAndRender();
+  }
+});
+
+// ── Fetch ─────────────────────────────────────────────────────────────────────
+async function fetchAndRender() {
+  loading = true; renderPage();
+  rawData = await fetchData(config);
+  data = applyFilters(rawData, config);
+  loading = false; renderPage();
+}
+
+// Fetch with hard timeout — prevents hanging on unreachable internal API servers
+function fetchWithTimeout(url, ms) {
+  ms = ms || 5000;
+  var ctrl = new AbortController();
+  var timer = setTimeout(function() { ctrl.abort(); }, ms);
+  return fetch(url, { signal: ctrl.signal }).finally(function() { clearTimeout(timer); });
+}
+
+// Parse the scraped text format returned by /debug/search-urls
+// Each listing block has: Landing URL, Listing Title, Listing Image URL, Listing Description, Posted by, Possession Status
+function parseApiListings(text, fallbackLoc) {
+  const results = [];
+  const blocks = text.split(/\n{2,}(?=Landing URL:)/);
+  for (var i = 0; i < blocks.length; i++) {
+    var block = blocks[i];
+    var get = function(field) {
+      var m = block.match(new RegExp('^' + field + ':\\s*(.+)$', 'm'));
+      return m ? m[1].trim() : '';
+    };
+    var title  = get('Listing Title');
+    if (!title) continue;
+    var desc   = get('Listing Description');
+    var imgUrl = get('Listing Image URL');
+    var poss   = get('Possession Status');
+
+    var bhkM   = title.match(/(\d)\s*BHK/i);
+    var bhk    = bhkM ? bhkM[1] + ' BHK' : '2 BHK';
+    var nameM  = title.match(/^(.+?)\s+\d\s*BHK/i);
+    var name   = nameM ? nameM[1].trim() : title;
+    var locM   = title.match(/\bin\s+(.+)$/i);
+    var loc    = locM ? locM[1].trim() : fallbackLoc;
+
+    // Price: grab first ₹ amount, strip deposit/month suffix
+    var priceM = desc.match(/₹[\d,]+(?:\.\d+)?(?:\s*(?:Cr|L))?(?:\s*\/month)?/);
+    var price  = priceM ? priceM[0].replace(/\s*\/month/, '').trim() : '₹—';
+
+    var sqftM  = desc.match(/([\d,]+)\s*sqft/i);
+    var sqft   = sqftM ? sqftM[1].replace(/,/g, '') + ' sq ft' : '';
+
+    var nearbyM = desc.match(/Nearby\s*:\s*(.+?)(?:\s+\+\d|$)/i);
+    var lm      = nearbyM ? nearbyM[1].trim() : '';
+
+    var rtm = /ready to move/i.test(desc) || /ready to move/i.test(poss);
+    results.push({
+      name, location: loc, price, sqft, bhk,
+      ready_to_move: rtm,
+      status: rtm ? 'Ready to move' : (poss || 'Under Construction'),
+      lm, image_url: imgUrl
+    });
+  }
+  return results.filter(function(r) { return r.name; });
+}
+
+// Apply RTM and BHK filters to any data result — runs on every data path
+// so filter changes take effect immediately without re-fetching
+// Parse a price string like "₹88L", "₹1.1 Cr", "₹79.5L" → value in Lakhs, or null
+function parsePriceLakhs(priceStr) {
+  if (!priceStr || priceStr === '₹—') return null;
+  var s = priceStr.replace(/[₹,\s]/g, '');
+  var crMatch = s.match(/^([\d.]+)[Cc]r$/);
+  if (crMatch) return parseFloat(crMatch[1]) * 100;
+  var lMatch = s.match(/^([\d.]+)[Ll]$/);
+  if (lMatch) return parseFloat(lMatch[1]);
+  return null;
+}
+
+function applyFilters(result, cfg) {
+  var f = cfg.filters || {};
+  var props = (result.properties || []).slice();
+
+  // RTM filter — strict: respect the user's selection exactly
+  if (f.readyToMove === 'yes') {
+    props = props.filter(function(p) { return p.ready_to_move; });
+  } else if (f.readyToMove === 'no') {
+    props = props.filter(function(p) { return !p.ready_to_move; });
+  }
+
+  // BHK filter — keep any property matching one of the selected BHKs
+  if (f.bhk && f.bhk.length) {
+    var selectedNums = f.bhk.map(function(b) { return b.replace(/\D/g, ''); });
+    var filtered = props.filter(function(p) {
+      var pNum = (p.bhk || '').replace(/\D/g, '').charAt(0);
+      return selectedNums.indexOf(pNum) !== -1;
+    });
+    // Only apply if results remain — avoids blanking the page on stale cached data
+    if (filtered.length > 0) props = filtered;
+  }
+
+  // Budget filter — only apply when both min and max are set
+  if (f.budgetMin && f.budgetMax) {
+    var budgFiltered = props.filter(function(p) {
+      var val = parsePriceLakhs(p.price);
+      if (val === null) return true; // keep if unparseable
+      return val >= f.budgetMin && val <= f.budgetMax;
+    });
+    if (budgFiltered.length > 0) props = budgFiltered;
+  }
+
+  return Object.assign({}, result, { properties: props });
+}
+
+async function fetchData(cfg) {
+  var loc = cfg.location || {};
+  var primary = loc.primary || '';
+
+  // ── 1. 99acres API ──────────────────────────────────────────────────────────
+  if (cfg.apiBase && primary) {
+    try {
+      // Fix P4: send first BHK to API (API accepts single value)
+      var bedroom = ((cfg.filters.bhk||['2BHK'])[0]||'2BHK').replace(/\D/g,'') || '2';
+      var locationQuery = primary + (loc.city && loc.city !== primary ? ' '+loc.city : '');
+
+      var debugRes = await fetchWithTimeout(cfg.apiBase+'/debug/entities?text='+encodeURIComponent(locationQuery), 5000);
+      var entities = {};
+      if (debugRes.ok) entities = (await debugRes.json()).entities || {};
+      entities.bedroom       = bedroom;
+      entities.preference    = entities.preference || 'S'; // Fix P6: 'S' = Sale, not 'R' = Rent
+      entities.property_type = entities.property_type || '1';
+      // Fix P2: pass RTM to API
+      if ((cfg.filters||{}).readyToMove === 'yes') entities.ready_to_move = true;
+
+      var searchRes = await fetchWithTimeout(
+        cfg.apiBase+'/debug/search-urls?entities='+encodeURIComponent(JSON.stringify(entities)), 5000
+      );
+      if (searchRes.ok) {
+        var j = await searchRes.json();
+        var pageContent = (j.content && j.content[0] && j.content[0].page_content) || '';
+        var raw = parseApiListings(pageContent, primary);
+        if (raw.length >= 2) {
+          return { properties: raw, localities: [], adjacentLocalities: [], landmarks: {} };
+        }
+      }
+    } catch(_) {
+      // API unreachable or timed out — fall through immediately
+    }
+  }
+
+  // ── 2. OpenAI pre-fetched by panel (Apply button) ───────────────────────────
+  if (cfg.openAIData && cfg.openAIData.properties && cfg.openAIData.properties.length) {
+    return {
+      properties:         cfg.openAIData.properties         || [],
+      localities:         cfg.openAIData.localities         || [],
+      adjacentLocalities: cfg.openAIData.adjacentLocalities || [],
+      landmarks:          cfg.openAIData.landmarks          || {}
+    };
+  }
+
+  // ── 3. Direct OpenAI call (key from panel config OR window global) ───────────
+  var oaiKey = cfg.openAIKey || (typeof window !== 'undefined' && window.OPENAI_API_KEY) || '';
+  if (oaiKey && primary) {
+    try {
+      var aiCfg = Object.assign({}, cfg, { openAIKey: oaiKey });
+      return await fetchFromOpenAI(aiCfg);
+    } catch(_) {
+      // OpenAI failed — fall through to mock data
+    }
+  }
+
+  // ── 4. City-matched mock data (always available) ─────────────────────────────
+  if (primary) return getMockData(cfg);
+  return { properties:[], localities:[], adjacentLocalities:[], landmarks:{} };
+}
+
+// Normalize any API response shape → homepage property shape
+function normalizeProps(raw, fallbackLoc) {
+  return raw.map(function(p) {
+    // Price: try various field names, fallback to computing from min_price
+    const priceL = p.min_price ? Math.round(p.min_price / 100000) : null;
+    const priceCr = priceL && priceL >= 100 ? (priceL/100).toFixed(2)+' Cr' : null;
+    const priceStr = p.price_str || p.PRICE || p.price
+      || (priceCr ? '₹'+priceCr : priceL ? '₹'+priceL+'L' : '₹—');
+    // Sqft
+    const area = p.carpet_area || p.SUPER_AREA || p.built_up_area || p.area || '';
+    const sqft = area ? (typeof area === 'number' ? area+' sq ft' : area) : '';
+    // BHK
+    const bhk = p.bhk_types || p.BEDROOM_NUM || p.bedroom_num
+      || (p.bedroom ? p.bedroom+' BHK' : p.PROP_BED ? p.PROP_BED+' BHK' : '2 BHK');
+    // Name / developer
+    const name = p.project_name || p.PROP_NAME || p.name || p.title || 'Property';
+    const dev  = p.developer || p.DEVELOPER || p.company_name || '';
+    // Location
+    const loc  = p.location || p.address || p.locality_name
+      || (p.LOCALITY_NAME ? p.LOCALITY_NAME+', '+p.CITY_NAME : fallbackLoc);
+    // Status
+    const rtm  = p.ready_to_move === true || p.ready_to_move === 1
+      || (typeof p.status === 'string' && /ready/i.test(p.status))
+      || (typeof p.STATUS === 'string' && /ready/i.test(p.STATUS));
+    const status = p.status || p.STATUS || (rtm ? 'Ready to move' : 'Under Construction');
+    return {
+      name, dev, location: loc, price: priceStr, sqft,
+      bhk: typeof bhk === 'number' ? bhk+' BHK' : bhk,
+      status, ready_to_move: rtm,
+      lm: p.lm || p.landmark || '',
+      image_url: p.image_url || p.PHOTO_URL || p.photo || ''
+    };
+  });
+}
+
+async function fetchFromOpenAI(cfg) {
+  const loc = cfg.location||{}, f = cfg.filters||{};
+  const bhk = (f.bhk||[]).join(', ')||'2 BHK';
+  const budget = f.budgetMax ? '₹'+f.budgetMin+'L–₹'+f.budgetMax+'L' : 'flexible';
+  const city = loc.city||loc.primary||'';
+  const prompt = `Real estate data for India. Return ONLY valid JSON, no markdown.
+City: ${city}, Locality: ${loc.primary||city}, Budget: ${budget}, BHK: ${bhk}
+Shape:
+{"localities":[{"name":"","bhkRange":"","avgPsqft":0,"yoy":0,"metro":"","conn":"","count":"","featured":false}],
+"properties":[{"name":"","dev":"","location":"","price":"","sqft":"","bhk":"","status":"","ready_to_move":false,"lm":""}],
+"adjacentLocalities":[{"name":"","delta":0,"label":"","metro":"","summary":""}],
+"landmarks":{"primary":{"metro":"","hospital":"","school":"","mall":""},"secondary":{"metro":"","hospital":"","school":"","mall":""}}}
+Return 5 localities, 6 properties, 4 adjacent. Realistic for ${city}, India.`;
+  const r = await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.openAIKey},body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:1800})});
+  const j = await r.json();
+  return JSON.parse(j.choices[0].message.content.trim().replace(/^```json?\n?/,'').replace(/\n?```$/,''));
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderPage() {
+  const page = document.getElementById('page');
+  const loc = config.location||{};
+  const stage = config.stage||1;
+  const primary = loc.primary||'';
+  const secondary = loc.secondary||'';
+  const city = loc.city||primary;
+  const f = config.filters||{};
+  const bhk = (f.bhk && f.bhk.length) ? f.bhk.join(', ') : '2 BHK';
+  const budget = f.budgetMax ? '₹'+f.budgetMin+'L–₹'+f.budgetMax+'L' : '';
+  const rtmLabel = f.readyToMove === 'yes' ? 'Ready to move' : f.readyToMove === 'no' ? 'Under construction' : '';
+
+  // Nav
+  const navLabel = primary
+    ? (secondary && secondary !== primary ? primary + ' · ' + secondary : primary)
+    : 'Search City/Locality...';
+  document.getElementById('nav-search-text').textContent = navLabel;
+
+  // Sticky CTA
+  if (!primary) { page.innerHTML = renderEmpty(); return; }
+  if (loading) { page.innerHTML = renderLoading(); return; }
+
+  const mods = [];
+  // ── Always ──────────────────────────────────────────────────────────────────
+  mods.push(modContextChips(stage, primary, secondary, bhk, budget, rtmLabel));
+  mods.push(modHero(stage, city, primary, secondary));
+
+  // ── S2-S3: resume + nudges ──────────────────────────────────────────────────
+  mods.push(modContinue(stage, primary, secondary));           // suppressed S4, S5
+  mods.push(modStaleLocationNudge(stage, secondary, config.lastVisitDaysAgo));
+
+  // ── S2: discovery + preferences ─────────────────────────────────────────────
+  mods.push(modConsiderationSet(stage));                       // moved to S2 (was S3)
+  mods.push(modLocalitySuggestions(stage, primary, secondary));
+  mods.push(modLocalitiesRadar(stage, city, primary));
+
+  // ── S1 only ─────────────────────────────────────────────────────────────────
+  mods.push(modBudgetAnchor(stage, primary));
+
+  // ── S1-S3: personalised budget context ──────────────────────────────────────
+  mods.push(modBudgetFit(stage, f, primary));                  // S1: city-level; S2: locality fit; S3: comparative
+
+  // ── S3: comparison suite ─────────────────────────────────────────────────────
+  mods.push(modPropertiesInSecondary(stage, secondary));
+  mods.push(modHeadToHead(stage, primary, secondary));         // guarded: requires secondary
+  mods.push(modNearestLandmarks(stage, primary, secondary));   // guarded: requires secondary
+  mods.push(modUpcomingDevelopments(stage, primary));          // moved before Tradeoff — inform before deciding
+  mods.push(modTradeoff(stage, primary, secondary));
+  mods.push(modExpertAgents(stage, primary, secondary));       // moved after Tradeoff — natural handoff
+
+  // ── S2-S3: properties ────────────────────────────────────────────────────────
+  mods.push(modPropertiesPrimary(stage, primary, secondary));
+  mods.push(modSimilarBHK(stage, bhk, primary));               // deduped against PropertiesPrimary
+  mods.push(modNewInSectors(stage, primary));                  // "New Launches in {primary}"
+  mods.push(modNearbyLocalities(stage, primary));
+  mods.push(modNearbyComparison(stage, primary));
+
+  // ── S4-S5: decision + post-visit ─────────────────────────────────────────────
+  mods.push(modDecisionSpotlight(stage, primary));
+  mods.push(modStillConsidering(stage, primary));              // extended to S5 with post-visit framing
+  mods.push(modVisitPlanner(stage));
+  mods.push(modPostVisitTools(stage));
+
+  // ── S1 only: new launches entry point ────────────────────────────────────────
+  mods.push(modNewLaunches(stage, primary));                   // S2-S3 suppressed: NewInSectors covers it
+
+  // ── S1+: recommendations + signals ──────────────────────────────────────────
+  mods.push(modPeopleAlsoViewed(stage, primary));              // social proof at every stage
+  mods.push(modPriceTrend(stage, primary));                    // appreciation signal at every stage
+
+  // ── Utilities + footer ───────────────────────────────────────────────────────
+  mods.push(modTools(stage));
+  mods.push(modArticles(stage, primary, secondary));
+  mods.push(modQuickLinks());
+  mods.push(modHelpful());
+  page.innerHTML = mods.filter(Boolean).join('');
+}
+
+// ── Modules ───────────────────────────────────────────────────────────────────
+
+function modContextChips(stage, primary, secondary, bhk, budget, rtmLabel) {
+  if (stage === 1) return null;
+  const chips = [];
+  if (stage >= 2 && primary) chips.push(`<div class="ctx-chip">${esc(primary)}${bhk?' · '+esc(bhk):''}${budget?' · '+esc(budget):''} <span class="x">×</span></div>`);
+  if (secondary) chips.push(`<div class="ctx-chip">${esc(secondary)} · ${esc(bhk)} <span class="x">×</span></div>`);
+  if (rtmLabel) chips.push(`<div class="ctx-chip">${esc(rtmLabel)}</div>`);
+  if (!chips.length) return null;
+  return `<div class="context-chips">${chips.join('')}</div>`;
+}
+
+function modHero(stage, city, primary, secondary) {
+  if (stage === 1) {
+    return `<div class="hero-s1">
+      <h1>Find your home in ${esc(city||primary)}</h1>
+      <p>Browse verified listings · Compare localities · Connect with sellers</p>
+    </div>`;
+  }
+  return null;
+}
+
+function noteHtml(key, stage) {
+  const val = propNotes[key] || '';
+  const showDisplay = val && stage >= 4;
+  return `<div class="prop-note-wrap">
+    ${showDisplay ? `<div class="prop-note-display">📝 "${esc(val)}"</div>` : ''}
+    <textarea class="prop-note-input" data-propkey="${esc(key)}" placeholder="Add a note...">${esc(val)}</textarea>
+  </div>`;
+}
+
+function reactionHtml(key, notePlaceholder) {
+  const passed = propChips[key] === 'pass';
+  const note = propNotes[key] || '';
+  const ph = notePlaceholder || 'Any concerns? Ask about parking, floor, etc.';
+  return `${note ? `<div class="prop-note-display" style="margin-top:6px;">📝 "${esc(note)}"</div>` : ''}
+  <textarea class="prop-note-input hidden" data-propkey="${esc(key)}" placeholder="${esc(ph)}">${esc(note)}</textarea>
+  <div class="card-actions">
+    <div class="card-act${passed?' active':''}" data-rkey="${esc(key)}" data-rlabel="pass">${passed?'✕ Removed':'✕ Not for me'}</div>
+    <div class="card-act" data-notetoggle="${esc(key)}">✏️ Add a note</div>
+  </div>`;
+}
+
+function modContinue(stage, primary, secondary) {
+  if (stage < 2 || stage === 4 || stage === 5) return null;
+  const props = data.properties.slice(0, 2);
+  const isS3 = stage === 3;
+
+  const lastDays = config.lastVisitDaysAgo;
+  const cards = props.length ? props.map((p, i) => {
+    const viewedLabel = i === 0 ? (stage >= 3 ? 'Viewed 3 times' : 'Viewed 2 days ago') : (stage >= 3 ? 'Viewed 1 time' : 'Viewed 2 days ago');
+    const isMostViewed = stage >= 3 && i === 0;
+    const isSharedCard = i === 1 && stage >= 2; // P2: share signal on 2nd card
+    const noteKey = p.name || ('prop_cont_' + i);
+    return `<div class="hprop">
+      <div class="hprop-img">
+        ${propImg(p)}
+        ${isMostViewed
+          ? `<div style="position:absolute;top:9px;left:9px;display:flex;flex-direction:column;align-items:flex-start;gap:5px;">
+               <div class="badge-most" style="position:static;">MOST VIEWED</div>
+               <div class="badge-viewed" style="position:static;">${esc(viewedLabel)}</div>
+             </div>`
+          : `<div class="badge-viewed">${esc(viewedLabel)}</div>`
+        }
+        ${isSharedCard ? `<div class="badge-shared">📤 Shared</div>` : ''}
+        <div class="prop-heart">♡</div>
+      </div>
+      <div class="hprop-body">
+        <div class="hprop-price">${esc(p.price||'₹—')}</div>
+        ${isMostViewed ? `<div style="font-size:10px;color:var(--red);font-weight:700;margin-bottom:2px;">↓ ₹1L since you last viewed</div>` : ''}
+        ${isMostViewed && lastDays ? `<div style="font-size:10px;color:var(--text3);margin-bottom:2px;">🔁 Last visited ${lastDays} day${lastDays>1?'s':''} ago</div>` : ''}
+        ${isMostViewed && stage >= 3 ? `<div style="font-size:10px;color:var(--text3);margin-bottom:2px;">👨‍👩‍👧 Shared with 2 family members</div>` : ''}
+        <div class="hprop-name">${esc(p.bhk||'2 BHK')} · ${esc(p.dev||'')}</div>
+        <div class="hprop-loc">${esc(p.location||primary)}</div>
+        <div class="hprop-tag ${p.ready_to_move?'ptag rtm':'ptag uc'}" style="font-size:10px;padding:2px 6px;border-radius:4px;display:inline-block;">${p.ready_to_move?'RTM':'UC'}</div>
+        ${stage === 3 ? reactionHtml(noteKey) : stage === 4 ? noteHtml(noteKey, stage) : stage === 5 ? reactionHtml(noteKey, 'How did it compare to expectations?') : ''}
+      </div>
+    </div>`;
+  }) : [skHprop(), skHprop()];
+
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="sec-head"><div class="sec-title">Continue Where You Left Off</div><div class="sec-link">See all →</div></div>
+      <div class="sec-sub">Your recent searches in ${esc(primary)}${secondary?' and '+esc(secondary):''}</div>
+    </div>
+    <div class="hscroll">${cards.join('')}</div>
+  </div>`;
+}
+
+function modNewInSectors(stage, primary) {
+  if (stage < 2 || stage > 3) return null;
+  const f = config.filters || {};
+  const selectedBhk = f.bhk && f.bhk.length ? f.bhk : null;
+  const pool = rawData.properties || data.properties;
+
+  // Filter: prefer properties matching BHK preference; if none match, fall back to unfiltered
+  let newProps = pool.filter(p => !p.ready_to_move);
+  if (selectedBhk) {
+    const nums = selectedBhk.map(b => b.replace(/\D/g, ''));
+    const bhkFiltered = newProps.filter(p => nums.indexOf((p.bhk||'').replace(/\D/g,'').charAt(0)) !== -1);
+    if (bhkFiltered.length) newProps = bhkFiltered;
+  }
+  newProps = newProps.slice(0, 3);
+  if (!newProps.length) return null;
+
+  const bhkLabel = selectedBhk ? selectedBhk.join(', ') : '';
+  const budget = f.budgetMax ? `₹${f.budgetMin}L–₹${f.budgetMax}L` : '';
+  const sub = [bhkLabel, budget].filter(Boolean).join(' · ');
+
+  const cards = newProps.map(p => `<div class="hprop">
+    <div class="hprop-img">
+      ${propImg(p)}
+      <div class="badge-new">NEW</div><div class="prop-heart">♡</div>
+    </div>
+    <div class="hprop-body">
+      <div class="hprop-price">${esc(p.price)}</div>
+      <div class="hprop-name">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="hprop-loc">${esc(p.location||primary)}</div>
+      ${p.lm?`<div class="hprop-tag" style="font-size:10px;color:var(--text3);">📍 ${esc(p.lm)}</div>`:''}
+    </div>
+  </div>`).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="sec-head"><div class="sec-title">New in ${esc(primary)}</div><div class="sec-link">See all →</div></div>
+      ${sub ? `<div class="sec-sub">Matching your search · ${esc(sub)}</div>` : ''}
+    </div>
+    <div class="hscroll">${cards}</div>
+  </div>`;
+}
+
+function modStaleLocationNudge(stage, secondary, lastDays) {
+  if (stage < 2 || stage > 3) return null;
+  if (!secondary || !lastDays || lastDays < 2) return null;
+  const timeLabel = lastDays >= 7 ? `${Math.round(lastDays/7)} week${lastDays>=14?'s':''} ago` : `${lastDays} days ago`;
+  return `<div class="sec sec-pad">
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;">You were looking in <b>${esc(secondary)}</b> ${timeLabel}. Still want recommendations for that?</div>
+    <div style="display:flex;gap:8px;">
+      <div class="yn-btn yn-yes">Yes, keep showing</div>
+      <div class="yn-btn yn-no">No</div>
+    </div>
+  </div>`;
+}
+
+function modLocalitySuggestions(stage, primary, secondary) {
+  if (stage < 2 || stage > 3) return null;
+  if (secondary) return null; // buyer has narrowed to two — H2H handles it
+  const fallback = getMockData(config);
+  const allLocs = data.localities.length ? data.localities : fallback.localities;
+  // Filter out the primary locality itself so we only show alternatives
+  const locs = allLocs.filter(l => l.name.toLowerCase().trim() !== primary.toLowerCase().trim()).slice(0, 4);
+  if (!locs.length) return null;
+  const cards = locs.map(l => `<div class="loc-suggest-card">
+    <div class="lsc-name">${esc(l.name)}</div>
+    <div class="lsc-range">${esc(l.bhkRange||'')}</div>
+    <div class="lsc-row"><span>📈 ${l.yoy||'—'}% YoY</span><span>🚇 ${esc(l.metro||'—')}</span></div>
+    <div class="lsc-row"><span>₹${(l.avgPsqft||'—').toLocaleString()}/sqft</span><span>${esc(l.conn||'')}</span></div>
+    <div class="lsc-footer">View ${esc(l.count||'properties')} →</div>
+  </div>`).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="sec-head"><div class="sec-title">Localities that match your search</div><div class="sec-link">All localities →</div></div>
+      <div class="sec-sub">Based on budget and preferences in ${esc(primary)}</div>
+    </div>
+    <div class="hscroll" style="padding-bottom:12px;">${cards}</div>
+    <div style="padding:6px 14px 0;font-size:13px;font-weight:700;color:var(--text);">What matters most in your daily life?<br><span style="font-size:12px;color:var(--text3);font-weight:400;">We'll prioritise localities that match</span></div>
+    <div class="pref-row">
+      <div class="pref-chip active">🚇 Metro</div>
+      <div class="pref-chip">🏥 Hospital</div>
+      <div class="pref-chip">🏫 School</div>
+      <div class="pref-chip">🛒 Marketplace</div>
+      <div class="pref-add">+ Add a landmark</div>
+    </div>
+    <div class="divider" style="margin:4px 0 0;"></div>
+  </div>`;
+}
+
+function modLocalitiesRadar(stage, city, primary) {
+  if (stage >= 3) return null;
+  // At S2 without a secondary locality, modLocalitySuggestions handles discovery
+  if (stage >= 2 && !(config.location && config.location.secondary)) return null;
+  const fallback = getMockData(config);
+  const locs = data.localities.length ? data.localities.slice(0,5) : fallback.localities.slice(0,5);
+  const cards = locs.map(l => `<div class="loc-card">
+    <div class="loc-card-name">${esc(l.name)}</div>
+    <div class="loc-card-range">${esc(l.bhkRange||'')}</div>
+    <div class="loc-card-stat"><span class="loc-stat-l">₹/sqft</span><span class="loc-stat-r">₹${l.avgPsqft||'—'}</span></div>
+    <div class="loc-card-stat"><span class="loc-stat-l">Price growth</span><span class="loc-stat-r up">+${l.yoy||'—'}% YoY</span></div>
+    <div class="loc-card-stat"><span class="loc-stat-l">Metro</span><span class="loc-stat-r">${esc(l.metro||'—')}</span></div>
+    <div class="loc-card-footer" style="cursor:pointer;">${esc(l.count||'')} · View →</div>
+  </div>`).join('');
+  const _f1 = config.filters || {};
+  const _budgetLabel = _f1.budgetMax ? `₹${_f1.budgetMin}L–₹${_f1.budgetMax}L` : '';
+  const _bhkLabel = (_f1.bhk && _f1.bhk.length) ? _f1.bhk.join(', ') : '';
+  const title = stage === 1
+    ? (_budgetLabel ? `Where your budget works in ${esc(city||primary)}` : `Trending in ${esc(city||primary)}`)
+    : 'Localities on your radar';
+  const sub = stage === 1
+    ? [_bhkLabel, _budgetLabel].filter(Boolean).join(' · ') || `Most searched localities in ${esc(city||primary)}`
+    : `Most viewed near ${esc(primary)}`;
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="sec-head"><div class="sec-title">${title}</div><div class="sec-link">All localities →</div></div>
+      <div class="sec-sub">${sub}</div>
+    </div>
+    <div class="hscroll">${cards}</div>
+    ${stage >= 2 ? '<div class="divider" style="margin:4px 0 0;"></div>' : ''}
+  </div>`;
+}
+
+function modConsiderationSet(stage) {
+  if (stage !== 2) return null;
+  const opts = [
+    { label:'Ready to move properties only', sub:'Move in immediately, no waiting', sel:true },
+    { label:'Open to Under Construction properties', sub:'Potentially 10-15% lower entry price', sel:false },
+    { label:'Interested in New Launches', sub:'Best prices, full unit choice', sel:false },
+  ];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">What type of property are you open to?</div></div>
+    ${opts.map(o=>`<div class="consid-option">
+      <div class="consid-radio${o.sel?' sel':''}"></div>
+      <div><div class="consid-label">${o.label}</div><div class="consid-sub">${o.sub}</div></div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function modPropertiesInSecondary(stage, secondary) {
+  if (stage !== 3 || !secondary) return null;
+  const f = config.filters||{};
+  const budget = f.budgetMax ? '₹'+f.budgetMin+'L–₹'+f.budgetMax+'L' : '';
+  const props = data.properties.slice(2, 4);
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="sec-head"><div class="sec-title">Properties in ${esc(secondary)}${budget?' · '+budget:''}</div><div class="sec-link">See all →</div></div>
+    </div>
+    <div class="hscroll">
+      ${props.length ? props.map(p=>propCard(p, {showBadge:true, horizontal:true})).join('') : skCard()+skCard()}
+    </div>
+  </div>`;
+}
+
+function modHeadToHead(stage, primary, secondary) {
+  if (stage !== 3) return null;
+  if (!secondary) return null;
+  const _fb = getMockData(config);
+  const l1 = data.localities[0]||_fb.localities[0];
+  const l2 = data.localities[1]||_fb.localities[1];
+  const filt = config.filters || {};
+  const cap = filt.budgetMax || 85;
+  const sqft1 = Math.round(cap * 100000 / (l1.avgPsqft || 8000) / 10) * 10;
+  const sqft2 = Math.round(cap * 100000 / (l2.avgPsqft || 7000) / 10) * 10;
+  const worksNearLabel = (config.user && config.user.worksNear) ? 'Drive to '+config.user.worksNear : 'Drive to office';
+  const rows = [
+    { label: worksNearLabel, v1:'5 mins', v2:'20–25 mins', win:0 },
+    { label:'Entry price / sqft', v1:'₹'+(l1.avgPsqft||8100), v2:'₹'+(l2.avgPsqft||6200), win: (l1.avgPsqft||8100) < (l2.avgPsqft||6200) ? 0 : 1 },
+    { label:`Space for ₹${cap}L`, v1:'~'+sqft1+' sq ft', v2:'~'+sqft2+' sq ft', win: sqft1 >= sqft2 ? 0 : 1 },
+    { label:'YoY appreciation', v1:'+'+( l1.yoy||12)+'%', v2:'+'+( l2.yoy||14)+'%', win: (l1.yoy||12) >= (l2.yoy||14) ? 0 : 1 },
+    { label:'Who buys here', v1:'Owner-occupiers', v2:'Investors & end-users', win:0 },
+    { label:'Development stage', v1:'Established', v2:'Mixed — verify', win:0 },
+  ];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:0;">
+      <div class="sec-title">Head to Head</div>
+      <div class="sec-sub" style="margin:2px 0 10px;">${esc(primary)} vs ${esc(secondary||'Nearby')}</div>
+    </div>
+    <div style="overflow:hidden;border-top:1px solid var(--border);">
+      <table class="h2h-table">
+        <thead class="h2h-head"><tr>
+          <th></th>
+          <th>${esc(primary)}</th>
+          <th>${esc(secondary||'Nearby')}</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(r=>`<tr class="h2h-row"><td>${r.label}</td>
+            <td>${r.win===0?`<span class="win">${esc(r.v1)}</span>`:esc(r.v1)}</td>
+            <td>${r.win===1?`<span class="win">${esc(r.v2)}</span>`:esc(r.v2)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="helpful-row"><span>Is this helpful?</span><div class="helpful-btns"><div class="helpful-btn">👍 Yes</div><div class="helpful-btn">👎 No</div></div></div>
+  </div>`;
+}
+
+function modNearestLandmarks(stage, primary, secondary) {
+  if (stage !== 3) return null;
+  if (!secondary) return null;
+  const lm = (data.landmarks && data.landmarks.primary) ? data.landmarks : getMockData(config).landmarks;
+  const rows = [
+    { type:'Metro', p: lm.primary.metro, s: lm.secondary.metro },
+    { type:'Hospital', p: lm.primary.hospital, s: lm.secondary.hospital },
+    { type:'School', p: lm.primary.school, s: lm.secondary.school },
+    { type:'Mall', p: lm.primary.mall, s: lm.secondary.mall },
+  ];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">Nearest Landmarks</div></div>
+    <div class="lm-table-wrap">
+      <table class="lm-table">
+        <thead><tr><th></th><th>${esc(primary)}</th><th>${esc(secondary||'Nearby')}</th></tr></thead>
+        <tbody>
+          ${rows.map(r=>`<tr><td>${r.type}</td><td>${esc(r.p||'—')}</td><td>${esc(r.s||'—')}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function modTradeoff(stage, primary, secondary) {
+  if (stage !== 3 || !secondary) return null;
+  const saving = data.adjacentLocalities.length ? Math.abs(data.adjacentLocalities[0].delta||8) : 8;
+  return `<div class="sec sec-pad">
+    <div class="tradeoff">
+      <div class="tradeoff-q">💡 ${esc(secondary)} saves you ~₹${saving}L but puts you 3km from metro. Worth it?</div>
+      <div class="tradeoff-btns">
+        <div class="tradeoff-btn sel">🚇 Metro first</div>
+        <div class="tradeoff-btn">₹${saving}L saving</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function modPropertiesPrimary(stage, primary, secondary) {
+  if (stage === 4 || stage === 5) return null;
+  const props = data.properties;
+  if (!props.length) return `<div class="sec sec-pad"><div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">No listings yet</div><div class="empty-sub">Try clicking Apply to load properties for ${esc(primary)}.</div></div></div>`;
+  const label = `Properties in ${esc(primary)}`;
+  if (stage === 3 && secondary) {
+    // S3: split into two groups
+    const half = Math.ceil(props.length / 2);
+    const g1 = props.slice(0, half), g2 = props.slice(half);
+    return `<div class="sec">
+      <div class="group-label"><div class="group-dot"></div>${esc(primary)}</div>
+      <div class="hscroll">${g1.map((p,i)=>propCard(p,{showBadge:i<2,horizontal:true})).join('')}</div>
+      <div class="group-label" style="margin-top:4px;"><div class="group-dot orange"></div>${esc(secondary)}</div>
+      <div class="hscroll">${g2.map(p=>propCard(p,{horizontal:true})).join('')}</div>
+      <div style="padding:4px 14px 12px;"><div class="sec-link">See all 9+ properties →</div></div>
+    </div>`;
+  }
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="sec-head"><div class="sec-title">${label}</div><div class="sec-link">See all ${props.length > 4 ? props.length+'+' : ''} →</div></div>
+    </div>
+    <div class="hscroll">${props.slice(0, 6).map((p,i)=>propCard(p,{showBadge:stage===2&&i<2,horizontal:true})).join('')}</div>
+  </div>`;
+}
+
+function modNearbyLocalities(stage, primary) {
+  if (stage !== 2) return null;
+  const adjs = data.adjacentLocalities.length ? data.adjacentLocalities : getMockData(config).adjacentLocalities;
+  const cards = adjs.slice(0, 2).map((a, ai) => {
+    // Use offset slices so we don't show the same top listings that appear higher on the page
+    const ap = data.properties.slice(3 + ai * 2, 5 + ai * 2);
+    return `<div>
+      <div class="group-label" style="padding:8px 14px 4px;font-size:13px;"><div class="group-dot" style="background:var(--green)"></div>${esc(a.name)} · ${esc(a.label)} vs ${esc(primary)}</div>
+      <div class="prop-grid" style="margin-bottom:4px;">
+        ${ap.map(p=>`<div class="prop-sm">
+          <div class="prop-sm-img">${propImg(p)}</div>
+          <div class="prop-sm-body">
+            <div class="prop-sm-price">${esc(p.price)}</div>
+            <div class="prop-sm-name">${esc(p.name||'')}</div>
+            <div class="prop-sm-loc">${esc(a.name)}</div>
+            <div class="prop-sm-landmark">${esc(a.metro||'')}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  const saving = adjs[0] ? adjs[0].delta : 6;
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;">
+      <div class="sec-head"><div class="sec-title">Nearby Localities · ₹${Math.abs(saving)}–${Math.abs(saving)+6}L below ${esc(primary)}</div><div class="sec-link">See all 3 →</div></div>
+    </div>
+    ${cards}
+  </div>`;
+}
+
+function modBudgetAnchor(stage, primary) {
+  if (stage !== 1) return null;
+  const loc = data.localities[0] || getMockData(config).localities[0];
+  if (!loc || !loc.avgPsqft) return null;
+  const entry = Math.round(loc.avgPsqft * 900 / 100000);
+  const mid   = Math.round(loc.avgPsqft * 1050 / 100000);
+  const prem  = Math.round(loc.avgPsqft * 1300 / 100000);
+  return `<div class="sec sec-pad">
+    <div class="bn-title">2 BHKs in ${esc(primary)} typically start at ₹${entry}L</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Based on ₹${loc.avgPsqft.toLocaleString()}/sq ft · ${esc(loc.count||'')}</div>
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;">Popular budget ranges here</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+      <div class="ctx-chip">Under ₹${entry}L</div>
+      <div class="ctx-chip">₹${entry}L–₹${mid}L</div>
+      <div class="ctx-chip">₹${mid}L–₹${prem}L</div>
+      <div class="ctx-chip">₹${prem}L+</div>
+    </div>
+  </div>`;
+}
+
+function modBudgetFit(stage, f, primary) {
+  if (stage > 3) return null;
+  const min = f.budgetMin || 70, max = f.budgetMax || 95;
+  const loc = data.localities[0] || getMockData(config).localities[0];
+  if (!loc || !loc.avgPsqft) return null;
+  const avgPsqft = loc.avgPsqft;
+  const areaEntry = Math.round(avgPsqft * 900 / 100000);
+  const sqftMin = Math.round(min * 100000 / avgPsqft / 10) * 10;
+  const sqftMax = Math.round(max * 100000 / avgPsqft / 10) * 10;
+  const adj = data.adjacentLocalities[0] || getMockData(config).adjacentLocalities[0];
+  const secondary = (config.location || {}).secondary;
+  const city = (config.location || {}).city || primary;
+  const bhkLabel = (f.bhk && f.bhk.length) ? f.bhk.join(', ') : '2 BHK';
+
+  // At S1 — city-level framing before buyer has chosen a locality
+  if (stage === 1) {
+    return `<div class="sec sec-pad">
+      <div class="budget-nudge">
+        <div class="bn-title">What ₹${min}L–₹${max}L gets you in ${esc(city)}</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5;">
+          At ₹${avgPsqft.toLocaleString()}/sq ft, expect <b>~${sqftMin}–${sqftMax} sq ft</b> for a ${esc(bhkLabel)} — typically a well-sized flat in ${esc(city)}.
+          ${adj ? `<br>Or consider <b>${esc(adj.name)}</b>, ${esc(adj.label)}.` : ''}
+        </div>
+        <div class="yn-row">
+          <div class="yn-btn yn-yes">Show matching properties</div>
+          <div class="yn-btn yn-no">Adjust budget</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // At S3 (comparing two localities) — show a comparative budget framing
+  if (stage === 3 && secondary) {
+    const loc2 = data.localities[1] || getMockData(config).localities[1];
+    if (loc2 && loc2.avgPsqft) {
+      const sqft1 = Math.round(max * 100000 / avgPsqft / 10) * 10;
+      const sqft2 = Math.round(max * 100000 / loc2.avgPsqft / 10) * 10;
+      const bigger = sqft2 > sqft1 ? secondary : primary;
+      const diff = Math.abs(sqft2 - sqft1);
+      return `<div class="sec sec-pad">
+        <div class="budget-nudge">
+          <div class="bn-title">Your ₹${max}L goes further in ${esc(bigger)}</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5;">
+            ${esc(primary)}: ~${sqft1} sq ft &nbsp;·&nbsp; ${esc(secondary)}: ~${sqft2} sq ft<br>
+            That's <b>${diff} sq ft more</b> for the same budget in ${esc(bigger)}.
+          </div>
+          <div class="yn-row">
+            <div class="yn-btn yn-yes">See properties in ${esc(bigger)}</div>
+            <div class="yn-btn yn-no">Compare both</div>
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+
+  // S2 — single locality framing
+  let title, body, cta;
+  if (max < areaEntry * 0.9) {
+    title = `₹${max}L is tight for ${esc(primary)}`;
+    body  = `Most 2 BHKs here start around ₹${areaEntry}L. ${adj ? `<b>${esc(adj.name)}</b> is ${esc(adj.label)} and may suit your budget better.` : 'Consider exploring nearby areas.'}`;
+    cta   = adj ? `See properties in ${esc(adj.name)}` : 'Explore nearby areas';
+  } else if (min > areaEntry * 1.4) {
+    title = `Your budget unlocks premium options in ${esc(primary)}`;
+    body  = `At ₹${min}L–₹${max}L, you can explore 3 BHKs (~${sqftMin}–${sqftMax} sq ft) or premium localities nearby.`;
+    cta   = 'See 3 BHK options';
+  } else {
+    title = `Your ₹${min}L–₹${max}L works well here`;
+    body  = `At ₹${avgPsqft.toLocaleString()}/sq ft, expect ~${sqftMin}–${sqftMax} sq ft — a solid 2 BHK in ${esc(primary)}.`;
+    cta   = 'Show me these properties';
+  }
+  return `<div class="sec sec-pad">
+    <div class="budget-nudge">
+      <div class="bn-title">${title}</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5;">${body}</div>
+      <div class="yn-row">
+        <div class="yn-btn yn-yes">${cta}</div>
+        <div class="yn-btn yn-no">Adjust budget</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function modDecisionSpotlight(stage, primary) {
+  if (stage !== 4) return null;
+  const prop = data.properties[0];
+  if (!prop) return null;
+  return `<div class="spotlight">
+    <div class="spotlight-header">
+      <div class="sph-title">✦ Decision Spotlight</div>
+      <div class="sph-badge">👁 Viewed 7×</div>
+      <div class="sph-badge">📞 Contacted</div>
+    </div>
+    <div class="spotlight-body">
+      <div style="height:160px;border-radius:var(--r-sm);margin-bottom:10px;overflow:hidden;position:relative;">
+        ${propImg(prop)}
+        <div style="position:absolute;bottom:8px;left:8px;background:var(--red);color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;">🔥 3 units left</div>
+        <div style="position:absolute;bottom:8px;right:8px;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;">+₹2L since last visit</div>
+      </div>
+      <div class="sp-insight">You've opened this 7 times. Your instinct is telling you something.</div>
+      <div class="sp-prop-detail">
+        ${prop.dev?`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">${esc(prop.dev.toUpperCase())}</div>`:''}
+        <div class="sp-prop-name">${esc(prop.name||'Property')}</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:2px;">
+          <div class="sp-prop-price">${esc(prop.price||'₹—')}</div>
+          <div style="font-size:12px;color:var(--text3);">~₹60K/mo EMI</div>
+        </div>
+        <div class="sp-prop-sub">${esc(prop.bhk||'2 BHK')} · ${esc(prop.sqft||'')} · ${esc(prop.location||primary)}</div>
+      </div>
+      <div class="sp-landmarks">
+        ${prop.lm?`<div class="sp-lm">📍 ${esc(prop.lm)}</div>`:''}
+        <div class="sp-lm">🚗 ~15 mins from ${esc((config.user && config.user.worksNear) || 'work')}</div>
+        <div class="sp-lm">🚇 10 mins to metro</div>
+        <div class="sp-lm">📈 +12% price growth this year</div>
+      </div>
+      <div class="social-bar" style="border-radius:var(--r-sm);margin-bottom:10px;"><span class="si">🔥</span> 12 people contacted this week</div>
+      ${noteHtml(prop.name || 'spotlight_prop', 4)}
+      <div class="sp-ctarow">
+        <div class="sp-cta-no">Not interested</div>
+        <div class="sp-cta-yes">📅 Visit this weekend</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function modStillConsidering(stage, primary) {
+  if (stage !== 4 && stage !== 5) return null;
+  const props = data.properties.slice(1, 4);
+  if (!props.length) return null;
+  const scViews = [4, 2, 3];
+  const cards = props.map((p, i) => {
+    const delta = i === 0 ? '₹2L cheaper · closer to your top pick' : i === 1 ? '₹5L more · 40 extra sq ft' : '₹1L cheaper · same locality';
+    const isGood = delta.includes('cheaper');
+    const sharedWithFriend = i === 0;
+    const hasPriceDrop = i === 0;
+    const noteKey = p.name || ('prop_sc_' + i);
+    return `<div class="sc-card">
+      <div class="sc-meta">
+        <span class="sc-meta-left">👁 ${scViews[i]}×${sharedWithFriend ? ' · <b>You shared this with a friend</b>' : ''}</span>
+        ${hasPriceDrop ? '<span class="sc-drop-badge">↓ ₹2L drop</span>' : ''}
+      </div>
+      <div class="sc-card-inner">
+        <div class="sc-thumb">${propImg(p)}</div>
+        <div class="sc-info">
+          <div class="sc-price">${esc(p.price||'₹—')}</div>
+          <div class="sc-name">${esc(p.bhk||'2 BHK')} · ${esc(primary)}, ${esc(p.sqft||'')}</div>
+          <div class="sc-vs">${isGood?`<span class="save">${esc(delta)}</span>`:`<span class="more">${esc(delta)}</span>`}</div>
+        </div>
+        <div class="sc-save-btn">Save</div>
+      </div>
+      <div class="sc-actions">
+        <div class="sc-q">Still in the running?</div>
+        <div class="sc-yn">
+          <div class="sc-btn yes">Yes</div>
+          <div class="sc-btn no">No</div>
+          <div class="sc-btn det">Details ›</div>
+        </div>
+      </div>
+      ${sharedWithFriend ? `<div class="sc-friend-q">
+        <div class="sc-friend-q-text">Did your friend like the property?</div>
+        <div class="sc-friend-btns">
+          <div class="sc-friend-btn yes">Yes</div>
+          <div class="sc-friend-btn no">No</div>
+          <div class="sc-friend-btn det">Details →</div>
+        </div>
+      </div>` : ''}
+      ${noteHtml(noteKey, 4)}
+    </div>`;
+  }).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;">
+      <div class="sec-head"><div class="sec-title">${stage === 5 ? 'How did your visits compare?' : 'Still Considering'}</div><div style="font-size:12px;color:var(--text3);">3 others</div></div>
+      <div class="sec-sub">${stage === 5 ? 'Review the properties you visited and decide your next step' : 'Your other shortlisted properties'}</div>
+    </div>
+    ${cards}
+    <div style="padding:10px 14px 12px;">
+      <div style="display:flex;gap:8px;">
+        <div class="cta-btn cta-sec" style="font-size:12px;padding:10px;">⚖ Compare All</div>
+        <div class="cta-btn cta-pri" style="font-size:12px;padding:10px;">📅 Plan Weekend Visits</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function modVisitPlanner(stage) {
+  if (stage !== 4) return null;
+  const props = data.properties.slice(1, 4);
+  if (!props.length) return null;
+  const cards = props.slice(0, 3).map(p => `<div class="hprop">
+    <div class="hprop-img">${propImg(p)}<div class="prop-heart">♡</div></div>
+    <div class="hprop-body">
+      <div class="hprop-price">${esc(p.price)}</div>
+      <div class="hprop-name">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="hprop-loc">${esc(p.location||'')}</div>
+    </div>
+  </div>`).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="sec-title">Plan your site visits</div>
+      <div class="sec-sub">Save time by grouping site visits nearby</div>
+    </div>
+    <div class="hscroll">${cards}</div>
+    <div style="padding:10px 14px 12px;"></div>
+  </div>`;
+}
+
+function modSimilarBHK(stage, bhk, primary) {
+  if (stage !== 2) return null;
+  // Use rawData so budget/RTM filter doesn't shrink the pool; deduplicate against what PropertiesPrimary already shows
+  const shown = new Set(data.properties.slice(0, 4).map(p => p.name));
+  const pool = (rawData.properties || data.properties).filter(p => !shown.has(p.name));
+  const props = pool.slice(0, 3);
+  if (!props.length) return null;
+  const cards = props.map(p => `<div class="hprop">
+    <div class="hprop-img">${propImg(p)}<div class="prop-heart">♡</div></div>
+    <div class="hprop-body">
+      <div class="hprop-price">${esc(p.price)}</div>
+      <div class="hprop-name">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="hprop-loc">${esc(p.location||primary)}</div>
+      <div class="hprop-tag ${p.ready_to_move?'ptag rtm':'ptag uc'}" style="font-size:10px;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:3px;">${p.ready_to_move?'RTM':'UC'}</div>
+    </div>
+  </div>`).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="sec-head"><div class="sec-title">More ${esc(bhk)} options in ${esc(primary)}</div><div class="sec-link">See all →</div></div>
+    </div>
+    <div class="hscroll">${cards}</div>
+  </div>`;
+}
+
+function modExpertAgents(stage, primary, secondary) {
+  if (stage !== 3) return null;
+  const agents = [
+    { init:'AS', name:'Arpit Sharma', area:'Expert for '+primary+' & '+( secondary||'nearby') },
+    { init:'PJ', name:'Preeti Joshi', area:'Expert for '+(secondary||primary)+' · 5yr experience' },
+  ];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">Local experts for ${esc(primary)}</div><div class="sec-sub">Highly rated agents in this area</div></div>
+    ${agents.map(a=>`<div class="expert-card">
+      <div class="expert-av">${a.init}</div>
+      <div class="expert-info"><div class="expert-name">${a.name}</div><div class="expert-area">${esc(a.area)}</div></div>
+      <div class="expert-btn">Contact</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function modUpcomingDevelopments(stage, primary) {
+  if (stage !== 3) return null;
+  const cityName = (config.location && config.location.city) || primary;
+  const devs = [
+    { title:'Property prices are rising rapidly in '+cityName, date:'Feb 28, 2026' },
+    { title:'New residential zones announced near '+primary, date:'Jan 15, 2026' },
+    { title:'Metro expansion update — impact on '+primary, date:'Mar 5, 2026' },
+  ];
+  const cityImgs = [
+    'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=400&q=75',
+    'https://images.unsplash.com/photo-1610642372651-fe6e7bc6a4d1?auto=format&fit=crop&w=400&q=75',
+    'https://images.unsplash.com/photo-1444723121867-7a241cacace9?auto=format&fit=crop&w=400&q=75',
+  ];
+  const cards = devs.map((d,i)=>`<div class="upcoming-card">
+    <div class="upcoming-img"><img src="${cityImgs[i]}" style="width:100%;height:100%;object-fit:cover;opacity:.75;" loading="lazy" onerror="this.style.display='none'" /></div>
+    <div class="upcoming-body"><div class="upcoming-title">${esc(d.title)}</div><div class="upcoming-date">${d.date}</div></div>
+  </div>`).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;"><div class="sec-title">Upcoming developments in these zones</div></div>
+    <div class="hscroll">${cards}</div>
+    <div style="padding:10px 14px 4px;"></div>
+  </div>`;
+}
+
+function modNearbyComparison(stage, primary) {
+  if (stage !== 3) return null;
+  if (config.location && config.location.secondary) return null; // H2H + Landmarks already handle the comparison
+  const _fb2 = getMockData(config);
+  const adjs = data.adjacentLocalities.length ? data.adjacentLocalities : _fb2.adjacentLocalities;
+  const pair = adjs.slice(0, 2);
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;"><div class="sec-title">More localities to explore</div></div>
+    <div class="nearby-cmp">
+      ${pair.map(a=>`<div class="ncmp-card">
+        <div class="ncmp-name">${esc(a.name)}</div>
+        <div class="ncmp-range">${esc(a.label||'')} vs ${esc(primary)}</div>
+        <div class="ncmp-row"><span class="ncmp-l">Avg/sqft</span><span class="ncmp-r">₹${a.avgPsqft||(_fb2.localities[2]?.avgPsqft)||7400}</span></div>
+        <div class="ncmp-row"><span class="ncmp-l">YoY</span><span class="ncmp-r up">+${a.yoy||(_fb2.localities[2]?.yoy)||14}%</span></div>
+        <div class="ncmp-row"><span class="ncmp-l">Metro</span><span class="ncmp-r">${esc(a.metro||'~1.5km')}</span></div>
+        <div class="ncmp-footer">${esc(a.summary||'Similar residential zone')}</div>
+      </div>`).join('')}
+    </div>
+    <div style="padding:10px 14px 4px;"></div>
+  </div>`;
+}
+
+function modNewLaunches(stage, primary) {
+  if (stage !== 1) return null; // S2-S3: redundant with modNewInSectors; S4+: discovery noise
+  const nl = data.properties.filter(p=>!p.ready_to_move)[0] || getMockData(config).properties[2];
+  return `<div class="nl-wrap">
+    <div class="nl-top">
+      <div class="nl-icon">✦</div>
+      <div><div class="nl-title">Newly launched projects</div><div class="nl-sub">Best prices · Unit of choice · Easy payment plans</div></div>
+    </div>
+    <div class="nl-card">
+      <div class="nl-new-label">✦ New launch ✦</div>
+      <div class="nl-row">
+        <div class="nl-thumb">${propImg(nl)}</div>
+        <div><div class="nl-name">${esc(nl.name)}</div><div class="nl-loc">${esc(nl.location||primary)}</div></div>
+      </div>
+      <div class="nl-details-row">${esc(nl.price)} <span class="nl-sep">|</span> <span class="nl-bhk">${esc(nl.bhk||'2, 3 BHK')}</span></div>
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:2px;"><span class="nl-rera">🔑 RERA</span><span style="font-size:12px;color:var(--text2);">${esc(nl.status||'Completion 2027')}</span></div>
+      <div class="nl-footer"><div class="nl-footer-text">🏷 First-choice units at zero brokerage</div><div class="nl-cta">View number</div></div>
+    </div>
+  </div>`;
+}
+
+function modPeopleAlsoViewed(stage, primary) {
+  if (stage < 1) return null;
+  const props = data.properties.slice(stage===4?1:3, stage===4?5:6);
+  if (!props.length) return null;
+  const cards = props.map((p,i)=>`<div class="hprop">
+    <div class="hprop-img">
+      ${propImg(p)}
+      ${i>0 ? '<div class="badge-viewed">Seen</div>' : '<div class="badge-rera" style="top:7px;left:7px;font-size:9px;padding:2px 6px;">🔑 RERA</div>'}
+      <div class="prop-heart">♡</div>
+      <div class="prop-possession" style="font-size:10px;">${esc(p.status||(p.ready_to_move?'Ready to Move':'Possession 2026'))}</div>
+    </div>
+    <div class="hprop-body">
+      <div class="hprop-price">${esc(p.price)}</div>
+      <div class="hprop-name">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="hprop-loc">${esc(p.location||primary)}</div>
+    </div>
+  </div>`).join('');
+  const label = 'People like you also viewed';
+  const badgeHtml = '';
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div style="display:flex;align-items:center;margin-bottom:4px;"><div class="sec-title" style="font-size:18px;">${label}</div>${badgeHtml}</div>
+    </div>
+    <div class="hscroll">${cards}</div>
+    <div style="padding:8px 14px 4px;"></div>
+  </div>`;
+}
+
+function modPriceTrend(stage, primary) {
+  // Show at all stages — price appreciation is a relevant signal for discovery through to decision
+  const loc = data.localities[0]||getMockData(config).localities[0];
+  return `<div class="sec">
+    <div class="price-trend">
+      <div class="pt-left"><div class="pt-circle">📈</div><div><div class="pt-val">+${loc.yoy||18}% price growth (YoY)</div><div class="pt-lbl">Price Trends · ${esc(primary)}</div></div></div>
+      <div class="pt-arrow">›</div>
+    </div>
+  </div>`;
+}
+
+function modPostVisitTools(stage) {
+  if (stage !== 5) return null;
+  const cityName = (config.location && config.location.city) || (config.location && config.location.primary) || 'your city';
+  const tools = [
+    { icon:'🧮', name:'EMI Calculator', desc:'Estimate monthly outflow based on your budget & tenure' },
+    { icon:'💰', name:'Loan Eligibility', desc:'Find out how much home loan you qualify for' },
+    { icon:'📜', name:'Registration Guide', desc:'Stamp duty & registration costs for '+cityName },
+    { icon:'🏠', name:'Home Loan Guide', desc:'Compare SBI, HDFC, ICICI rates & processing fees' },
+  ];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">Tools for your next step</div></div>
+    ${tools.map(t=>`<div class="pv-tool">
+      <div class="pv-tool-icon">${t.icon}</div>
+      <div class="pv-tool-info"><div class="pv-tool-name">${t.name}</div><div class="pv-tool-desc">${t.desc}</div></div>
+      <div class="pv-tool-arr">›</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function modTools(stage) {
+  if (stage === 1 || stage === 5) return null;
+  const sets = {
+    2:[{icon:'📈',name:'Price Trends',desc:'Locality history'},{icon:'📖',name:'Buyer Guide',desc:'Step-by-step checklist'}],
+    3:[{icon:'📈',name:'Price Trends',desc:'Locality history'},{icon:'🧮',name:'EMI Calculator',desc:'Monthly outflow'},{icon:'💰',name:'Home Loan Guide',desc:'Rates & eligibility'},{icon:'📖',name:'Buyer Guide',desc:'Step-by-step checklist'}],
+    4:[{icon:'🧮',name:'EMI Calculator',desc:'Monthly outflow'},{icon:'💰',name:'Loan Eligibility',desc:'Pre-qualify in 2 mins'},{icon:'📈',name:'Price Check',desc:'Current market rate'}],
+  };
+  const tools = (sets[stage]||sets[2]);
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;"><div class="sec-title">Tools &amp; Calculators</div></div>
+    <div class="tool-row">${tools.map(t=>`<div class="tool-card"><div class="tool-icon">${t.icon}</div><div class="tool-name">${t.name}</div><div class="tool-desc">${t.desc}</div></div>`).join('')}</div>
+    <div style="padding:8px 14px 4px;"></div>
+  </div>`;
+}
+
+function modHelpWith(stage) {
+  return null; // Removed: Buy/Rent/Invest onboarding menu is noise for committed buyers at S2+
+}
+
+function modArticles(stage, primary, secondary) {
+  if (stage === 1) return null;
+  const city = (config.location && config.location.city) || primary;
+  const sets = {
+    2:[
+      {t:'Which '+esc(city)+' localities have the best resale value?',d:'Jan 12, 2026',img:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?auto=format&fit=crop&w=200&q=70'},
+      {t:'What buyers often miss when buying in '+esc(city),d:'Feb 3, 2026',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=200&q=70'},
+      {t:'Understanding RERA — a complete buyer\'s guide',d:'Jan 28, 2026',img:'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=200&q=70'},
+    ],
+    3:[
+      {t:'Reasons to invest in '+esc(primary)+' right now',d:'Nov 18, 2025',img:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?auto=format&fit=crop&w=200&q=70'},
+      {t:esc(primary)+' vs '+(secondary?esc(secondary):'nearby locality')+' — which is better in 2026?',d:'Dec 12, 2025',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=200&q=70'},
+      {t:'Top residential projects in '+esc(primary)+' 2026',d:'Feb 8, 2026',img:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=70'},
+    ],
+    4:[
+      {t:'How to close a property deal — checklist',d:'Jan 20, 2026',img:'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=200&q=70'},
+      {t:'Red flags to watch in a property agreement',d:'Feb 1, 2026',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=200&q=70'},
+      {t:'Price negotiation tactics that actually work',d:'Feb 22, 2026',img:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?auto=format&fit=crop&w=200&q=70'},
+    ],
+    5:[
+      {t:'Home loan: How to choose the right bank',d:'Jan 15, 2026',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=200&q=70'},
+      {t:'Stamp duty & registration — complete guide',d:'Feb 3, 2026',img:'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=200&q=70'},
+      {t:'Moving checklist — before you take possession',d:'Mar 1, 2026',img:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=70'},
+    ],
+  };
+  const articles = sets[stage]||sets[2];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">Latest Articles</div></div>
+    ${articles.map(a=>`<div class="article-card">
+      <div class="article-thumb"><img src="${a.img}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'" /></div>
+      <div><div class="article-title">${a.t}</div><div class="article-date">${a.d}</div></div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function modQuickLinks() {
+  const links = ['Buy Property','Rent Property','New Projects','Price Trends','EMI Calculator','Home Loans','RERA Check','Buyer Guide'];
+  return `<div class="sec sec-pad">
+    <div class="sec-head" style="margin-bottom:8px;"><div class="sec-title">Quick Links</div><div class="sec-link" style="font-size:11px;color:var(--text3);">Top ↑</div></div>
+    <div class="ql-wrap">${links.map(l=>`<div class="ql-btn">${l}</div>`).join('')}</div>
+  </div>`;
+}
+
+function modHelpful() {
+  return `<div class="helpful-row"><span>Is this page helpful?</span><div class="helpful-btns"><div class="helpful-btn">👍 Yes</div><div class="helpful-btn">👎 No</div></div></div>`;
+}
+
+// ── Shared prop card ──────────────────────────────────────────────────────────
+function propCard(p, opts) {
+  opts = opts||{};
+  const showNew = !!opts.showBadge;
+  const cls = opts.horizontal ? 'prop prop-h' : 'prop';
+  return `<div class="${cls}">
+    <div class="prop-img">
+      ${propImg(p)}
+      ${showNew ? `<div class="badge-new">NEW</div>` : `<div class="badge-rera">🔑 RERA</div>`}
+      <div class="prop-heart">♡</div>
+      <div class="prop-possession">${esc(p.status||(p.ready_to_move?'Ready to move':'Under Construction'))}</div>
+    </div>
+    <div class="prop-body">
+      <div class="prop-price">${esc(p.price||'₹—')}</div>
+      <div class="prop-price-sub">${[p.bhk, p.sqft].filter(Boolean).join(' · ')}</div>
+      <div class="prop-name">${esc(p.name||'Property')}</div>
+      <div class="prop-dev">${esc([p.dev, p.location].filter(Boolean).join(' · '))}</div>
+      <div class="prop-tags">
+        <span class="ptag ${p.ready_to_move?'rtm':'uc'}">${p.ready_to_move?'Ready to Move':'Under Construction'}</span>
+        ${p.status && !p.ready_to_move && p.status !== 'Under Construction' ? `<span class="ptag uc">${esc(p.status)}</span>` : ''}
+      </div>
+      ${p.lm?`<div class="prop-landmark"><span>📍 ${esc(p.lm)}</span></div>`:''}
+    </div>
+    <div class="prop-footer">
+      <div class="pf-contact">Contact Seller</div>
+      <div class="pf-viewnumber">📞 View Number</div>
+    </div>
+  </div>`;
+}
+
+// ── Skeletons ─────────────────────────────────────────────────────────────────
+function skHprop() {
+  return `<div class="hprop"><div class="hprop-img skel"></div><div class="hprop-body"><div class="skel" style="height:14px;width:60%;margin-bottom:6px;"></div><div class="skel" style="height:10px;width:80%;margin-bottom:4px;"></div><div class="skel" style="height:10px;width:50%;"></div></div></div>`;
+}
+function skCard() {
+  return `<div class="prop"><div style="height:160px;" class="skel"></div><div class="prop-body"><div class="skel" style="height:16px;width:50%;margin-bottom:8px;"></div><div class="skel" style="height:12px;width:80%;margin-bottom:6px;"></div><div class="skel" style="height:12px;width:40%;"></div></div></div>`;
+}
+function renderLoading() {
+  return [
+    `<div class="sec" style="padding:16px 14px;">${skCard()}${skCard()}</div>`,
+    `<div class="sec" style="padding:16px 14px;">${[1,2,3].map(()=>`<div class="skel" style="height:90px;border-radius:8px;margin-bottom:8px;"></div>`).join('')}</div>`,
+  ].join('');
+}
+function renderEmpty() {
+  return `<div class="empty"><div class="empty-icon">🏡</div><div class="empty-title">Set a location to begin</div><div class="empty-sub">Open the researcher panel, configure a buyer profile, and click <strong>Apply to Preview</strong> to load the homepage.</div></div>`;
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function esc(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Heart toggle — delegate from #page ────────────────────────────────────────
+document.getElementById('page').addEventListener('click', function(e) {
+  const heart = e.target.closest('.prop-heart');
+  if (heart) {
+    heart.classList.toggle('saved');
+    heart.textContent = heart.classList.contains('saved') ? '♥' : '♡';
+  }
+});
+
+// ── Sticky notes — delegate from #page ────────────────────────────────────────
+document.getElementById('page').addEventListener('input', function(e) {
+  const ta = e.target.closest('.prop-note-input');
+  if (ta) {
+    const key = ta.dataset.propkey;
+    propNotes[key] = ta.value;
+    // Update note display in both prop-note-wrap and card-chips-wrap contexts
+    const wrap = ta.closest('.prop-note-wrap') || ta.closest('.card-chips-wrap');
+    if (wrap) {
+      let disp = wrap.querySelector('.prop-note-display');
+      if (ta.value) {
+        if (!disp) {
+          disp = document.createElement('div');
+          disp.className = 'prop-note-display';
+          wrap.insertBefore(disp, wrap.firstChild);
+        }
+        disp.textContent = '📝 "' + ta.value + '"';
+      } else if (disp) {
+        disp.remove();
+      }
+    }
+  }
+});
+
+// ── Per-card actions — delegate from #page ────────────────────────────────────
+document.getElementById('page').addEventListener('click', function(e) {
+  // "Not for me" toggle
+  const passBtn = e.target.closest('[data-rlabel="pass"]');
+  if (passBtn) {
+    const key = passBtn.dataset.rkey;
+    propChips[key] = propChips[key] === 'pass' ? '' : 'pass';
+    const active = propChips[key] === 'pass';
+    passBtn.className = 'card-act' + (active ? ' active' : '');
+    passBtn.textContent = active ? '✕ Removed' : '✕ Not for me';
+    return;
+  }
+  // Note toggle
+  const toggle = e.target.closest('[data-notetoggle]');
+  if (toggle && toggle.classList.contains('card-act')) {
+    const key = toggle.dataset.notetoggle;
+    const wrap = toggle.closest('.card-actions');
+    if (!wrap) return;
+    const ta = wrap.previousElementSibling;
+    if (ta && ta.classList.contains('prop-note-input')) {
+      ta.classList.toggle('hidden');
+      if (!ta.classList.contains('hidden')) ta.focus();
+    }
+    return;
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+var _supaUrl = (typeof window !== 'undefined' && window.SUPABASE_URL)  || '';
+var _supaKey = (typeof window !== 'undefined' && window.SUPABASE_ANON_KEY) || '';
+var _inIframe = window.parent && window.parent !== window;
+
+if (!_inIframe && _supaUrl && _supaKey && window.supabase) {
+  // ── Standalone mode: always subscribe to fixed 'default' room ────────────────
+  var _lsb = window.supabase.createClient(_supaUrl, _supaKey);
+
+  renderPage(); // show empty/loading state while waiting
+
+  // 1. Fetch the latest config immediately on load
+  _lsb.from('live_config').select('config').eq('room', 'default').single().then(function(res) {
+    if (res.data && res.data.config) {
+      _panelConnected = true;
+      config = Object.assign(defaultConfig(), res.data.config);
+      fetchAndRender();
+    }
+  });
+
+  // 2. Subscribe — every panel change arrives here in ~1 second
+  _lsb.channel('live:default')
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'live_config',
+      filter: 'room=eq.default'
+    }, function(payload) {
+      if (payload.new && payload.new.config) {
+        _panelConnected = true;
+        config = Object.assign(defaultConfig(), payload.new.config);
+        fetchAndRender();
+      }
+    })
+    .subscribe();
+
+} else {
+  // ── Iframe mode: connected to panel via postMessage ──────────────────────────
+  renderPage();
+  if (_inIframe) {
+    function _signalReady() {
+      if (_panelConnected) return;
+      window.parent.postMessage({ type: 'HOMEPAGE_READY' }, '*');
+    }
+    _signalReady();
+    var _readyTimer = setInterval(function() {
+      if (_panelConnected) { clearInterval(_readyTimer); return; }
+      _signalReady();
+    }, 300);
+    setTimeout(function() { clearInterval(_readyTimer); }, 8000);
+  }
+}
+</script>
+</body>
+</html>
