@@ -408,42 +408,40 @@ body { padding-bottom: 20px; min-height: 100vh; }
 
 /* ── DS component integration ── */
 
-/* ds-prop-card in horizontal scroll container */
+/* ds-prop-card in horizontal scroll */
 .hscroll .ds-prop-card { flex-shrink: 0; }
-.hscroll .ds-prop-card.horizontal { width: 230px; }
+.hscroll .ds-prop-card.horizontal { width: 195px; }
+.hscroll .ds-prop-card.horizontal .ds-prop-card-img { height: 115px; }
+.hscroll .ds-prop-card.horizontal .ds-prop-card-body { padding: 8px 10px 6px; }
+.hscroll .ds-prop-card.horizontal .ds-prop-card-price { font-size: 15px; }
+.hscroll .ds-prop-card.horizontal .ds-prop-card-name { font-size: 11px; font-weight: 600; }
+.hscroll .ds-prop-card.horizontal .ds-prop-card-subtitle { font-size: 11px; }
+.hscroll .ds-prop-card.horizontal .ds-prop-card-possession { font-size: 10px; padding: 4px 8px; }
 
 /* ds-prop-card vertical stacked in sec */
 .sec > .ds-prop-card { margin: 0 14px 8px; }
 
-/* Context chips row override for ds-chip */
+/* Context chips row: ds-chip already handles flex */
 .context-chips .ds-chip { flex-shrink: 0; }
 
-/* Pref row ds-chip override */
+/* Pref row with ds-chips */
 .pref-row { display: flex; gap: 7px; flex-wrap: wrap; padding: 8px 14px 12px; }
 .pref-row .ds-chip { flex-shrink: 0; }
 
-/* Budget insight inside sec-pad */
-.sec-pad .ds-insight { margin-left: 0; margin-right: 0; }
-
-/* ds-btn in sp-ctarow */
+/* CTA row in spotlight */
 .sp-ctarow { display: flex; gap: 8px; }
-.sp-ctarow .ds-btn { white-space: nowrap; }
 
-/* sc-save-btn override to use ds-shortlist */
+/* sc-save-btn */
 .sc-save-btn { flex-shrink: 0; align-self: flex-start; }
 
-/* helpful-row with ds-btn */
+/* helpful-row */
 .helpful-btns { display: flex; gap: 8px; }
 
-/* ds-chip in quick links wrap */
+/* Quick links chip group wraps */
 .sec-pad .ds-chip-group { flex-wrap: wrap; }
 
-/* card-actions with ds-btn */
+/* card-actions inline style */
 .card-actions { display: flex; gap: 6px; margin-top: 8px; }
-.card-actions .ds-btn.active { background: #FEE2E2; color: var(--red-heart); border-color: var(--red-heart); }
 
 /* expert-card ds-btn alignment */
 .expert-card .ds-btn { flex-shrink: 0; }
-
-/* Section heading within sec-head */
-.sec-head .ds-section-heading { margin-bottom: 0; }

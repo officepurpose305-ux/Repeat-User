@@ -736,9 +736,9 @@ function reactionHtml(key, notePlaceholder) {
   const ph = notePlaceholder || 'Any concerns? Ask about parking, floor, etc.';
   return `${note ? `<div class="prop-note-display" style="margin-top:6px;">📝 "${esc(note)}"</div>` : ''}
   <textarea class="prop-note-input hidden" data-propkey="${esc(key)}" placeholder="${esc(ph)}">${esc(note)}</textarea>
-  <div class="card-actions" style="display:flex;gap:6px;margin-top:8px;">
-    <button class="ds-btn ds-btn-xs ds-btn-tertiary card-act${passed?' active':''}" data-rkey="${esc(key)}" data-rlabel="pass">${passed?'✕ Removed':'✕ Not for me'}</button>
-    <button class="ds-btn ds-btn-xs ds-btn-secondary card-act" data-notetoggle="${esc(key)}">✏️ Add a note</button>
+  <div class="card-actions">
+    <button class="card-act${passed?' active':''}" data-rkey="${esc(key)}" data-rlabel="pass">${passed?'✕ Removed':'✕ Not for me'}</button>
+    <button class="card-act" data-notetoggle="${esc(key)}">✏️ Add a note</button>
   </div>`;
 }
 
@@ -835,15 +835,7 @@ function modStaleLocationNudge(stage, secondary, lastDays) {
   if (!secondary || !lastDays || lastDays < 2) return null;
   const timeLabel = lastDays >= 7 ? `${Math.round(lastDays/7)} week${lastDays>=14?'s':''} ago` : `${lastDays} days ago`;
   return `<div class="sec sec-pad">
-    <div class="ds-insight sm" style="margin-bottom:12px;">
-      <div class="ds-insight-head">
-        <div class="ds-insight-title-row">
-          <span class="ds-insight-icon">🔁</span>
-          <div class="ds-insight-title">You were looking in ${esc(secondary)} ${timeLabel}</div>
-        </div>
-      </div>
-      <div class="ds-insight-sub">Still want recommendations for that area?</div>
-    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;">You were looking in <b>${esc(secondary)}</b> ${timeLabel}. Still want recommendations for that?</div>
     <div style="display:flex;gap:8px;">
       <button class="ds-btn ds-btn-sm ds-btn-primary">Yes, keep showing</button>
       <button class="ds-btn ds-btn-sm ds-btn-tertiary">No</button>
@@ -868,8 +860,8 @@ function modLocalitySuggestions(stage, primary, secondary) {
   </div>`).join('');
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div class="sec-head"><div class="ds-section-heading sec-title">Localities that match your search</div><div class="sec-link">All localities →</div></div>
-      <div class="ds-heading-sub sec-sub">Based on budget and preferences in ${esc(primary)}</div>
+      <div class="sec-head"><div class="sec-title">Localities that match your search</div><div class="sec-link">All localities →</div></div>
+      <div class="sec-sub">Based on budget and preferences in ${esc(primary)}</div>
     </div>
     <div class="hscroll" style="padding-bottom:12px;">${cards}</div>
     <div style="padding:6px 14px 0;">
@@ -928,10 +920,10 @@ function modConsiderationSet(stage) {
     { label:'Interested in New Launches', sub:'Best prices, full unit choice', sel:false },
   ];
   return `<div class="sec">
-    <div class="sec-pad" style="padding-bottom:4px;"><div class="ds-section-heading sec-title">What type of property are you open to?</div></div>
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">What type of property are you open to?</div></div>
     ${opts.map(o=>`<div class="consid-option">
       <div class="ds-radio${o.sel?' checked':''}"></div>
-      <div><div class="consid-label">${o.label}</div><div class="consid-sub ds-heading-sub">${o.sub}</div></div>
+      <div><div class="consid-label">${o.label}</div><div class="consid-sub">${o.sub}</div></div>
     </div>`).join('')}
   </div>`;
 }
@@ -1021,18 +1013,12 @@ function modTradeoff(stage, primary, secondary) {
   if (stage !== 3 || !secondary) return null;
   const saving = data.adjacentLocalities.length ? Math.abs(data.adjacentLocalities[0].delta||8) : 8;
   return `<div class="sec sec-pad">
-    <div class="ds-insight" style="margin-bottom:12px;">
-      <div class="ds-insight-head">
-        <div class="ds-insight-title-row">
-          <span class="ds-insight-icon">⚖️</span>
-          <div class="ds-insight-title">${esc(secondary)} saves ~₹${saving}L but puts you 3km from metro</div>
-        </div>
+    <div class="tradeoff">
+      <div class="tradeoff-q">💡 ${esc(secondary)} saves you ~₹${saving}L but puts you 3km from metro. Worth it?</div>
+      <div style="display:flex;gap:8px;">
+        <button class="ds-btn ds-btn-sm ds-btn-primary">🚇 Metro first</button>
+        <button class="ds-btn ds-btn-sm ds-btn-quaternary">₹${saving}L saving</button>
       </div>
-      <div class="ds-insight-sub">Is the saving worth the commute? You decide.</div>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button class="ds-btn ds-btn-sm ds-btn-primary">🚇 Metro first</button>
-      <button class="ds-btn ds-btn-sm ds-btn-tertiary">₹${saving}L saving</button>
     </div>
   </div>`;
 }
@@ -1100,16 +1086,9 @@ function modBudgetAnchor(stage, primary) {
   const mid   = Math.round(loc.avgPsqft * 1050 / 100000);
   const prem  = Math.round(loc.avgPsqft * 1300 / 100000);
   return `<div class="sec sec-pad">
-    <div class="ds-insight" style="margin-bottom:12px;">
-      <div class="ds-insight-head">
-        <div class="ds-insight-title-row">
-          <span class="ds-insight-icon">💡</span>
-          <div class="ds-insight-title">2 BHKs in ${esc(primary)} typically start at ₹${entry}L</div>
-        </div>
-      </div>
-      <div class="ds-insight-sub">Based on ₹${loc.avgPsqft.toLocaleString()}/sq ft · ${esc(loc.count||'')}</div>
-    </div>
-    <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">Popular budget ranges here</div>
+    <div class="bn-title">2 BHKs in ${esc(primary)} typically start at ₹${entry}L</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Based on ₹${loc.avgPsqft.toLocaleString()}/sq ft · ${esc(loc.count||'')}</div>
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;">Popular budget ranges here</div>
     <div class="ds-chip-group">
       <div class="ds-chip ds-chip-sm">Under ₹${entry}L</div>
       <div class="ds-chip ds-chip-sm">₹${entry}L–₹${mid}L</div>
@@ -1136,18 +1115,16 @@ function modBudgetFit(stage, f, primary) {
   // At S1 — city-level framing before buyer has chosen a locality
   if (stage === 1) {
     return `<div class="sec sec-pad">
-      <div class="ds-insight" style="margin-bottom:12px;">
-        <div class="ds-insight-head">
-          <div class="ds-insight-title-row">
-            <span class="ds-insight-icon">💰</span>
-            <div class="ds-insight-title">What ₹${min}L–₹${max}L gets you in ${esc(city)}</div>
-          </div>
+      <div class="budget-nudge">
+        <div class="bn-title">What ₹${min}L–₹${max}L gets you in ${esc(city)}</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">
+          At ₹${avgPsqft.toLocaleString()}/sq ft, expect <b>~${sqftMin}–${sqftMax} sq ft</b> for a ${esc(bhkLabel)} — typically a well-sized flat in ${esc(city)}.
+          ${adj ? `<br>Or consider <b>${esc(adj.name)}</b>, ${esc(adj.label)}.` : ''}
         </div>
-        <div class="ds-insight-sub">At ₹${avgPsqft.toLocaleString()}/sq ft, expect <b>~${sqftMin}–${sqftMax} sq ft</b> for a ${esc(bhkLabel)}.${adj ? ` Or consider <b>${esc(adj.name)}</b>, ${esc(adj.label)}.` : ''}</div>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button class="ds-btn ds-btn-sm ds-btn-primary">Show matching properties</button>
-        <button class="ds-btn ds-btn-sm ds-btn-tertiary">Adjust budget</button>
+        <div style="display:flex;gap:8px;">
+          <button class="ds-btn ds-btn-sm ds-btn-primary">Show matching properties</button>
+          <button class="ds-btn ds-btn-sm ds-btn-tertiary">Adjust budget</button>
+        </div>
       </div>
     </div>`;
   }
@@ -1161,18 +1138,16 @@ function modBudgetFit(stage, f, primary) {
       const bigger = sqft2 > sqft1 ? secondary : primary;
       const diff = Math.abs(sqft2 - sqft1);
       return `<div class="sec sec-pad">
-        <div class="ds-insight" style="margin-bottom:12px;">
-          <div class="ds-insight-head">
-            <div class="ds-insight-title-row">
-              <span class="ds-insight-icon">📐</span>
-              <div class="ds-insight-title">Your ₹${max}L goes further in ${esc(bigger)}</div>
-            </div>
+        <div class="budget-nudge">
+          <div class="bn-title">Your ₹${max}L goes further in ${esc(bigger)}</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">
+            ${esc(primary)}: ~${sqft1} sq ft &nbsp;·&nbsp; ${esc(secondary)}: ~${sqft2} sq ft<br>
+            That's <b>${diff} sq ft more</b> for the same budget in ${esc(bigger)}.
           </div>
-          <div class="ds-insight-sub">${esc(primary)}: ~${sqft1} sq ft · ${esc(secondary)}: ~${sqft2} sq ft<br>That's <b>${diff} sq ft more</b> for the same budget in ${esc(bigger)}.</div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="ds-btn ds-btn-sm ds-btn-primary">See properties in ${esc(bigger)}</button>
-          <button class="ds-btn ds-btn-sm ds-btn-tertiary">Compare both</button>
+          <div style="display:flex;gap:8px;">
+            <button class="ds-btn ds-btn-sm ds-btn-primary">See properties in ${esc(bigger)}</button>
+            <button class="ds-btn ds-btn-sm ds-btn-tertiary">Compare both</button>
+          </div>
         </div>
       </div>`;
     }
@@ -1194,18 +1169,13 @@ function modBudgetFit(stage, f, primary) {
     cta   = 'Show me these properties';
   }
   return `<div class="sec sec-pad">
-    <div class="ds-insight" style="margin-bottom:12px;">
-      <div class="ds-insight-head">
-        <div class="ds-insight-title-row">
-          <span class="ds-insight-icon">💰</span>
-          <div class="ds-insight-title">${title}</div>
-        </div>
+    <div class="budget-nudge">
+      <div class="bn-title">${title}</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">${body}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="ds-btn ds-btn-sm ds-btn-primary">${cta}</button>
+        <button class="ds-btn ds-btn-sm ds-btn-tertiary">Adjust budget</button>
       </div>
-      <div class="ds-insight-sub">${body}</div>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button class="ds-btn ds-btn-sm ds-btn-primary">${cta}</button>
-      <button class="ds-btn ds-btn-sm ds-btn-tertiary">Adjust budget</button>
     </div>
   </div>`;
 }
@@ -1275,7 +1245,7 @@ function modStillConsidering(stage, primary) {
           <div class="sc-name">${esc(p.bhk||'2 BHK')} · ${esc(primary)}, ${esc(p.sqft||'')}</div>
           <div class="sc-vs">${isGood?`<span class="save">${esc(delta)}</span>`:`<span class="more">${esc(delta)}</span>`}</div>
         </div>
-        <button class="ds-shortlist sm on-white sc-save-btn"><span class="material-icons">favorite_border</span></button>
+        <button class="sc-save-btn ds-btn ds-btn-xs ds-btn-quaternary"><span class="material-icons" style="font-size:16px;">bookmark_border</span></button>
       </div>
       <div class="sc-actions">
         <div class="sc-q">Still in the running?</div>
@@ -1477,16 +1447,16 @@ function modPeopleAlsoViewed(stage, primary) {
 function modPriceTrend(stage, primary) {
   // Show at all stages — price appreciation is a relevant signal for discovery through to decision
   const loc = data.localities[0]||getMockData(config).localities[0];
-  return `<div class="sec sec-pad">
-    <div class="ds-insight sm" style="cursor:pointer;">
-      <div class="ds-insight-head">
-        <div class="ds-insight-title-row">
-          <span class="ds-insight-icon"><span class="material-icons" style="font-size:18px;color:var(--purple);">trending_up</span></span>
-          <div class="ds-insight-title">+${loc.yoy||18}% price growth (YoY)</div>
+  return `<div class="sec">
+    <div class="price-trend">
+      <div class="pt-left">
+        <div class="pt-circle"><span class="material-icons" style="font-size:22px;color:var(--green);">trending_up</span></div>
+        <div>
+          <div class="pt-val">+${loc.yoy||18}% price growth (YoY)</div>
+          <div class="pt-lbl">Price Trends · ${esc(primary)}</div>
         </div>
-        <span class="material-icons" style="font-size:20px;color:var(--text-tertiary);">chevron_right</span>
       </div>
-      <div class="ds-insight-sub">Price Trends · ${esc(primary)}</div>
+      <span class="material-icons pt-arrow" style="color:var(--text3);">chevron_right</span>
     </div>
   </div>`;
 }
@@ -1501,7 +1471,7 @@ function modPostVisitTools(stage) {
     { icon:'🏠', name:'Home Loan Guide', desc:'Compare SBI, HDFC, ICICI rates & processing fees' },
   ];
   return `<div class="sec">
-    <div class="sec-pad" style="padding-bottom:4px;"><div class="ds-section-heading sec-title">Tools for your next step</div></div>
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">Tools for your next step</div></div>
     ${tools.map(t=>`<div class="pv-tool">
       <div class="pv-tool-icon">${t.icon}</div>
       <div class="pv-tool-info"><div class="pv-tool-name">${t.name}</div><div class="pv-tool-desc ds-heading-sub">${t.desc}</div></div>
@@ -1519,7 +1489,7 @@ function modTools(stage) {
   };
   const tools = (sets[stage]||sets[2]);
   return `<div class="sec">
-    <div class="sec-pad" style="padding-bottom:8px;"><div class="ds-section-heading sec-title">Tools &amp; Calculators</div></div>
+    <div class="sec-pad" style="padding-bottom:8px;"><div class="sec-title">Tools &amp; Calculators</div></div>
     <div class="tool-row">${tools.map(t=>`<div class="tool-card">
       <div class="tool-icon">${t.icon}</div>
       <div class="tool-name">${t.name}</div>
@@ -1571,7 +1541,7 @@ function modArticles(stage, primary, secondary) {
 function modQuickLinks() {
   const links = ['Buy Property','Rent Property','New Projects','Price Trends','EMI Calculator','Home Loans','RERA Check','Buyer Guide'];
   return `<div class="sec sec-pad">
-    <div class="sec-head" style="margin-bottom:8px;"><div class="ds-section-heading sec-title">Quick Links</div><div class="sec-link" style="font-size:11px;color:var(--text-tertiary);">Top ↑</div></div>
+    <div class="sec-head" style="margin-bottom:8px;"><div class="sec-title">Quick Links</div><div class="sec-link" style="font-size:11px;color:var(--text-tertiary);">Top ↑</div></div>
     <div class="ds-chip-group">${links.map(l=>`<div class="ds-chip ds-chip-sm">${l}</div>`).join('')}</div>
   </div>`;
 }
@@ -1584,7 +1554,8 @@ function modHelpful() {
 function propCard(p, opts) {
   opts = opts||{};
   const showNew = !!opts.showBadge;
-  const cls = opts.horizontal ? 'ds-prop-card horizontal' : 'ds-prop-card';
+  const isH = !!opts.horizontal;
+  const cls = isH ? 'ds-prop-card horizontal' : 'ds-prop-card';
   const tags = [];
   if (p.dev) tags.push(`<span class="ds-prop-card-tag">${esc(p.dev)}</span>`);
   if (p.location) tags.push(`<span class="ds-prop-card-tag">📍 ${esc(p.location)}</span>`);
@@ -1594,11 +1565,11 @@ function propCard(p, opts) {
       ${propImg(p)}
       <div class="ds-prop-card-badges">
         ${showNew ? `<span class="ds-image-tag">NEW</span>` : `<span class="ds-image-tag">🔑 RERA</span>`}
+        ${p.ready_to_move ? `<span class="ds-image-tag" style="background:rgba(22,163,74,0.82);">RTM</span>` : ''}
       </div>
       <button class="ds-shortlist ds-prop-card-shortlist"><span class="material-icons">favorite_border</span></button>
       <div class="ds-prop-card-possession">
         <span>${esc(p.status||(p.ready_to_move?'Ready to move':'Under Construction'))}</span>
-        <span class="ds-image-tag" style="position:static;${p.ready_to_move?'':'background:rgba(120,80,0,0.75);'}">${p.ready_to_move?'RTM':'UC'}</span>
       </div>
     </div>
     <div class="ds-prop-card-body">
@@ -1606,14 +1577,14 @@ function propCard(p, opts) {
       <div class="ds-prop-card-subtitle">${[p.bhk, p.sqft].filter(Boolean).join(' · ')}</div>
       <div class="ds-prop-card-title-row">
         <div class="ds-prop-card-name">${esc(p.name||'Property')}</div>
-        ${showNew ? `<span class="ds-prop-card-badge-new">NEW</span>` : `<span class="ds-prop-card-badge-resale">${p.ready_to_move?'RTM':'UC'}</span>`}
+        ${showNew ? `<span class="ds-prop-card-badge-new">NEW</span>` : ''}
       </div>
-      ${tags.length ? `<div class="ds-prop-card-tags">${tags.join('')}</div>` : ''}
+      ${!isH && tags.length ? `<div class="ds-prop-card-tags">${tags.join('')}</div>` : ''}
     </div>
-    <div class="ds-prop-card-actions">
+    ${!isH ? `<div class="ds-prop-card-actions">
       <button class="ds-btn ds-btn-sm ds-btn-tertiary">Contact Seller</button>
-      <button class="ds-btn ds-btn-sm ds-btn-primary">📞 View Number</button>
-    </div>
+      <button class="ds-btn ds-btn-sm ds-btn-primary">View Number</button>
+    </div>` : ''}
   </div>`;
 }
 
@@ -1679,7 +1650,7 @@ document.getElementById('page').addEventListener('click', function(e) {
     const key = passBtn.dataset.rkey;
     propChips[key] = propChips[key] === 'pass' ? '' : 'pass';
     const active = propChips[key] === 'pass';
-    passBtn.className = 'ds-btn ds-btn-xs ds-btn-tertiary card-act' + (active ? ' active' : '');
+    passBtn.className = 'card-act' + (active ? ' active' : '');
     passBtn.textContent = active ? '✕ Removed' : '✕ Not for me';
     return;
   }
