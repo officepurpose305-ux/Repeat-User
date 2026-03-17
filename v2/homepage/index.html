@@ -704,9 +704,9 @@ function renderPage() {
 function modContextChips(stage, primary, secondary, bhk, budget, rtmLabel) {
   if (stage === 1) return null;
   const chips = [];
-  if (stage >= 2 && primary) chips.push(`<div class="ctx-chip">${esc(primary)}${bhk?' · '+esc(bhk):''}${budget?' · '+esc(budget):''} <span class="x">×</span></div>`);
-  if (secondary) chips.push(`<div class="ctx-chip">${esc(secondary)} · ${esc(bhk)} <span class="x">×</span></div>`);
-  if (rtmLabel) chips.push(`<div class="ctx-chip">${esc(rtmLabel)}</div>`);
+  if (stage >= 2 && primary) chips.push(`<div class="ds-chip ds-chip-sm active">${esc(primary)}${bhk?' · '+esc(bhk):''}${budget?' · '+esc(budget):''}<span class="ds-chip-dismiss"><span class="material-icons" style="font-size:14px;">close</span></span></div>`);
+  if (secondary) chips.push(`<div class="ds-chip ds-chip-sm active">${esc(secondary)} · ${esc(bhk)}<span class="ds-chip-dismiss"><span class="material-icons" style="font-size:14px;">close</span></span></div>`);
+  if (rtmLabel) chips.push(`<div class="ds-chip ds-chip-sm">${esc(rtmLabel)}</div>`);
   if (!chips.length) return null;
   return `<div class="context-chips">${chips.join('')}</div>`;
 }
@@ -714,8 +714,8 @@ function modContextChips(stage, primary, secondary, bhk, budget, rtmLabel) {
 function modHero(stage, city, primary, secondary) {
   if (stage === 1) {
     return `<div class="hero-s1">
-      <h1>Find your home in ${esc(city||primary)}</h1>
-      <p>Browse verified listings · Compare localities · Connect with sellers</p>
+      <h1 class="ds-page-heading">Find your home in ${esc(city||primary)}</h1>
+      <p class="ds-heading-sub" style="margin-top:8px;">Browse verified listings · Compare localities · Connect with sellers</p>
     </div>`;
   }
   return null;
@@ -736,9 +736,9 @@ function reactionHtml(key, notePlaceholder) {
   const ph = notePlaceholder || 'Any concerns? Ask about parking, floor, etc.';
   return `${note ? `<div class="prop-note-display" style="margin-top:6px;">📝 "${esc(note)}"</div>` : ''}
   <textarea class="prop-note-input hidden" data-propkey="${esc(key)}" placeholder="${esc(ph)}">${esc(note)}</textarea>
-  <div class="card-actions">
-    <div class="card-act${passed?' active':''}" data-rkey="${esc(key)}" data-rlabel="pass">${passed?'✕ Removed':'✕ Not for me'}</div>
-    <div class="card-act" data-notetoggle="${esc(key)}">✏️ Add a note</div>
+  <div class="card-actions" style="display:flex;gap:6px;margin-top:8px;">
+    <button class="ds-btn ds-btn-xs ds-btn-tertiary card-act${passed?' active':''}" data-rkey="${esc(key)}" data-rlabel="pass">${passed?'✕ Removed':'✕ Not for me'}</button>
+    <button class="ds-btn ds-btn-xs ds-btn-secondary card-act" data-notetoggle="${esc(key)}">✏️ Add a note</button>
   </div>`;
 }
 
@@ -753,27 +753,26 @@ function modContinue(stage, primary, secondary) {
     const isMostViewed = stage >= 3 && i === 0;
     const isSharedCard = i === 1 && stage >= 2; // P2: share signal on 2nd card
     const noteKey = p.name || ('prop_cont_' + i);
-    return `<div class="hprop">
-      <div class="hprop-img">
+    return `<div class="ds-prop-card horizontal">
+      <div class="ds-prop-card-img">
         ${propImg(p)}
-        ${isMostViewed
-          ? `<div style="position:absolute;top:9px;left:9px;display:flex;flex-direction:column;align-items:flex-start;gap:5px;">
-               <div class="badge-most" style="position:static;">MOST VIEWED</div>
-               <div class="badge-viewed" style="position:static;">${esc(viewedLabel)}</div>
-             </div>`
-          : `<div class="badge-viewed">${esc(viewedLabel)}</div>`
-        }
-        ${isSharedCard ? `<div class="badge-shared">📤 Shared</div>` : ''}
-        <div class="prop-heart">♡</div>
+        <div class="ds-prop-card-badges" style="right:44px;">
+          ${isMostViewed ? `<span class="ds-image-tag" style="background:var(--amber);">MOST VIEWED</span>` : ''}
+          <span class="ds-image-tag">${esc(viewedLabel)}</span>
+          ${isSharedCard ? `<span class="ds-image-tag">📤 Shared</span>` : ''}
+        </div>
+        <button class="ds-shortlist ds-prop-card-shortlist"><span class="material-icons">favorite_border</span></button>
+        <div class="ds-prop-card-possession">
+          <span>${p.ready_to_move?'Ready to move':'Under Construction'}</span>
+        </div>
       </div>
-      <div class="hprop-body">
-        <div class="hprop-price">${esc(p.price||'₹—')}</div>
-        ${isMostViewed ? `<div style="font-size:10px;color:var(--red);font-weight:700;margin-bottom:2px;">↓ ₹1L since you last viewed</div>` : ''}
-        ${isMostViewed && lastDays ? `<div style="font-size:10px;color:var(--text3);margin-bottom:2px;">🔁 Last visited ${lastDays} day${lastDays>1?'s':''} ago</div>` : ''}
-        ${isMostViewed && stage >= 3 ? `<div style="font-size:10px;color:var(--text3);margin-bottom:2px;">👨‍👩‍👧 Shared with 2 family members</div>` : ''}
-        <div class="hprop-name">${esc(p.bhk||'2 BHK')} · ${esc(p.dev||'')}</div>
-        <div class="hprop-loc">${esc(p.location||primary)}</div>
-        <div class="hprop-tag ${p.ready_to_move?'ptag rtm':'ptag uc'}" style="font-size:10px;padding:2px 6px;border-radius:4px;display:inline-block;">${p.ready_to_move?'RTM':'UC'}</div>
+      <div class="ds-prop-card-body">
+        <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+        ${isMostViewed ? `<div style="font-size:10px;color:var(--red-heart);font-weight:700;margin-bottom:2px;">↓ ₹1L since you last viewed</div>` : ''}
+        ${isMostViewed && lastDays ? `<div style="font-size:10px;color:var(--text-tertiary);margin-bottom:2px;">🔁 Last visited ${lastDays} day${lastDays>1?'s':''} ago</div>` : ''}
+        ${isMostViewed && stage >= 3 ? `<div style="font-size:10px;color:var(--text-tertiary);margin-bottom:2px;">👨‍👩‍👧 Shared with 2 family members</div>` : ''}
+        <div class="ds-prop-card-subtitle">${esc(p.bhk||'2 BHK')} · ${esc(p.dev||'')}</div>
+        <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
         ${stage === 3 ? reactionHtml(noteKey) : stage === 4 ? noteHtml(noteKey, stage) : stage === 5 ? reactionHtml(noteKey, 'How did it compare to expectations?') : ''}
       </div>
     </div>`;
@@ -808,16 +807,18 @@ function modNewInSectors(stage, primary) {
   const budget = f.budgetMax ? `₹${f.budgetMin}L–₹${f.budgetMax}L` : '';
   const sub = [bhkLabel, budget].filter(Boolean).join(' · ');
 
-  const cards = newProps.map(p => `<div class="hprop">
-    <div class="hprop-img">
+  const cards = newProps.map(p => `<div class="ds-prop-card horizontal">
+    <div class="ds-prop-card-img">
       ${propImg(p)}
-      <div class="badge-new">NEW</div><div class="prop-heart">♡</div>
+      <div class="ds-prop-card-badges"><span class="ds-image-tag blue">NEW</span></div>
+      <button class="ds-shortlist ds-prop-card-shortlist"><span class="material-icons">favorite_border</span></button>
+      <div class="ds-prop-card-possession"><span>New Launch</span></div>
     </div>
-    <div class="hprop-body">
-      <div class="hprop-price">${esc(p.price)}</div>
-      <div class="hprop-name">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
-      <div class="hprop-loc">${esc(p.location||primary)}</div>
-      ${p.lm?`<div class="hprop-tag" style="font-size:10px;color:var(--text3);">📍 ${esc(p.lm)}</div>`:''}
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
+      ${p.lm?`<div class="ds-prop-card-tags"><span class="ds-prop-card-tag">📍 ${esc(p.lm)}</span></div>`:''}
     </div>
   </div>`).join('');
   return `<div class="sec">
@@ -834,10 +835,18 @@ function modStaleLocationNudge(stage, secondary, lastDays) {
   if (!secondary || !lastDays || lastDays < 2) return null;
   const timeLabel = lastDays >= 7 ? `${Math.round(lastDays/7)} week${lastDays>=14?'s':''} ago` : `${lastDays} days ago`;
   return `<div class="sec sec-pad">
-    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;">You were looking in <b>${esc(secondary)}</b> ${timeLabel}. Still want recommendations for that?</div>
+    <div class="ds-insight sm" style="margin-bottom:12px;">
+      <div class="ds-insight-head">
+        <div class="ds-insight-title-row">
+          <span class="ds-insight-icon">🔁</span>
+          <div class="ds-insight-title">You were looking in ${esc(secondary)} ${timeLabel}</div>
+        </div>
+      </div>
+      <div class="ds-insight-sub">Still want recommendations for that area?</div>
+    </div>
     <div style="display:flex;gap:8px;">
-      <div class="yn-btn yn-yes">Yes, keep showing</div>
-      <div class="yn-btn yn-no">No</div>
+      <button class="ds-btn ds-btn-sm ds-btn-primary">Yes, keep showing</button>
+      <button class="ds-btn ds-btn-sm ds-btn-tertiary">No</button>
     </div>
   </div>`;
 }
@@ -859,17 +868,20 @@ function modLocalitySuggestions(stage, primary, secondary) {
   </div>`).join('');
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div class="sec-head"><div class="sec-title">Localities that match your search</div><div class="sec-link">All localities →</div></div>
-      <div class="sec-sub">Based on budget and preferences in ${esc(primary)}</div>
+      <div class="sec-head"><div class="ds-section-heading sec-title">Localities that match your search</div><div class="sec-link">All localities →</div></div>
+      <div class="ds-heading-sub sec-sub">Based on budget and preferences in ${esc(primary)}</div>
     </div>
     <div class="hscroll" style="padding-bottom:12px;">${cards}</div>
-    <div style="padding:6px 14px 0;font-size:13px;font-weight:700;color:var(--text);">What matters most in your daily life?<br><span style="font-size:12px;color:var(--text3);font-weight:400;">We'll prioritise localities that match</span></div>
+    <div style="padding:6px 14px 0;">
+      <div class="ds-subsection-heading">What matters most in your daily life?</div>
+      <div class="ds-heading-sub">We'll prioritise localities that match</div>
+    </div>
     <div class="pref-row">
-      <div class="pref-chip active">🚇 Metro</div>
-      <div class="pref-chip">🏥 Hospital</div>
-      <div class="pref-chip">🏫 School</div>
-      <div class="pref-chip">🛒 Marketplace</div>
-      <div class="pref-add">+ Add a landmark</div>
+      <div class="ds-chip ds-chip-sm active">🚇 Metro</div>
+      <div class="ds-chip ds-chip-sm">🏥 Hospital</div>
+      <div class="ds-chip ds-chip-sm">🏫 School</div>
+      <div class="ds-chip ds-chip-sm">🛒 Marketplace</div>
+      <div class="ds-chip ds-chip-sm"><span class="material-icons" style="font-size:14px;">add</span> Add landmark</div>
     </div>
     <div class="divider" style="margin:4px 0 0;"></div>
   </div>`;
@@ -916,10 +928,10 @@ function modConsiderationSet(stage) {
     { label:'Interested in New Launches', sub:'Best prices, full unit choice', sel:false },
   ];
   return `<div class="sec">
-    <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">What type of property are you open to?</div></div>
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="ds-section-heading sec-title">What type of property are you open to?</div></div>
     ${opts.map(o=>`<div class="consid-option">
-      <div class="consid-radio${o.sel?' sel':''}"></div>
-      <div><div class="consid-label">${o.label}</div><div class="consid-sub">${o.sub}</div></div>
+      <div class="ds-radio${o.sel?' checked':''}"></div>
+      <div><div class="consid-label">${o.label}</div><div class="consid-sub ds-heading-sub">${o.sub}</div></div>
     </div>`).join('')}
   </div>`;
 }
@@ -978,7 +990,7 @@ function modHeadToHead(stage, primary, secondary) {
         </tbody>
       </table>
     </div>
-    <div class="helpful-row"><span>Is this helpful?</span><div class="helpful-btns"><div class="helpful-btn">👍 Yes</div><div class="helpful-btn">👎 No</div></div></div>
+    <div class="helpful-row"><span>Is this helpful?</span><div class="helpful-btns"><button class="ds-btn ds-btn-xs ds-btn-secondary"><span class="material-icons" style="font-size:14px;">thumb_up</span> Yes</button><button class="ds-btn ds-btn-xs ds-btn-tertiary"><span class="material-icons" style="font-size:14px;">thumb_down</span> No</button></div></div>
   </div>`;
 }
 
@@ -1009,12 +1021,18 @@ function modTradeoff(stage, primary, secondary) {
   if (stage !== 3 || !secondary) return null;
   const saving = data.adjacentLocalities.length ? Math.abs(data.adjacentLocalities[0].delta||8) : 8;
   return `<div class="sec sec-pad">
-    <div class="tradeoff">
-      <div class="tradeoff-q">💡 ${esc(secondary)} saves you ~₹${saving}L but puts you 3km from metro. Worth it?</div>
-      <div class="tradeoff-btns">
-        <div class="tradeoff-btn sel">🚇 Metro first</div>
-        <div class="tradeoff-btn">₹${saving}L saving</div>
+    <div class="ds-insight" style="margin-bottom:12px;">
+      <div class="ds-insight-head">
+        <div class="ds-insight-title-row">
+          <span class="ds-insight-icon">⚖️</span>
+          <div class="ds-insight-title">${esc(secondary)} saves ~₹${saving}L but puts you 3km from metro</div>
+        </div>
       </div>
+      <div class="ds-insight-sub">Is the saving worth the commute? You decide.</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="ds-btn ds-btn-sm ds-btn-primary">🚇 Metro first</button>
+      <button class="ds-btn ds-btn-sm ds-btn-tertiary">₹${saving}L saving</button>
     </div>
   </div>`;
 }
@@ -1082,14 +1100,21 @@ function modBudgetAnchor(stage, primary) {
   const mid   = Math.round(loc.avgPsqft * 1050 / 100000);
   const prem  = Math.round(loc.avgPsqft * 1300 / 100000);
   return `<div class="sec sec-pad">
-    <div class="bn-title">2 BHKs in ${esc(primary)} typically start at ₹${entry}L</div>
-    <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Based on ₹${loc.avgPsqft.toLocaleString()}/sq ft · ${esc(loc.count||'')}</div>
-    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;">Popular budget ranges here</div>
-    <div style="display:flex;gap:7px;flex-wrap:wrap;">
-      <div class="ctx-chip">Under ₹${entry}L</div>
-      <div class="ctx-chip">₹${entry}L–₹${mid}L</div>
-      <div class="ctx-chip">₹${mid}L–₹${prem}L</div>
-      <div class="ctx-chip">₹${prem}L+</div>
+    <div class="ds-insight" style="margin-bottom:12px;">
+      <div class="ds-insight-head">
+        <div class="ds-insight-title-row">
+          <span class="ds-insight-icon">💡</span>
+          <div class="ds-insight-title">2 BHKs in ${esc(primary)} typically start at ₹${entry}L</div>
+        </div>
+      </div>
+      <div class="ds-insight-sub">Based on ₹${loc.avgPsqft.toLocaleString()}/sq ft · ${esc(loc.count||'')}</div>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">Popular budget ranges here</div>
+    <div class="ds-chip-group">
+      <div class="ds-chip ds-chip-sm">Under ₹${entry}L</div>
+      <div class="ds-chip ds-chip-sm">₹${entry}L–₹${mid}L</div>
+      <div class="ds-chip ds-chip-sm">₹${mid}L–₹${prem}L</div>
+      <div class="ds-chip ds-chip-sm">₹${prem}L+</div>
     </div>
   </div>`;
 }
@@ -1111,16 +1136,18 @@ function modBudgetFit(stage, f, primary) {
   // At S1 — city-level framing before buyer has chosen a locality
   if (stage === 1) {
     return `<div class="sec sec-pad">
-      <div class="budget-nudge">
-        <div class="bn-title">What ₹${min}L–₹${max}L gets you in ${esc(city)}</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5;">
-          At ₹${avgPsqft.toLocaleString()}/sq ft, expect <b>~${sqftMin}–${sqftMax} sq ft</b> for a ${esc(bhkLabel)} — typically a well-sized flat in ${esc(city)}.
-          ${adj ? `<br>Or consider <b>${esc(adj.name)}</b>, ${esc(adj.label)}.` : ''}
+      <div class="ds-insight" style="margin-bottom:12px;">
+        <div class="ds-insight-head">
+          <div class="ds-insight-title-row">
+            <span class="ds-insight-icon">💰</span>
+            <div class="ds-insight-title">What ₹${min}L–₹${max}L gets you in ${esc(city)}</div>
+          </div>
         </div>
-        <div class="yn-row">
-          <div class="yn-btn yn-yes">Show matching properties</div>
-          <div class="yn-btn yn-no">Adjust budget</div>
-        </div>
+        <div class="ds-insight-sub">At ₹${avgPsqft.toLocaleString()}/sq ft, expect <b>~${sqftMin}–${sqftMax} sq ft</b> for a ${esc(bhkLabel)}.${adj ? ` Or consider <b>${esc(adj.name)}</b>, ${esc(adj.label)}.` : ''}</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="ds-btn ds-btn-sm ds-btn-primary">Show matching properties</button>
+        <button class="ds-btn ds-btn-sm ds-btn-tertiary">Adjust budget</button>
       </div>
     </div>`;
   }
@@ -1134,16 +1161,18 @@ function modBudgetFit(stage, f, primary) {
       const bigger = sqft2 > sqft1 ? secondary : primary;
       const diff = Math.abs(sqft2 - sqft1);
       return `<div class="sec sec-pad">
-        <div class="budget-nudge">
-          <div class="bn-title">Your ₹${max}L goes further in ${esc(bigger)}</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5;">
-            ${esc(primary)}: ~${sqft1} sq ft &nbsp;·&nbsp; ${esc(secondary)}: ~${sqft2} sq ft<br>
-            That's <b>${diff} sq ft more</b> for the same budget in ${esc(bigger)}.
+        <div class="ds-insight" style="margin-bottom:12px;">
+          <div class="ds-insight-head">
+            <div class="ds-insight-title-row">
+              <span class="ds-insight-icon">📐</span>
+              <div class="ds-insight-title">Your ₹${max}L goes further in ${esc(bigger)}</div>
+            </div>
           </div>
-          <div class="yn-row">
-            <div class="yn-btn yn-yes">See properties in ${esc(bigger)}</div>
-            <div class="yn-btn yn-no">Compare both</div>
-          </div>
+          <div class="ds-insight-sub">${esc(primary)}: ~${sqft1} sq ft · ${esc(secondary)}: ~${sqft2} sq ft<br>That's <b>${diff} sq ft more</b> for the same budget in ${esc(bigger)}.</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="ds-btn ds-btn-sm ds-btn-primary">See properties in ${esc(bigger)}</button>
+          <button class="ds-btn ds-btn-sm ds-btn-tertiary">Compare both</button>
         </div>
       </div>`;
     }
@@ -1165,13 +1194,18 @@ function modBudgetFit(stage, f, primary) {
     cta   = 'Show me these properties';
   }
   return `<div class="sec sec-pad">
-    <div class="budget-nudge">
-      <div class="bn-title">${title}</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5;">${body}</div>
-      <div class="yn-row">
-        <div class="yn-btn yn-yes">${cta}</div>
-        <div class="yn-btn yn-no">Adjust budget</div>
+    <div class="ds-insight" style="margin-bottom:12px;">
+      <div class="ds-insight-head">
+        <div class="ds-insight-title-row">
+          <span class="ds-insight-icon">💰</span>
+          <div class="ds-insight-title">${title}</div>
+        </div>
       </div>
+      <div class="ds-insight-sub">${body}</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="ds-btn ds-btn-sm ds-btn-primary">${cta}</button>
+      <button class="ds-btn ds-btn-sm ds-btn-tertiary">Adjust budget</button>
     </div>
   </div>`;
 }
@@ -1211,8 +1245,8 @@ function modDecisionSpotlight(stage, primary) {
       <div class="social-bar" style="border-radius:var(--r-sm);margin-bottom:10px;"><span class="si">🔥</span> 12 people contacted this week</div>
       ${noteHtml(prop.name || 'spotlight_prop', 4)}
       <div class="sp-ctarow">
-        <div class="sp-cta-no">Not interested</div>
-        <div class="sp-cta-yes">📅 Visit this weekend</div>
+        <button class="ds-btn ds-btn-md ds-btn-tertiary" style="flex:1;">Not interested</button>
+        <button class="ds-btn ds-btn-md ds-btn-primary" style="flex:2;">📅 Visit this weekend</button>
       </div>
     </div>
   </div>`;
@@ -1241,22 +1275,22 @@ function modStillConsidering(stage, primary) {
           <div class="sc-name">${esc(p.bhk||'2 BHK')} · ${esc(primary)}, ${esc(p.sqft||'')}</div>
           <div class="sc-vs">${isGood?`<span class="save">${esc(delta)}</span>`:`<span class="more">${esc(delta)}</span>`}</div>
         </div>
-        <div class="sc-save-btn">Save</div>
+        <button class="ds-shortlist sm on-white sc-save-btn"><span class="material-icons">favorite_border</span></button>
       </div>
       <div class="sc-actions">
         <div class="sc-q">Still in the running?</div>
         <div class="sc-yn">
-          <div class="sc-btn yes">Yes</div>
-          <div class="sc-btn no">No</div>
-          <div class="sc-btn det">Details ›</div>
+          <button class="ds-btn ds-btn-xs ds-btn-primary">Yes</button>
+          <button class="ds-btn ds-btn-xs ds-btn-tertiary">No</button>
+          <button class="ds-btn ds-btn-xs ds-btn-secondary">Details ›</button>
         </div>
       </div>
       ${sharedWithFriend ? `<div class="sc-friend-q">
         <div class="sc-friend-q-text">Did your friend like the property?</div>
-        <div class="sc-friend-btns">
-          <div class="sc-friend-btn yes">Yes</div>
-          <div class="sc-friend-btn no">No</div>
-          <div class="sc-friend-btn det">Details →</div>
+        <div class="sc-friend-btns" style="display:flex;gap:8px;margin-top:6px;">
+          <button class="ds-btn ds-btn-xs ds-btn-primary">Yes</button>
+          <button class="ds-btn ds-btn-xs ds-btn-tertiary">No</button>
+          <button class="ds-btn ds-btn-xs ds-btn-secondary">Details →</button>
         </div>
       </div>` : ''}
       ${noteHtml(noteKey, 4)}
@@ -1268,11 +1302,9 @@ function modStillConsidering(stage, primary) {
       <div class="sec-sub">${stage === 5 ? 'Review the properties you visited and decide your next step' : 'Your other shortlisted properties'}</div>
     </div>
     ${cards}
-    <div style="padding:10px 14px 12px;">
-      <div style="display:flex;gap:8px;">
-        <div class="cta-btn cta-sec" style="font-size:12px;padding:10px;">⚖ Compare All</div>
-        <div class="cta-btn cta-pri" style="font-size:12px;padding:10px;">📅 Plan Weekend Visits</div>
-      </div>
+    <div style="padding:10px 14px 12px;display:flex;gap:8px;">
+      <button class="ds-btn ds-btn-sm ds-btn-tertiary" style="flex:1;">⚖ Compare All</button>
+      <button class="ds-btn ds-btn-sm ds-btn-primary" style="flex:2;">📅 Plan Weekend Visits</button>
     </div>
   </div>`;
 }
@@ -1281,12 +1313,15 @@ function modVisitPlanner(stage) {
   if (stage !== 4) return null;
   const props = data.properties.slice(1, 4);
   if (!props.length) return null;
-  const cards = props.slice(0, 3).map(p => `<div class="hprop">
-    <div class="hprop-img">${propImg(p)}<div class="prop-heart">♡</div></div>
-    <div class="hprop-body">
-      <div class="hprop-price">${esc(p.price)}</div>
-      <div class="hprop-name">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
-      <div class="hprop-loc">${esc(p.location||'')}</div>
+  const cards = props.slice(0, 3).map(p => `<div class="ds-prop-card horizontal">
+    <div class="ds-prop-card-img">
+      ${propImg(p)}
+      <button class="ds-shortlist ds-prop-card-shortlist"><span class="material-icons">favorite_border</span></button>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||'')}</div>
     </div>
   </div>`).join('');
   return `<div class="sec">
@@ -1306,13 +1341,16 @@ function modSimilarBHK(stage, bhk, primary) {
   const pool = (rawData.properties || data.properties).filter(p => !shown.has(p.name));
   const props = pool.slice(0, 3);
   if (!props.length) return null;
-  const cards = props.map(p => `<div class="hprop">
-    <div class="hprop-img">${propImg(p)}<div class="prop-heart">♡</div></div>
-    <div class="hprop-body">
-      <div class="hprop-price">${esc(p.price)}</div>
-      <div class="hprop-name">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
-      <div class="hprop-loc">${esc(p.location||primary)}</div>
-      <div class="hprop-tag ${p.ready_to_move?'ptag rtm':'ptag uc'}" style="font-size:10px;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:3px;">${p.ready_to_move?'RTM':'UC'}</div>
+  const cards = props.map(p => `<div class="ds-prop-card horizontal">
+    <div class="ds-prop-card-img">
+      ${propImg(p)}
+      <button class="ds-shortlist ds-prop-card-shortlist"><span class="material-icons">favorite_border</span></button>
+      <div class="ds-prop-card-possession"><span>${p.ready_to_move?'Ready to move':'Under Construction'}</span></div>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
     </div>
   </div>`).join('');
   return `<div class="sec">
@@ -1333,8 +1371,8 @@ function modExpertAgents(stage, primary, secondary) {
     <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">Local experts for ${esc(primary)}</div><div class="sec-sub">Highly rated agents in this area</div></div>
     ${agents.map(a=>`<div class="expert-card">
       <div class="expert-av">${a.init}</div>
-      <div class="expert-info"><div class="expert-name">${a.name}</div><div class="expert-area">${esc(a.area)}</div></div>
-      <div class="expert-btn">Contact</div>
+      <div class="expert-info"><div class="expert-name">${a.name}</div><div class="expert-area ds-heading-sub">${esc(a.area)}</div></div>
+      <button class="ds-btn ds-btn-sm ds-btn-primary"><span class="material-icons" style="font-size:14px;">call</span> Contact</button>
     </div>`).join('')}
   </div>`;
 }
@@ -1401,7 +1439,7 @@ function modNewLaunches(stage, primary) {
       </div>
       <div class="nl-details-row">${esc(nl.price)} <span class="nl-sep">|</span> <span class="nl-bhk">${esc(nl.bhk||'2, 3 BHK')}</span></div>
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:2px;"><span class="nl-rera">🔑 RERA</span><span style="font-size:12px;color:var(--text2);">${esc(nl.status||'Completion 2027')}</span></div>
-      <div class="nl-footer"><div class="nl-footer-text">🏷 First-choice units at zero brokerage</div><div class="nl-cta">View number</div></div>
+      <div class="nl-footer"><div class="nl-footer-text">🏷 First-choice units at zero brokerage</div><button class="ds-btn ds-btn-xs ds-btn-primary">View number</button></div>
     </div>
   </div>`;
 }
@@ -1410,17 +1448,19 @@ function modPeopleAlsoViewed(stage, primary) {
   if (stage < 1) return null;
   const props = data.properties.slice(stage===4?1:3, stage===4?5:6);
   if (!props.length) return null;
-  const cards = props.map((p,i)=>`<div class="hprop">
-    <div class="hprop-img">
+  const cards = props.map((p,i)=>`<div class="ds-prop-card horizontal">
+    <div class="ds-prop-card-img">
       ${propImg(p)}
-      ${i>0 ? '<div class="badge-viewed">Seen</div>' : '<div class="badge-rera" style="top:7px;left:7px;font-size:9px;padding:2px 6px;">🔑 RERA</div>'}
-      <div class="prop-heart">♡</div>
-      <div class="prop-possession" style="font-size:10px;">${esc(p.status||(p.ready_to_move?'Ready to Move':'Possession 2026'))}</div>
+      <div class="ds-prop-card-badges" style="right:44px;">
+        ${i>0 ? `<span class="ds-image-tag">Seen</span>` : `<span class="ds-image-tag">🔑 RERA</span>`}
+      </div>
+      <button class="ds-shortlist ds-prop-card-shortlist"><span class="material-icons">favorite_border</span></button>
+      <div class="ds-prop-card-possession"><span>${esc(p.status||(p.ready_to_move?'Ready to Move':'Possession 2026'))}</span></div>
     </div>
-    <div class="hprop-body">
-      <div class="hprop-price">${esc(p.price)}</div>
-      <div class="hprop-name">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
-      <div class="hprop-loc">${esc(p.location||primary)}</div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
     </div>
   </div>`).join('');
   const label = 'People like you also viewed';
@@ -1437,10 +1477,16 @@ function modPeopleAlsoViewed(stage, primary) {
 function modPriceTrend(stage, primary) {
   // Show at all stages — price appreciation is a relevant signal for discovery through to decision
   const loc = data.localities[0]||getMockData(config).localities[0];
-  return `<div class="sec">
-    <div class="price-trend">
-      <div class="pt-left"><div class="pt-circle">📈</div><div><div class="pt-val">+${loc.yoy||18}% price growth (YoY)</div><div class="pt-lbl">Price Trends · ${esc(primary)}</div></div></div>
-      <div class="pt-arrow">›</div>
+  return `<div class="sec sec-pad">
+    <div class="ds-insight sm" style="cursor:pointer;">
+      <div class="ds-insight-head">
+        <div class="ds-insight-title-row">
+          <span class="ds-insight-icon"><span class="material-icons" style="font-size:18px;color:var(--purple);">trending_up</span></span>
+          <div class="ds-insight-title">+${loc.yoy||18}% price growth (YoY)</div>
+        </div>
+        <span class="material-icons" style="font-size:20px;color:var(--text-tertiary);">chevron_right</span>
+      </div>
+      <div class="ds-insight-sub">Price Trends · ${esc(primary)}</div>
     </div>
   </div>`;
 }
@@ -1455,11 +1501,11 @@ function modPostVisitTools(stage) {
     { icon:'🏠', name:'Home Loan Guide', desc:'Compare SBI, HDFC, ICICI rates & processing fees' },
   ];
   return `<div class="sec">
-    <div class="sec-pad" style="padding-bottom:4px;"><div class="sec-title">Tools for your next step</div></div>
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="ds-section-heading sec-title">Tools for your next step</div></div>
     ${tools.map(t=>`<div class="pv-tool">
       <div class="pv-tool-icon">${t.icon}</div>
-      <div class="pv-tool-info"><div class="pv-tool-name">${t.name}</div><div class="pv-tool-desc">${t.desc}</div></div>
-      <div class="pv-tool-arr">›</div>
+      <div class="pv-tool-info"><div class="pv-tool-name">${t.name}</div><div class="pv-tool-desc ds-heading-sub">${t.desc}</div></div>
+      <span class="material-icons" style="color:var(--text-tertiary);font-size:20px;">chevron_right</span>
     </div>`).join('')}
   </div>`;
 }
@@ -1473,8 +1519,12 @@ function modTools(stage) {
   };
   const tools = (sets[stage]||sets[2]);
   return `<div class="sec">
-    <div class="sec-pad" style="padding-bottom:8px;"><div class="sec-title">Tools &amp; Calculators</div></div>
-    <div class="tool-row">${tools.map(t=>`<div class="tool-card"><div class="tool-icon">${t.icon}</div><div class="tool-name">${t.name}</div><div class="tool-desc">${t.desc}</div></div>`).join('')}</div>
+    <div class="sec-pad" style="padding-bottom:8px;"><div class="ds-section-heading sec-title">Tools &amp; Calculators</div></div>
+    <div class="tool-row">${tools.map(t=>`<div class="tool-card">
+      <div class="tool-icon">${t.icon}</div>
+      <div class="tool-name">${t.name}</div>
+      <div class="tool-desc ds-heading-sub">${t.desc}</div>
+    </div>`).join('')}</div>
     <div style="padding:8px 14px 4px;"></div>
   </div>`;
 }
@@ -1521,41 +1571,48 @@ function modArticles(stage, primary, secondary) {
 function modQuickLinks() {
   const links = ['Buy Property','Rent Property','New Projects','Price Trends','EMI Calculator','Home Loans','RERA Check','Buyer Guide'];
   return `<div class="sec sec-pad">
-    <div class="sec-head" style="margin-bottom:8px;"><div class="sec-title">Quick Links</div><div class="sec-link" style="font-size:11px;color:var(--text3);">Top ↑</div></div>
-    <div class="ql-wrap">${links.map(l=>`<div class="ql-btn">${l}</div>`).join('')}</div>
+    <div class="sec-head" style="margin-bottom:8px;"><div class="ds-section-heading sec-title">Quick Links</div><div class="sec-link" style="font-size:11px;color:var(--text-tertiary);">Top ↑</div></div>
+    <div class="ds-chip-group">${links.map(l=>`<div class="ds-chip ds-chip-sm">${l}</div>`).join('')}</div>
   </div>`;
 }
 
 function modHelpful() {
-  return `<div class="helpful-row"><span>Is this page helpful?</span><div class="helpful-btns"><div class="helpful-btn">👍 Yes</div><div class="helpful-btn">👎 No</div></div></div>`;
+  return `<div class="helpful-row"><span>Is this page helpful?</span><div class="helpful-btns"><button class="ds-btn ds-btn-xs ds-btn-secondary"><span class="material-icons" style="font-size:14px;">thumb_up</span> Yes</button><button class="ds-btn ds-btn-xs ds-btn-tertiary"><span class="material-icons" style="font-size:14px;">thumb_down</span> No</button></div></div>`;
 }
 
 // ── Shared prop card ──────────────────────────────────────────────────────────
 function propCard(p, opts) {
   opts = opts||{};
   const showNew = !!opts.showBadge;
-  const cls = opts.horizontal ? 'prop prop-h' : 'prop';
+  const cls = opts.horizontal ? 'ds-prop-card horizontal' : 'ds-prop-card';
+  const tags = [];
+  if (p.dev) tags.push(`<span class="ds-prop-card-tag">${esc(p.dev)}</span>`);
+  if (p.location) tags.push(`<span class="ds-prop-card-tag">📍 ${esc(p.location)}</span>`);
+  if (p.lm) tags.push(`<span class="ds-prop-card-tag">🚇 ${esc(p.lm)}</span>`);
   return `<div class="${cls}">
-    <div class="prop-img">
+    <div class="ds-prop-card-img">
       ${propImg(p)}
-      ${showNew ? `<div class="badge-new">NEW</div>` : `<div class="badge-rera">🔑 RERA</div>`}
-      <div class="prop-heart">♡</div>
-      <div class="prop-possession">${esc(p.status||(p.ready_to_move?'Ready to move':'Under Construction'))}</div>
-    </div>
-    <div class="prop-body">
-      <div class="prop-price">${esc(p.price||'₹—')}</div>
-      <div class="prop-price-sub">${[p.bhk, p.sqft].filter(Boolean).join(' · ')}</div>
-      <div class="prop-name">${esc(p.name||'Property')}</div>
-      <div class="prop-dev">${esc([p.dev, p.location].filter(Boolean).join(' · '))}</div>
-      <div class="prop-tags">
-        <span class="ptag ${p.ready_to_move?'rtm':'uc'}">${p.ready_to_move?'Ready to Move':'Under Construction'}</span>
-        ${p.status && !p.ready_to_move && p.status !== 'Under Construction' ? `<span class="ptag uc">${esc(p.status)}</span>` : ''}
+      <div class="ds-prop-card-badges">
+        ${showNew ? `<span class="ds-image-tag">NEW</span>` : `<span class="ds-image-tag">🔑 RERA</span>`}
       </div>
-      ${p.lm?`<div class="prop-landmark"><span>📍 ${esc(p.lm)}</span></div>`:''}
+      <button class="ds-shortlist ds-prop-card-shortlist"><span class="material-icons">favorite_border</span></button>
+      <div class="ds-prop-card-possession">
+        <span>${esc(p.status||(p.ready_to_move?'Ready to move':'Under Construction'))}</span>
+        <span class="ds-image-tag" style="position:static;${p.ready_to_move?'':'background:rgba(120,80,0,0.75);'}">${p.ready_to_move?'RTM':'UC'}</span>
+      </div>
     </div>
-    <div class="prop-footer">
-      <div class="pf-contact">Contact Seller</div>
-      <div class="pf-viewnumber">📞 View Number</div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+      <div class="ds-prop-card-subtitle">${[p.bhk, p.sqft].filter(Boolean).join(' · ')}</div>
+      <div class="ds-prop-card-title-row">
+        <div class="ds-prop-card-name">${esc(p.name||'Property')}</div>
+        ${showNew ? `<span class="ds-prop-card-badge-new">NEW</span>` : `<span class="ds-prop-card-badge-resale">${p.ready_to_move?'RTM':'UC'}</span>`}
+      </div>
+      ${tags.length ? `<div class="ds-prop-card-tags">${tags.join('')}</div>` : ''}
+    </div>
+    <div class="ds-prop-card-actions">
+      <button class="ds-btn ds-btn-sm ds-btn-tertiary">Contact Seller</button>
+      <button class="ds-btn ds-btn-sm ds-btn-primary">📞 View Number</button>
     </div>
   </div>`;
 }
@@ -1580,12 +1637,13 @@ function renderEmpty() {
 // ── Utils ─────────────────────────────────────────────────────────────────────
 function esc(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ── Heart toggle — delegate from #page ────────────────────────────────────────
+// ── Shortlist toggle — delegate from #page ────────────────────────────────────
 document.getElementById('page').addEventListener('click', function(e) {
-  const heart = e.target.closest('.prop-heart');
-  if (heart) {
-    heart.classList.toggle('saved');
-    heart.textContent = heart.classList.contains('saved') ? '♥' : '♡';
+  const btn = e.target.closest('.ds-shortlist');
+  if (btn) {
+    btn.classList.toggle('saved');
+    const icon = btn.querySelector('.material-icons');
+    if (icon) icon.textContent = btn.classList.contains('saved') ? 'favorite' : 'favorite_border';
   }
 });
 
@@ -1621,7 +1679,7 @@ document.getElementById('page').addEventListener('click', function(e) {
     const key = passBtn.dataset.rkey;
     propChips[key] = propChips[key] === 'pass' ? '' : 'pass';
     const active = propChips[key] === 'pass';
-    passBtn.className = 'card-act' + (active ? ' active' : '');
+    passBtn.className = 'ds-btn ds-btn-xs ds-btn-tertiary card-act' + (active ? ' active' : '');
     passBtn.textContent = active ? '✕ Removed' : '✕ Not for me';
     return;
   }
