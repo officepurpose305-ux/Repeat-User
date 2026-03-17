@@ -3,352 +3,689 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Design system — component showcase</title>
+  <title>Blocks Design System</title>
   <link rel="stylesheet" href="design-system.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    .showcase-page { max-width: 420px; margin: 0 auto; padding: var(--space-4); padding-bottom: 120px; }
-    .token-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-top: var(--space-2); }
-    .token-swatch { height: 40px; border-radius: var(--radius-btn); border: 1px solid var(--border); }
-    .token-name { font-size: var(--text-xs); color: var(--text-tertiary); margin-top: 4px; }
+    .showcase-page { max-width: 480px; margin: 0 auto; padding: 24px 16px 120px; }
+    .token-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+    .token-swatch { height: 36px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.08); }
+    .token-name { font-size: 10px; color: var(--text-tertiary); margin-top: 3px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+    .col { display: flex; flex-direction: column; gap: 8px; }
+    hr.ds-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+    .variant-label { font-size: 10px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; margin-top: 4px; }
+    .btn-grid { display: grid; grid-template-columns: auto auto auto auto; gap: 8px; align-items: center; }
+    .btn-grid-head { font-size: 10px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+    .size-label { font-size: 10px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.4px; margin-right: 4px; align-self: center; }
   </style>
 </head>
 <body>
-  <div class="showcase-page">
-    <h1 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);">Design system</h1>
+<div class="showcase-page">
 
-    <!-- Tokens -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">Tokens — colours</h2>
-      <div class="token-grid">
-        <div><div class="token-swatch" style="background: var(--surface);"></div><div class="token-name">surface</div></div>
-        <div><div class="token-swatch" style="background: var(--surface-alt);"></div><div class="token-name">surface-alt</div></div>
-        <div><div class="token-swatch" style="background: var(--surface-input);"></div><div class="token-name">surface-input</div></div>
-        <div><div class="token-swatch" style="background: var(--text-primary);"></div><div class="token-name">text-primary</div></div>
-        <div><div class="token-swatch" style="background: var(--blue-btn-light);"></div><div class="token-name">blue-btn-light</div></div>
-        <div><div class="token-swatch" style="background: var(--blue-btn-primary);"></div><div class="token-name">blue-btn-primary</div></div>
-        <div><div class="token-swatch" style="background: var(--blue-light);"></div><div class="token-name">blue-light</div></div>
-        <div><div class="token-swatch" style="background: var(--orange);"></div><div class="token-name">orange</div></div>
-        <div><div class="token-swatch" style="background: var(--green);"></div><div class="token-name">green</div></div>
-        <div><div class="token-swatch" style="background: var(--red);"></div><div class="token-name">red</div></div>
-      </div>
-    </section>
-
-    <!-- NavBar -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">NavBar</h2>
-      <div class="ds-navbar">
-        <button type="button" class="ds-navbar-back" aria-label="Back">←</button>
-        <input type="text" class="ds-navbar-search" placeholder="Search City / Locality...">
-        <div class="ds-navbar-actions">
-          <button type="button" class="ds-navbar-btn" aria-label="Save">♡</button>
-          <button type="button" class="ds-navbar-btn" aria-label="Share">⎘</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- StatusHeader -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">StatusHeader</h2>
-      <div class="ds-status-header">
-        <div class="ds-status-icon">⌂</div>
-        <div class="ds-status-text">
-          <div class="ds-status-title">Ready to move</div>
-          <div class="ds-status-sub">Since Jun, 2023</div>
-        </div>
-        <div class="ds-status-updates">
-          <span class="ds-status-dot"></span>
-          <span>Updates</span>
-          <span>▾</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- MetricsRow -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">MetricsRow</h2>
-      <div class="ds-metrics-row">
-        <div class="ds-metrics-cell">
-          <div class="ds-metrics-value">₹15,000 /sqft</div>
-          <div class="ds-metrics-label">Super area</div>
-        </div>
-        <div class="ds-metrics-cell">
-          <div class="ds-metrics-value">★ 3.5</div>
-          <div class="ds-metrics-label">7 reviews</div>
-        </div>
-        <div class="ds-metrics-cell">
-          <div class="ds-metrics-value">📍 Map</div>
-          <div class="ds-metrics-label">View</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TabBar -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">TabBar</h2>
-      <div class="ds-tabbar">
-        <button type="button" class="ds-tab active">⊞ Overview</button>
-        <button type="button" class="ds-tab">⌂ Properties <span class="ds-tab-badge">New</span></button>
-      </div>
-    </section>
-
-    <!-- SectionHeading + FilterPills -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">SectionHeading + FilterPills</h2>
-      <div class="ds-section-heading">
-        <div class="ds-section-title">Available units</div>
-        <div class="ds-section-engagement">🔥 36 potential buyers showed interest recently</div>
-      </div>
-      <div class="ds-filter-pills">
-        <button type="button" class="ds-pill active">2 BHK Apartment</button>
-        <button type="button" class="ds-pill">3 BHK Apartment</button>
-        <button type="button" class="ds-pill">4 BHK Apartment</button>
-      </div>
-    </section>
-
-    <!-- ListingCard -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">ListingCard (detail)</h2>
-      <div class="ds-listing-card">
-        <div class="ds-listing-card-header">
-          <div class="ds-listing-card-icon">✦</div>
-          <span class="ds-listing-card-title">New bookings</span>
-        </div>
-        <div class="ds-listing-card-meta">1,085 – 1,095 sqft (Super built-up area) ▾</div>
-        <div class="ds-listing-card-price">₹1.63 – 1.64 Cr</div>
-        <div class="ds-listing-card-meta">+ charges · ₹15,000 /sqft</div>
-        <button type="button" class="ds-listing-card-cta">View 2 property options</button>
-        <div class="ds-listing-card-footer">
-          <span>ℹ Updated 1 day ago</span>
-          <a href="#">View details</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- PropertyCard carousel -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">PropertyCard (carousel)</h2>
-      <div class="ds-section-heading">
-        <div class="ds-section-title">People like you also viewed</div>
-      </div>
-      <div style="display: flex; gap: var(--space-3); overflow-x: auto;">
-        <div class="ds-property-card">
-          <div class="ds-property-card-image">
-            <span class="ds-property-card-badge"><span class="ds-property-card-badge-check">✓</span> RERA</span>
-            <span class="ds-property-card-heart" aria-label="Save">♡</span>
-            <span class="ds-property-card-banner">Possession from Dec 2030</span>
-          </div>
-          <div class="ds-property-card-body">
-            <div class="ds-property-card-name">Project name</div>
-            <div class="ds-property-card-desc">2, 3, 4 BHK in Locality, City</div>
-            <div class="ds-property-card-price">₹ 1.81 – 3.37 Cr</div>
-          </div>
-        </div>
-        <div class="ds-property-card">
-          <div class="ds-property-card-image">
-            <span class="ds-property-card-badge"><span class="ds-property-card-badge-check">✓</span> RERA</span>
-            <span class="ds-property-card-heart" aria-label="Save">♡</span>
-            <span class="ds-property-card-banner">Possession from 2029</span>
-          </div>
-          <div class="ds-property-card-body">
-            <div class="ds-property-card-name">Another project</div>
-            <div class="ds-property-card-desc">3, 4 BHK in Locality, City</div>
-            <div class="ds-property-card-price">₹ 4.23 Cr</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SellerCards -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">SellerCards</h2>
-      <div class="ds-section-heading">
-        <div class="ds-section-title">Contact top sellers</div>
-      </div>
-      <div class="ds-seller-cards">
-        <div class="ds-seller-card">
-          <div class="ds-seller-card-badges">
-            <span class="ds-seller-badge">✓ RERA</span>
-            <span class="ds-seller-badge">✓ Advisor</span>
-          </div>
-          <div class="ds-seller-card-title">Seller name</div>
-          <div class="ds-seller-card-sub">50+ agents and advisors</div>
-          <button type="button" class="ds-seller-card-btn">View number</button>
-        </div>
-        <div class="ds-seller-card" style="background: linear-gradient(135deg, #374151 0%, #1f2937 100%);">
-          <div class="ds-seller-card-title">Another seller</div>
-          <button type="button" class="ds-seller-card-btn">View number</button>
-        </div>
-      </div>
-      <a href="#" class="ds-view-all">View all sellers →</a>
-    </section>
-
-    <!-- MapCard -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">MapCard</h2>
-      <div class="ds-map-card">
-        <div class="ds-map-area">
-          <button type="button" class="ds-map-btn">View on map</button>
-        </div>
-        <div class="ds-map-address">
-          <div>
-            <strong>Address:</strong><br>
-            Plot No 01, Sector 150, City – 201301
-          </div>
-          <a href="#">Directions</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ProsConsList -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">ProsConsList</h2>
-      <div class="ds-pros-cons">
-        <div class="ds-pros-cons-title">Pros & cons</div>
-        <ul class="ds-pros-cons-list">
-          <li><span class="ds-pros-cons-icon pro">✓</span> Temperature-controlled indoor swimming pool</li>
-          <li><span class="ds-pros-cons-icon pro">✓</span> Gated society with 24/7 security</li>
-          <li><span class="ds-pros-cons-icon con">−</span> Possession timeline is 2+ years</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- CompareSection -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">CompareSection</h2>
-      <div class="ds-section-heading">
-        <div class="ds-section-title">Compare with similar projects</div>
-      </div>
-      <input type="text" class="ds-compare-search" placeholder="Search projects to compare">
-      <div class="ds-compare-cards">
-        <div class="ds-compare-card">
-          <div class="ds-compare-card-image"></div>
-          <div class="ds-compare-card-body">
-            <div class="ds-compare-card-name">Project A</div>
-            <div class="ds-compare-card-meta">★ 3.5 · 7 reviews</div>
-            <div class="ds-compare-card-meta">2, 3, 4 BHK · Locality, City</div>
-            <div class="ds-compare-card-meta">Ready to move · Completed Jun 2023</div>
-            <div class="ds-compare-card-price-block">
-              <div class="label">2 BHK · 1085 sq.ft.</div>
-              <div class="value">₹1.63 Cr</div>
-              <div class="sub">₹14.6k/sq ft</div>
-            </div>
-          </div>
-        </div>
-        <div class="ds-compare-card">
-          <div class="ds-compare-card-image"></div>
-          <div class="ds-compare-card-body">
-            <div class="ds-compare-card-name">Project B</div>
-            <div class="ds-compare-card-meta">★ 3.8 · 9 reviews</div>
-            <div class="ds-compare-card-meta">2, 3 BHK · Locality, City</div>
-            <div class="ds-compare-card-meta">Ready to move</div>
-            <div class="ds-compare-card-price-block">
-              <div class="label">2 BHK · 1195 sq.ft.</div>
-              <div class="value">₹1.38 Cr</div>
-              <div class="sub">₹12.3k/sq ft</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SegmentedControl -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">SegmentedControl</h2>
-      <div class="ds-section-heading">
-        <div class="ds-section-title">Projects by builder</div>
-      </div>
-      <div class="ds-segmented">
-        <button type="button" class="active">Ongoing</button>
-        <button type="button">Upcoming</button>
-        <button type="button">Delivered</button>
-      </div>
-    </section>
-
-    <!-- ProjectListCard -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">ProjectListCard</h2>
-      <div class="ds-project-list-card">
-        <div class="ds-project-list-card-thumb"></div>
-        <div class="ds-project-list-card-body">
-          <div class="ds-project-list-card-name">Project name</div>
-          <div class="ds-project-list-card-type">3, 4 BHK Apartment</div>
-          <div class="ds-project-list-card-price">₹ 5.25 – 15.64 Cr</div>
-          <div class="ds-project-list-card-divider"></div>
-          <div class="ds-project-list-card-footer">
-            <span>Sector 107, City</span>
-            <span>Possession: Sep 2029</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FeedbackPrompt -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">FeedbackPrompt</h2>
-      <div class="ds-feedback">
-        <div class="ds-feedback-q">Is this helpful?</div>
-        <div class="ds-feedback-btns">
-          <button type="button">👍 Yes</button>
-          <button type="button">👎 No</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- NewLaunchesBlock -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">NewLaunchesBlock</h2>
-      <div class="ds-new-launches">
-        <div class="ds-new-launches-head">
-          <div class="ds-new-launches-icon">✦</div>
-          <div class="ds-section-title">Newly launched projects</div>
-        </div>
-        <div class="ds-new-launches-sub">Best prices · Unit of choice · Easy payment plans</div>
-        <div class="ds-new-launches-cards">
-          <div class="ds-new-launch-card">
-            <div class="ds-new-launch-banner">✦ New launch ✦</div>
-            <div class="thumb"></div>
-            <div class="name">Project name</div>
-            <div class="location">Sector 97, City</div>
-            <div class="price">₹6.14 – 20.77 Cr</div>
-            <div class="ds-listing-card-meta">3, 4, 5 BHK · Completion Jul 2030</div>
-            <button type="button" class="ds-btn">View number</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- InterestingReadsBlock -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">InterestingReadsBlock</h2>
-      <div class="ds-section-heading">
-        <div class="ds-section-title">Interesting reads</div>
-      </div>
-      <div class="ds-reads-cards">
-        <div class="ds-read-card">
-          <div class="ds-read-card-image"></div>
-          <div class="ds-read-card-body">
-            <div class="ds-read-card-title">Reasons to invest in Locality, City</div>
-            <div class="ds-read-card-date">Nov 18, 2025</div>
-          </div>
-        </div>
-        <div class="ds-read-card">
-          <div class="ds-read-card-image"></div>
-          <div class="ds-read-card-body">
-            <div class="ds-read-card-title">Price trends and buyer guide</div>
-            <div class="ds-read-card-date">Oct 2, 2025</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BottomActionBar -->
-    <section class="ds-showcase-section">
-      <h2 class="ds-showcase-label">BottomActionBar</h2>
-      <div class="ds-action-bar">
-        <button type="button" class="ds-btn ds-btn-secondary">⬇ Brochure</button>
-        <button type="button" class="ds-btn ds-btn-primary">📞 View number</button>
-      </div>
-    </section>
+  <div style="margin-bottom: 32px;">
+    <div class="ds-page-heading">Blocks Design System</div>
+    <div class="ds-heading-sub">99acres component library — v2.0</div>
   </div>
+
+  <!-- ── TOKENS ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Tokens — Colours</div>
+    <div class="token-grid">
+      <div><div class="token-swatch" style="background:#2563eb"></div><div class="token-name">blue</div></div>
+      <div><div class="token-swatch" style="background:#dbeafe"></div><div class="token-name">blue-light</div></div>
+      <div><div class="token-swatch" style="background:#6c30d4"></div><div class="token-name">purple</div></div>
+      <div><div class="token-swatch" style="background:#ede9fe"></div><div class="token-name">purple-light</div></div>
+      <div><div class="token-swatch" style="background:#111111"></div><div class="token-name">text-primary</div></div>
+      <div><div class="token-swatch" style="background:#555555"></div><div class="token-name">text-secondary</div></div>
+      <div><div class="token-swatch" style="background:#999999"></div><div class="token-name">text-tertiary</div></div>
+      <div><div class="token-swatch" style="background:#f0f0f0;border:1px solid #ddd"></div><div class="token-name">surface-input</div></div>
+      <div><div class="token-swatch" style="background:#16a34a"></div><div class="token-name">green</div></div>
+      <div><div class="token-swatch" style="background:#10b981"></div><div class="token-name">green-toggle</div></div>
+      <div><div class="token-swatch" style="background:#dc2626"></div><div class="token-name">red</div></div>
+      <div><div class="token-swatch" style="background:#e84040"></div><div class="token-name">red-heart</div></div>
+      <div><div class="token-swatch" style="background:#f59e0b"></div><div class="token-name">orange</div></div>
+      <div><div class="token-swatch" style="background:#ffffff;border:1px solid #ddd"></div><div class="token-name">surface</div></div>
+      <div><div class="token-swatch" style="background:#f5f5f5;border:1px solid #ddd"></div><div class="token-name">surface-alt</div></div>
+      <div><div class="token-swatch" style="background:#f8f8f8;border:1px solid #ddd"></div><div class="token-name">page-bg</div></div>
+    </div>
+  </section>
+
+  <!-- ── HEADING ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Heading</div>
+    <div class="ds-heading-block">
+      <div class="ds-page-heading">Page Heading</div>
+      <div class="ds-heading-sub">Write your subtext here</div>
+    </div>
+    <div class="ds-heading-block">
+      <div class="ds-section-heading">Section Heading</div>
+      <div class="ds-heading-sub">Write your subtext here</div>
+    </div>
+    <div class="ds-heading-block">
+      <div class="ds-subsection-heading">Subsection Heading</div>
+      <div class="ds-heading-sub">Write your subtext here</div>
+    </div>
+  </section>
+
+  <!-- ── BUTTONS ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Buttons — Brand Blue</div>
+
+    <!-- Header row -->
+    <div style="display:grid;grid-template-columns:48px 1fr 1fr 1fr 1fr;gap:8px;margin-bottom:4px;">
+      <div></div>
+      <div class="btn-grid-head">Primary</div>
+      <div class="btn-grid-head">Secondary</div>
+      <div class="btn-grid-head">Tertiary</div>
+      <div class="btn-grid-head">Quaternary</div>
+    </div>
+
+    <!-- Large -->
+    <div style="display:grid;grid-template-columns:48px 1fr 1fr 1fr 1fr;gap:8px;margin-bottom:8px;align-items:center;">
+      <div class="size-label">Large</div>
+      <button class="ds-btn ds-btn-primary ds-btn-lg" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-secondary ds-btn-lg" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-tertiary ds-btn-lg" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-quaternary ds-btn-lg" style="width:100%">Label</button>
+    </div>
+    <!-- Medium -->
+    <div style="display:grid;grid-template-columns:48px 1fr 1fr 1fr 1fr;gap:8px;margin-bottom:8px;align-items:center;">
+      <div class="size-label">Med</div>
+      <button class="ds-btn ds-btn-primary ds-btn-md" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-secondary ds-btn-md" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-tertiary ds-btn-md" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-quaternary ds-btn-md" style="width:100%">Label</button>
+    </div>
+    <!-- Small -->
+    <div style="display:grid;grid-template-columns:48px 1fr 1fr 1fr 1fr;gap:8px;margin-bottom:8px;align-items:center;">
+      <div class="size-label">Small</div>
+      <button class="ds-btn ds-btn-primary ds-btn-sm" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-secondary ds-btn-sm" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-tertiary ds-btn-sm" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-quaternary ds-btn-sm" style="width:100%">Label</button>
+    </div>
+    <!-- XSmall -->
+    <div style="display:grid;grid-template-columns:48px 1fr 1fr 1fr 1fr;gap:8px;margin-bottom:8px;align-items:center;">
+      <div class="size-label">XSm</div>
+      <button class="ds-btn ds-btn-primary ds-btn-xs" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-secondary ds-btn-xs" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-tertiary ds-btn-xs" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-quaternary ds-btn-xs" style="width:100%">Label</button>
+    </div>
+    <!-- States -->
+    <div class="variant-label">States</div>
+    <div class="row">
+      <button class="ds-btn ds-btn-primary ds-btn-md" disabled>Disabled</button>
+      <button class="ds-btn ds-btn-primary ds-btn-md ds-btn-loading">Loading</button>
+      <button class="ds-btn ds-btn-primary ds-btn-md">
+        <span class="material-icons" style="font-size:18px;">call</span> With icon
+      </button>
+    </div>
+
+    <hr class="ds-divider">
+    <div class="ds-showcase-label">Buttons — Black</div>
+
+    <div style="display:grid;grid-template-columns:48px 1fr 1fr 1fr;gap:8px;margin-bottom:4px;">
+      <div></div>
+      <div class="btn-grid-head">Primary</div>
+      <div class="btn-grid-head">Secondary</div>
+      <div class="btn-grid-head">Tertiary</div>
+    </div>
+    <div style="display:grid;grid-template-columns:48px 1fr 1fr 1fr;gap:8px;margin-bottom:8px;align-items:center;">
+      <div class="size-label">Large</div>
+      <button class="ds-btn ds-btn-black ds-btn-lg" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-black-outline ds-btn-lg" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-black-ghost ds-btn-lg" style="width:100%">Label</button>
+    </div>
+    <div style="display:grid;grid-template-columns:48px 1fr 1fr 1fr;gap:8px;margin-bottom:8px;align-items:center;">
+      <div class="size-label">Med</div>
+      <button class="ds-btn ds-btn-black ds-btn-md" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-black-outline ds-btn-md" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-black-ghost ds-btn-md" style="width:100%">Label</button>
+    </div>
+    <div style="display:grid;grid-template-columns:48px 1fr 1fr 1fr;gap:8px;align-items:center;">
+      <div class="size-label">Small</div>
+      <button class="ds-btn ds-btn-black ds-btn-sm" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-black-outline ds-btn-sm" style="width:100%">Label</button>
+      <button class="ds-btn ds-btn-black-ghost ds-btn-sm" style="width:100%">Label</button>
+    </div>
+  </section>
+
+  <!-- ── CHIP SELECTOR ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Chip Selector</div>
+
+    <div class="variant-label">Multi select — Medium</div>
+    <div class="ds-chip-group" style="margin-bottom:14px;">
+      <button class="ds-chip ds-chip-md">
+        <span class="material-icons" style="font-size:16px;">add</span> Label
+      </button>
+      <button class="ds-chip ds-chip-md active">
+        Label <span class="ds-chip-dismiss"><span class="material-icons" style="font-size:16px;">close</span></span>
+      </button>
+      <button class="ds-chip ds-chip-md">
+        <span class="material-icons" style="font-size:16px;">add</span> Label
+      </button>
+    </div>
+
+    <div class="variant-label">Single select — Small</div>
+    <div class="ds-chip-group" style="margin-bottom:14px;">
+      <button class="ds-chip ds-chip-sm">Label</button>
+      <button class="ds-chip ds-chip-sm active">Label</button>
+      <button class="ds-chip ds-chip-sm">Label</button>
+      <button class="ds-chip ds-chip-sm">Label</button>
+    </div>
+
+    <div class="variant-label">XSmall</div>
+    <div class="ds-chip-group">
+      <button class="ds-chip ds-chip-xs">Label</button>
+      <button class="ds-chip ds-chip-xs active">Label</button>
+      <button class="ds-chip ds-chip-xs">Label</button>
+    </div>
+  </section>
+
+  <!-- ── CHIP TABS ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Chip Tabs</div>
+    <div class="ds-chip-tabs">
+      <button class="ds-chip-tab active">Label</button>
+      <button class="ds-chip-tab">Label</button>
+      <button class="ds-chip-tab">
+        <span class="material-icons" style="font-size:16px;">person</span> Label
+      </button>
+      <button class="ds-chip-tab">
+        Label <span class="material-icons" style="font-size:16px;">person</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ── SEGMENT CONTROL ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Segment Control</div>
+    <div class="col">
+      <div>
+        <div class="variant-label">Label only</div>
+        <div class="ds-segment">
+          <button class="ds-segment-btn active">Label</button>
+          <button class="ds-segment-btn">Label</button>
+          <button class="ds-segment-btn">Label</button>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Icon + Label</div>
+        <div class="ds-segment">
+          <button class="ds-segment-btn active">
+            <span class="material-icons" style="font-size:16px;">home</span> Label
+          </button>
+          <button class="ds-segment-btn">
+            <span class="material-icons" style="font-size:16px;">apartment</span> Label
+          </button>
+          <button class="ds-segment-btn">
+            <span class="material-icons" style="font-size:16px;">map</span> Label
+          </button>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Small — Buy / Rent</div>
+        <div class="ds-segment sm">
+          <button class="ds-segment-btn active">Buy</button>
+          <button class="ds-segment-btn">Rent</button>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Small — Property type</div>
+        <div class="ds-segment sm">
+          <button class="ds-segment-btn active">Apartment</button>
+          <button class="ds-segment-btn">Builder Floor</button>
+          <button class="ds-segment-btn">Plot</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SEARCH BOX ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Search Box</div>
+    <div class="col">
+      <div>
+        <div class="variant-label">With back button — Default</div>
+        <div class="ds-search">
+          <span class="ds-search-back"><span class="material-icons" style="font-size:20px;">chevron_left</span></span>
+          <span class="ds-search-icon"><span class="material-icons" style="font-size:18px;">search</span></span>
+          <input type="text" placeholder='Search "Noida"'>
+          <div class="ds-search-actions">
+            <button class="ds-search-action-btn"><span class="material-icons" style="font-size:18px;">my_location</span></button>
+            <button class="ds-search-action-btn"><span class="material-icons" style="font-size:18px;">mic</span></button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Without back button — Enabled</div>
+        <div class="ds-search">
+          <span class="ds-search-icon"><span class="material-icons" style="font-size:18px;">search</span></span>
+          <input type="text" placeholder="City/Locality/Project/Landmark">
+          <div class="ds-search-actions">
+            <button class="ds-search-action-btn"><span class="material-icons" style="font-size:18px;">my_location</span></button>
+            <button class="ds-search-action-btn"><span class="material-icons" style="font-size:18px;">mic</span></button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Typing — Multiselect</div>
+        <div class="ds-search">
+          <span class="ds-search-back"><span class="material-icons" style="font-size:20px;">chevron_left</span></span>
+          <input type="text" value="Sector 150, N">
+          <button class="ds-search-clear"><span class="material-icons" style="font-size:14px;">close</span></button>
+        </div>
+        <div class="ds-search-tags">
+          <div class="ds-search-tag">
+            Sector 44 <span class="material-icons" style="font-size:14px;cursor:pointer;opacity:0.55;">close</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Filled</div>
+        <div class="ds-search">
+          <span class="ds-search-back"><span class="material-icons" style="font-size:20px;">chevron_left</span></span>
+          <input type="text" value="Sector 44, Noida" readonly>
+          <button class="ds-search-clear"><span class="material-icons" style="font-size:14px;">close</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SELECTION ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Selection — Checkbox / Radio / Toggle</div>
+    <div class="col">
+      <div>
+        <div class="variant-label">Checkbox — Default / Checked / Intermediate / Disabled / Error</div>
+        <div class="row">
+          <div class="ds-checkbox"></div>
+          <div class="ds-checkbox checked"></div>
+          <div class="ds-checkbox intermediate"></div>
+          <div class="ds-checkbox disabled"></div>
+          <div class="ds-checkbox error"></div>
+          <div class="ds-checkbox error checked"></div>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Radio — Default / Selected / Disabled / Error</div>
+        <div class="row">
+          <div class="ds-radio"></div>
+          <div class="ds-radio checked"></div>
+          <div class="ds-radio disabled"></div>
+          <div class="ds-radio error checked"></div>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Toggle — Off / On / Disabled / Error</div>
+        <div class="row">
+          <div class="ds-toggle"></div>
+          <div class="ds-toggle on"></div>
+          <div class="ds-toggle disabled"></div>
+          <div class="ds-toggle on disabled"></div>
+          <div class="ds-toggle error on"></div>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">With label</div>
+        <div class="ds-selection-row" style="margin-bottom:8px;">
+          <div class="ds-checkbox checked"></div>
+          <span class="ds-selection-label">Ready to move</span>
+        </div>
+        <div class="ds-selection-row">
+          <div class="ds-toggle on"></div>
+          <span class="ds-selection-label">Show only verified listings</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SHORTLIST ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Shortlist</div>
+
+    <div class="variant-label">On Images</div>
+    <div class="row" style="margin-bottom:12px;">
+      <div style="background:linear-gradient(135deg,#8099b0,#6080a0);padding:16px;border-radius:12px;display:flex;gap:12px;align-items:center;">
+        <div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.7);margin-bottom:6px;">Default</div>
+          <div class="ds-shortlist">
+            <span class="material-icons">favorite_border</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.7);margin-bottom:6px;">Saved</div>
+          <div class="ds-shortlist saved">
+            <span class="material-icons">favorite</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.7);margin-bottom:6px;">Sm Default</div>
+          <div class="ds-shortlist sm">
+            <span class="material-icons">favorite_border</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.7);margin-bottom:6px;">Sm Saved</div>
+          <div class="ds-shortlist sm saved">
+            <span class="material-icons">favorite</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant-label">On White Background</div>
+    <div class="row">
+      <div style="background:#fff;padding:16px;border-radius:12px;display:flex;gap:12px;align-items:center;border:1px solid #eee;">
+        <div>
+          <div style="font-size:10px;color:#999;margin-bottom:6px;">Default</div>
+          <div class="ds-shortlist on-white">
+            <span class="material-icons">favorite_border</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#999;margin-bottom:6px;">Saved</div>
+          <div class="ds-shortlist on-white saved">
+            <span class="material-icons">favorite</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#999;margin-bottom:6px;">Sm Default</div>
+          <div class="ds-shortlist on-white sm">
+            <span class="material-icons">favorite_border</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#999;margin-bottom:6px;">Sm Saved</div>
+          <div class="ds-shortlist on-white sm saved">
+            <span class="material-icons">favorite</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── IMAGE TAG ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Image Tag</div>
+    <div class="col">
+      <div class="variant-label">Default</div>
+      <div class="ds-image-tags">
+        <div class="ds-image-tag">
+          <span class="material-icons" style="font-size:13px;">verified</span> RERA
+        </div>
+        <div class="ds-image-tag">Zero Brokerage</div>
+        <div class="ds-image-tag">Grade A</div>
+      </div>
+      <div class="variant-label">Priority (amber icon)</div>
+      <div class="ds-image-tags">
+        <div class="ds-image-tag">
+          <span class="material-icons" style="font-size:13px;color:#fbbf24;">local_offer</span> 3 Offers
+        </div>
+        <div class="ds-image-tag">
+          <span class="material-icons" style="font-size:13px;">groups</span> 3 people contacted this week
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INSIGHT ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Insight Card</div>
+    <div class="col">
+      <div>
+        <div class="variant-label">Medium (title + subtext)</div>
+        <div class="ds-insight">
+          <div class="ds-insight-head">
+            <div class="ds-insight-title-row">
+              <span class="ds-insight-icon material-icons">auto_awesome</span>
+              <span class="ds-insight-title">Affordable locality in the city</span>
+            </div>
+            <div class="ds-insight-dots">
+              <div class="ds-insight-dot"></div>
+              <div class="ds-insight-dot active"></div>
+              <div class="ds-insight-dot"></div>
+            </div>
+          </div>
+          <div class="ds-insight-sub">Excellent connectivity with Delhi via DND and Metro Line</div>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">Small</div>
+        <div class="ds-insight sm">
+          <div class="ds-insight-head">
+            <div class="ds-insight-title-row">
+              <span class="ds-insight-icon material-icons">auto_awesome</span>
+              <span class="ds-insight-title">Title</span>
+            </div>
+          </div>
+          <div class="ds-insight-sub">Write subtext here</div>
+        </div>
+      </div>
+      <div>
+        <div class="variant-label">XSmall (title only)</div>
+        <div class="ds-insight xs">
+          <div class="ds-insight-title-row">
+            <span class="ds-insight-icon material-icons">auto_awesome</span>
+            <span class="ds-insight-title">Title</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROPERTY CARD ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Property Card</div>
+
+    <div class="variant-label">Full card</div>
+    <div class="ds-prop-card" style="margin-bottom:16px;">
+      <div class="ds-prop-card-img">
+        <div class="ds-prop-card-badges">
+          <div class="ds-image-tag"><span class="material-icons" style="font-size:13px;">verified</span> RERA</div>
+          <div class="ds-image-tag">Zero Brokerage</div>
+        </div>
+        <div class="ds-prop-card-shortlist">
+          <div class="ds-shortlist"><span class="material-icons">favorite_border</span></div>
+        </div>
+        <div class="ds-prop-card-social-proof">
+          <span class="material-icons" style="font-size:14px;">groups</span>
+          3 people already contacted in past week
+        </div>
+        <div class="ds-prop-card-possession">
+          <span>Under Construction · Completion Jun 2025</span>
+          <span>1/16</span>
+        </div>
+      </div>
+      <div class="ds-prop-card-body">
+        <div class="ds-prop-card-title-row">
+          <span class="ds-prop-card-name">Godrej Palm Retreat</span>
+          <span class="ds-prop-card-badge-new">New Booking</span>
+        </div>
+        <div class="ds-prop-card-subtitle">
+          3 BHK Apartment · Sector 121, Noida
+          <span class="ds-prop-card-rating">
+            <span class="material-icons" style="font-size:13px;">star</span> 4.3
+          </span>
+          <div class="ds-image-tag" style="font-size:10px;height:20px;padding:0 7px;">
+            <span class="material-icons" style="font-size:11px;">verified</span> RERA
+          </div>
+        </div>
+        <div class="ds-prop-card-price">₹1.25 Cr</div>
+        <div class="ds-prop-card-price-detail">
+          <span>₹8,500 /sqft</span>
+          <span>1,000 sqft · Super built-up</span>
+        </div>
+        <div class="ds-prop-card-tags">
+          <div class="ds-prop-card-tag">
+            <span class="material-icons" style="font-size:12px;">trending_up</span> 12% ROI
+          </div>
+          <div class="ds-prop-card-tag">10:90 Payment Plan</div>
+          <div class="ds-prop-card-tag">12% Lease Guarantee</div>
+        </div>
+        <div class="ds-prop-card-highlights">
+          Highlights: <strong>School at 5 mins walk</strong> · 5 Star Fitness Centre
+        </div>
+      </div>
+      <div class="ds-prop-card-actions">
+        <button class="ds-btn ds-btn-secondary ds-btn-md">
+          <span class="material-icons" style="font-size:16px;">download</span> Brochure
+        </button>
+        <button class="ds-btn ds-btn-primary ds-btn-md">
+          <span class="material-icons" style="font-size:16px;">call</span> View number
+        </button>
+      </div>
+    </div>
+
+    <div class="variant-label">Horizontal carousel variant</div>
+    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;">
+      <div class="ds-prop-card horizontal">
+        <div class="ds-prop-card-img">
+          <div class="ds-prop-card-badges">
+            <div class="ds-image-tag"><span class="material-icons" style="font-size:12px;">verified</span> RERA</div>
+          </div>
+          <div class="ds-prop-card-shortlist">
+            <div class="ds-shortlist sm"><span class="material-icons">favorite_border</span></div>
+          </div>
+          <div class="ds-prop-card-possession"><span>Possession Dec 2026</span></div>
+        </div>
+        <div class="ds-prop-card-body">
+          <div class="ds-prop-card-name" style="font-size:14px;">ATS Tourmaline</div>
+          <div class="ds-prop-card-subtitle">2 BHK · Sector 109</div>
+          <div class="ds-prop-card-price" style="font-size:18px;">₹88L</div>
+        </div>
+      </div>
+      <div class="ds-prop-card horizontal">
+        <div class="ds-prop-card-img">
+          <div class="ds-prop-card-badges">
+            <div class="ds-image-tag"><span class="material-icons" style="font-size:12px;">verified</span> RERA</div>
+          </div>
+          <div class="ds-prop-card-shortlist">
+            <div class="ds-shortlist sm"><span class="material-icons">favorite_border</span></div>
+          </div>
+          <div class="ds-prop-card-possession"><span>Ready to move</span></div>
+        </div>
+        <div class="ds-prop-card-body">
+          <div class="ds-prop-card-name" style="font-size:14px;">Godrej Meridien</div>
+          <div class="ds-prop-card-subtitle">3 BHK · Sector 106</div>
+          <div class="ds-prop-card-price" style="font-size:18px;">₹1.44 Cr</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRICE INSIGHT CARD ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Price Insight Card</div>
+    <div class="ds-price-insight">
+      <div class="ds-price-insight-header">
+        <div>
+          <div class="ds-price-insight-title">Price insights</div>
+          <div class="ds-price-insight-sub">in Sector 150 Noida</div>
+        </div>
+        <div class="ds-segment sm">
+          <button class="ds-segment-btn active">Buy</button>
+          <button class="ds-segment-btn">Rent</button>
+        </div>
+      </div>
+      <div class="ds-price-insight-body">
+        Sector 150, Noida average property price/sqft for apart... <a href="#">more</a>
+      </div>
+      <div class="ds-insight">
+        <div class="ds-insight-title-row">
+          <span class="ds-insight-icon material-icons">auto_awesome</span>
+          <span class="ds-insight-title">Affordable locality in the city</span>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <div class="ds-segment sm">
+          <button class="ds-segment-btn active">Apartment</button>
+          <button class="ds-segment-btn">Builder Floor</button>
+          <button class="ds-segment-btn">Plot</button>
+        </div>
+      </div>
+      <div class="ds-price-insight-stat">
+        <div class="ds-price-insight-stat-label">Avg. Property Rate</div>
+        <div class="ds-price-insight-stat-row">
+          <div>
+            <div class="ds-price-insight-value">₹11,050<span>/sqft</span></div>
+            <div class="ds-price-insight-stat-sub">Based on carpet area</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="ds-price-insight-change">
+              <span class="material-icons" style="font-size:16px;">arrow_upward</span> 25%
+            </div>
+            <div class="ds-price-insight-change-period">(1Y)</div>
+          </div>
+        </div>
+        <button class="ds-price-insight-cta">
+          View price trends &amp; compare
+          <span class="material-icons" style="font-size:16px;">chevron_right</span>
+        </button>
+      </div>
+      <div style="font-size:14px;font-weight:700;margin:12px 0 8px;">Property prices</div>
+      <div class="ds-prop-price-grid">
+        <div class="ds-prop-price-cell">
+          <div class="ds-prop-price-cell-label">1 BHK Apartment</div>
+          <div class="ds-prop-price-cell-value">₹45L–1.31 Cr</div>
+          <div class="ds-prop-price-cell-sub">Price Range</div>
+          <button class="ds-prop-price-cell-cta">
+            320+ properties <span class="material-icons" style="font-size:14px;">chevron_right</span>
+          </button>
+        </div>
+        <div class="ds-prop-price-cell">
+          <div class="ds-prop-price-cell-label">2 BHK Apartment</div>
+          <div class="ds-prop-price-cell-value">₹1.05–1.5 Cr</div>
+          <div class="ds-prop-price-cell-sub">Price Range</div>
+          <button class="ds-prop-price-cell-cta">
+            320+ properties <span class="material-icons" style="font-size:14px;">chevron_right</span>
+          </button>
+        </div>
+      </div>
+      <div class="ds-feedback-row">
+        Is this helpful?
+        <button class="ds-feedback-btn">
+          <span class="material-icons" style="font-size:16px;">thumb_up</span> Yes
+        </button>
+        <button class="ds-feedback-btn">
+          <span class="material-icons" style="font-size:16px;">thumb_down</span> No
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BOTTOM NAV ── -->
+  <section class="ds-showcase-section">
+    <div class="ds-showcase-label">Bottom Nav</div>
+    <div style="position:relative;height:80px;background:var(--page-bg);border-radius:12px;overflow:hidden;">
+      <div class="ds-bottom-nav" style="position:absolute;">
+        <button class="ds-bottom-nav-item active">
+          <span class="material-icons ds-nav-icon">home</span>
+          Home
+        </button>
+        <button class="ds-bottom-nav-item">
+          <span class="material-icons ds-nav-icon">apartment</span>
+          New projects
+        </button>
+        <button class="ds-bottom-nav-item cta">
+          <span class="material-icons ds-nav-icon" style="width:36px;height:36px;background:var(--surface-alt);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border-medium);font-size:20px;">add</span>
+          Sell/Rent
+        </button>
+        <button class="ds-bottom-nav-item">
+          <span class="material-icons ds-nav-icon">favorite_border</span>
+          Shortlist
+        </button>
+        <button class="ds-bottom-nav-item">
+          <span class="material-icons ds-nav-icon">person_outline</span>
+          Profile
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>
 </body>
 </html>
