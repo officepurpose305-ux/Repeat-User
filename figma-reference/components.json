@@ -1,0 +1,857 @@
+{
+  "modules": [
+    {
+      "id": "modContextChips",
+      "name": "Context Chips",
+      "stages": [2, 3, 4, 5],
+      "description": "Horizontal scrolling row of selected location chips with dismiss buttons",
+      "data": {
+        "primary": "string",
+        "secondary": "string | null"
+      },
+      "layout": "Horizontal flex row, 12px padding, 8px gap between chips",
+      "variants": [
+        {
+          "name": "single-location",
+          "description": "One chip with primary location"
+        },
+        {
+          "name": "two-locations",
+          "description": "Two chips: primary and secondary"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Dismiss button (×)",
+          "role": "button",
+          "action": "Remove location"
+        }
+      ],
+      "tokens": ["--blue", "--text-primary", "--border", "--radius-pill"],
+      "componentClass": "ds-chip ds-chip-md active"
+    },
+    {
+      "id": "modHero",
+      "name": "Hero Section",
+      "stages": [1],
+      "description": "Blue gradient hero banner with city name, stats bar, and search hint with pulse animation",
+      "data": {
+        "city": "string",
+        "primary": "string",
+        "propertyCount": "number",
+        "budgetRange": "string"
+      },
+      "layout": "Vertical stack: heading → stats bar → search hint (white pill with pulse)",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Full hero with gradient, stats, and search hint"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Search hint",
+          "role": "button",
+          "action": "Open search"
+        }
+      ],
+      "tokens": ["--blue", "--text-primary", "--surface"],
+      "componentClass": "hero-s1"
+    },
+    {
+      "id": "modBudgetAnchor",
+      "name": "Budget Anchor",
+      "stages": [1],
+      "description": "3-column grid showing Entry/Mid/Premium price tiers with space estimates",
+      "data": {
+        "primary": "string",
+        "avgPsqft": "number",
+        "budgetMax": "number"
+      },
+      "layout": "3-column grid, each with centered text",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Three budget tier cards"
+        }
+      ],
+      "interactive": [],
+      "tokens": ["--blue-light", "--text-primary", "--text-secondary", "--radius-sm"],
+      "componentClass": "section with grid"
+    },
+    {
+      "id": "modLocalitiesRadar",
+      "name": "Localities Radar",
+      "stages": [1, 2],
+      "description": "Horizontal scrolling cards showing top 5 localities with price, growth, metro info",
+      "data": {
+        "localities": "Locality[]",
+        "city": "string",
+        "budgetMax": "number"
+      },
+      "layout": "Horizontal scroll container, fixed 160px cards, 10px gap",
+      "variants": [
+        {
+          "name": "default",
+          "description": "5 locality cards with stats"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Watch button (bell icon)",
+          "role": "button",
+          "action": "Add to watching list"
+        },
+        {
+          "element": "All localities link",
+          "role": "link",
+          "action": "View full list"
+        }
+      ],
+      "tokens": ["--surface", "--text-primary", "--text-secondary", "--green", "--border", "--radius-sm"],
+      "componentClass": "hscroll"
+    },
+    {
+      "id": "modNewLaunches",
+      "name": "New Launches Card",
+      "stages": [1],
+      "description": "Spotlight card for a featured new launch with image, price, RERA badge, and CTA",
+      "data": {
+        "property": "Property",
+        "primary": "string"
+      },
+      "layout": "Card with: icon/title row → image placeholder → details → RERA badge → footer CTA",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Single new launch card"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "View number button",
+          "role": "button",
+          "action": "Contact seller"
+        }
+      ],
+      "tokens": ["--orange", "--blue", "--text-primary", "--surface", "--radius-md"],
+      "componentClass": "nl-wrap"
+    },
+    {
+      "id": "modPriceTrend",
+      "name": "Price Trend",
+      "stages": [1, 2, 3, 4, 5],
+      "description": "Single row card with trending_up icon, YoY % growth, and locality info",
+      "data": {
+        "primary": "string",
+        "yoy": "number"
+      },
+      "layout": "Flex row: icon circle (left) → growth % + location (center) → chevron (right)",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Price trend display card"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Row",
+          "role": "button",
+          "action": "View detailed price trends"
+        }
+      ],
+      "tokens": ["--green", "--green-light", "--text-primary", "--text-secondary", "--text-tertiary"],
+      "componentClass": "price-trend card"
+    },
+    {
+      "id": "modBudgetFit",
+      "name": "Budget Fit Insight",
+      "stages": [1, 2, 3],
+      "description": "Purple insight card with lightbulb icon, headline, body text, and two CTAs",
+      "data": {
+        "budgetMax": "number",
+        "primary": "string",
+        "avgPsqft": "number"
+      },
+      "layout": "Icon + title → body text → two buttons (primary + tertiary)",
+      "variants": [
+        {
+          "name": "tight-budget",
+          "description": "Warns budget is tight"
+        },
+        {
+          "name": "premium-fit",
+          "description": "Budget fits premium segment"
+        },
+        {
+          "name": "fits-well",
+          "description": "Budget is well-positioned"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "See properties button",
+          "role": "button",
+          "action": "Apply filter"
+        },
+        {
+          "element": "Adjust budget button",
+          "role": "button",
+          "action": "Open budget editor"
+        }
+      ],
+      "tokens": ["--purple", "--purple-light", "--text-primary", "--surface"],
+      "componentClass": "ds-insight"
+    },
+    {
+      "id": "modConsiderationSet",
+      "name": "Consideration Set",
+      "stages": [2],
+      "description": "Radio button group for property type selection (Ready to move / UC / New launch)",
+      "data": {
+        "options": [
+          "Ready to move",
+          "Under construction",
+          "New launch"
+        ]
+      },
+      "layout": "Vertical flex column, 6px gap, each option is a grid (icon | label+sub | check)",
+      "variants": [
+        {
+          "name": "unselected",
+          "description": "Light blue icon bg, unselected card"
+        },
+        {
+          "name": "selected",
+          "description": "Blue bg, white icon, check_circle"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Option card",
+          "role": "radio",
+          "action": "Select property type"
+        }
+      ],
+      "tokens": ["--blue", "--blue-light", "--text-primary", "--text-secondary", "--border", "--surface"],
+      "componentClass": "consid-card (refactored to inline styles)"
+    },
+    {
+      "id": "modLocalitySuggestions",
+      "name": "Locality Suggestions",
+      "stages": [2, 3],
+      "description": "Chips row with preference filters + locality cards showing nearby options",
+      "data": {
+        "primary": "string",
+        "adjacentLocalities": "AdjacentLocality[]",
+        "budgetMin": "number",
+        "budgetMax": "number"
+      },
+      "layout": "Preference chips row (flex wrap) → locality list (flex column)",
+      "variants": [
+        {
+          "name": "default",
+          "description": "All filters available"
+        },
+        {
+          "name": "with-filters",
+          "description": "Some filters active"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Preference chip",
+          "role": "button",
+          "action": "Filter by landmark"
+        },
+        {
+          "element": "View X → button",
+          "role": "button",
+          "action": "Show properties in locality"
+        }
+      ],
+      "tokens": ["--text-primary", "--text-secondary", "--border", "--surface"],
+      "componentClass": "preference chips + locality rows"
+    },
+    {
+      "id": "modNearbyLocalities",
+      "name": "Nearby Localities",
+      "stages": [2],
+      "description": "Small property card grid showing 2-4 properties in adjacent localities",
+      "data": {
+        "adjacentLocalities": "AdjacentLocality[]",
+        "properties": "Property[]"
+      },
+      "layout": "2-column grid of small property cards (prop-sm style)",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Grid of nearby properties"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "See all X → button",
+          "role": "button",
+          "action": "View all properties"
+        }
+      ],
+      "tokens": ["--surface", "--text-primary", "--text-secondary", "--border"],
+      "componentClass": "prop-grid"
+    },
+    {
+      "id": "modContinue",
+      "name": "Continue Where You Left Off",
+      "stages": [2, 3],
+      "description": "Blue header + horizontal scroll of 2-3 property cards with time badge",
+      "data": {
+        "properties": "Property[]",
+        "lastVisitDaysAgo": "number"
+      },
+      "layout": "Header (blue gradient) → horizontal scroll container with prop cards",
+      "variants": [
+        {
+          "name": "s2",
+          "description": "S2: Basic property cards"
+        },
+        {
+          "name": "s3",
+          "description": "S3: Adds reaction buttons (pass/not-for-me)"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Shortlist heart",
+          "role": "button",
+          "action": "Toggle save"
+        },
+        {
+          "element": "Reaction button",
+          "role": "button",
+          "action": "Record feedback"
+        }
+      ],
+      "tokens": ["--blue", "--text-primary", "--surface"],
+      "componentClass": "continue-banner + hscroll"
+    },
+    {
+      "id": "modHeadToHead",
+      "name": "Head to Head Comparison",
+      "stages": [3],
+      "requires": ["secondary"],
+      "description": "Table comparing primary and secondary localities (6 rows: price, growth, metro, etc)",
+      "data": {
+        "localities": "Locality[]",
+        "budgetMax": "number",
+        "worksNear": "string | null"
+      },
+      "layout": "Semantic <table> with dark header, 6 rows, winner cells in green",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Standard 6-row comparison"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Table row",
+          "role": "presentation",
+          "action": "None (display only)"
+        }
+      ],
+      "tokens": ["--text-primary", "--green", "--border", "--surface"],
+      "componentClass": "h2h-table (refactored to semantic <table>)"
+    },
+    {
+      "id": "modNearestLandmarks",
+      "name": "Nearest Landmarks Table",
+      "stages": [3],
+      "requires": ["secondary"],
+      "description": "Table showing Metro/Hospital/School/Mall distances for both localities",
+      "data": {
+        "landmarks": "LandmarksObject"
+      },
+      "layout": "Semantic <table> with icon circles, 3 rows",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Standard landmark comparison"
+        }
+      ],
+      "interactive": [],
+      "tokens": ["--blue", "--red", "--green", "--orange", "--text-primary", "--surface"],
+      "componentClass": "lm-table"
+    },
+    {
+      "id": "modNearbyComparison",
+      "name": "Nearby Locality Comparison",
+      "stages": [2, 3],
+      "description": "2-column flex cards showing price per sqft, YoY growth, metro distance for alternatives",
+      "data": {
+        "adjacentLocalities": "AdjacentLocality[]"
+      },
+      "layout": "2-column flex row, each card with name/range → metrics",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Side-by-side locality comparison"
+        }
+      ],
+      "interactive": [],
+      "tokens": ["--text-primary", "--text-secondary", "--green", "--border", "--surface"],
+      "componentClass": "nearby-cmp"
+    },
+    {
+      "id": "modExpertAgents",
+      "name": "Expert Agents",
+      "stages": [3],
+      "description": "Two agent cards with avatar circle, name, rating, deal count, and Call button",
+      "data": {
+        "agents": [
+          {
+            "name": "string",
+            "rating": "number",
+            "deals": "number",
+            "avatarColor": "string"
+          }
+        ]
+      },
+      "layout": "Flex column of agent rows: avatar | info | call button",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Expert agent card"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Call button",
+          "role": "button",
+          "action": "Initiate call"
+        }
+      ],
+      "tokens": ["--blue", "--text-primary", "--text-secondary", "--surface"],
+      "componentClass": "expert-card"
+    },
+    {
+      "id": "modTradeoff",
+      "name": "Tradeoff Insight",
+      "stages": [3],
+      "description": "Purple insight card showing price savings vs metro distance tradeoff",
+      "data": {
+        "delta": "number",
+        "metro": "string"
+      },
+      "layout": "Icon + title → body → two CTA buttons",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Savings vs metro tradeoff"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Metro first button",
+          "role": "button",
+          "action": "Choose primary"
+        },
+        {
+          "element": "Savings button",
+          "role": "button",
+          "action": "Choose secondary"
+        }
+      ],
+      "tokens": ["--purple", "--purple-light", "--text-primary"],
+      "componentClass": "ds-insight"
+    },
+    {
+      "id": "modDecisionSpotlight",
+      "name": "Decision Spotlight",
+      "stages": [4],
+      "description": "Large featured card with orange border showing top property pick, EMI estimate, and Schedule button",
+      "data": {
+        "topProperty": "Property",
+        "estimatedEMI": "number"
+      },
+      "layout": "Orange header → image → details → EMI box → two buttons (Not interested / Schedule)",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Spotlight card for top property"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Not interested button",
+          "role": "button",
+          "action": "Mark not interested"
+        },
+        {
+          "element": "Schedule visit button",
+          "role": "button",
+          "action": "Schedule"
+        }
+      ],
+      "tokens": ["--orange", "--text-primary", "--green", "--surface"],
+      "componentClass": "spotlight"
+    },
+    {
+      "id": "modVisitPlanner",
+      "name": "Visit Planner",
+      "stages": [4],
+      "description": "Horizontal scroll of 3 property cards with overlay Schedule button",
+      "data": {
+        "properties": "Property[]"
+      },
+      "layout": "Horizontal scroll, each card has transparent Schedule button overlay",
+      "variants": [
+        {
+          "name": "default",
+          "description": "3 properties ready to schedule"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Schedule button",
+          "role": "button",
+          "action": "Add to visit schedule"
+        }
+      ],
+      "tokens": ["--surface", "--text-primary"],
+      "componentClass": "hscroll with overlay buttons"
+    },
+    {
+      "id": "modStillConsidering",
+      "name": "Still Considering",
+      "stages": [4, 5],
+      "description": "List of 3 properties with thumbnail, price delta, Yes/No/Details buttons, and note textarea",
+      "data": {
+        "properties": "Property[]",
+        "topPrice": "number"
+      },
+      "layout": "Flex column, each item: thumbnail (70×60) | info | actions",
+      "variants": [
+        {
+          "name": "s4",
+          "description": "S4: 'Still in the running?'"
+        },
+        {
+          "name": "s5",
+          "description": "S5: 'How did your visits compare?'"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Yes / No / Details buttons",
+          "role": "button",
+          "action": "Record decision"
+        },
+        {
+          "element": "Bookmark button",
+          "role": "button",
+          "action": "Save property"
+        },
+        {
+          "element": "Note textarea",
+          "role": "textbox",
+          "action": "Add notes"
+        }
+      ],
+      "tokens": ["--green", "--red", "--blue", "--text-primary", "--text-secondary"],
+      "componentClass": "sc-card (refactored to inline styles)"
+    },
+    {
+      "id": "modPostVisitTools",
+      "name": "Post-Visit Tools",
+      "stages": [5],
+      "description": "4 tool cards (EMI, Loan Guide, Stamp Duty, Possession) with colored icons and chevron",
+      "data": {
+        "tools": [
+          {
+            "name": "string",
+            "description": "string",
+            "icon": "string",
+            "iconColor": "string"
+          }
+        ]
+      },
+      "layout": "Flex column, each row: icon (40×40) | title+desc | chevron",
+      "variants": [
+        {
+          "name": "default",
+          "description": "4 post-visit tools"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Tool row",
+          "role": "button",
+          "action": "Open tool"
+        }
+      ],
+      "tokens": ["--blue", "--blue-light", "--green", "--green-light", "--orange", "--purple", "--purple-light"],
+      "componentClass": "pv-tool (refactored to inline styles)"
+    },
+    {
+      "id": "modTools",
+      "name": "Tools Grid",
+      "stages": [2, 3, 4],
+      "description": "2-column grid of tool cards (varies by stage: EMI, Loan, Price Check, etc)",
+      "data": {
+        "stage": "number"
+      },
+      "layout": "2-column grid, each with icon + label",
+      "variants": [
+        {
+          "name": "s2",
+          "description": "Price Trends, Buyer's Guide"
+        },
+        {
+          "name": "s3",
+          "description": "EMI, Home Loan, Price Check, Investment Guide"
+        },
+        {
+          "name": "s4",
+          "description": "EMI, Loan Eligibility, Price Check, Possession"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Tool card",
+          "role": "button",
+          "action": "Open tool"
+        }
+      ],
+      "tokens": ["--surface-alt", "--text-primary"],
+      "componentClass": "Grid layout with flex items"
+    },
+    {
+      "id": "modArticles",
+      "name": "Articles / Resources",
+      "stages": [2, 3, 4, 5],
+      "description": "List of article/guide rows with headline, category, and read time",
+      "data": {
+        "articles": [
+          {
+            "category": "string",
+            "title": "string",
+            "readTime": "number"
+          }
+        ]
+      },
+      "layout": "Flex column, each row: text content (no image)",
+      "variants": [
+        {
+          "name": "s2",
+          "description": "Locality insights, investment guides"
+        },
+        {
+          "name": "s3",
+          "description": "Comparison guides, landmark info"
+        },
+        {
+          "name": "s4",
+          "description": "Deal timeline, document prep"
+        },
+        {
+          "name": "s5",
+          "description": "Negotiation tips, closing checklist"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Article row",
+          "role": "link",
+          "action": "Open article"
+        }
+      ],
+      "tokens": ["--text-primary", "--text-secondary", "--border"],
+      "componentClass": "Article list rows"
+    },
+    {
+      "id": "modQuickLinks",
+      "name": "Quick Links",
+      "stages": [1, 2, 3, 4, 5],
+      "description": "Horizontal scrolling chip group with 8 quick action links",
+      "data": {
+        "links": [
+          "Buy",
+          "Rent",
+          "New Projects",
+          "Price Trends",
+          "EMI",
+          "Home Loans",
+          "RERA",
+          "Buyer Guide"
+        ]
+      },
+      "layout": "Horizontal scroll, flex wrap of chips",
+      "variants": [
+        {
+          "name": "default",
+          "description": "All 8 quick links"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Link chip",
+          "role": "button",
+          "action": "Navigate to section"
+        }
+      ],
+      "tokens": ["--border", "--text-primary", "--surface"],
+      "componentClass": "ds-chip-group in hscroll"
+    },
+    {
+      "id": "modDecisionVelocity",
+      "name": "Decision Velocity",
+      "stages": [2, 3],
+      "description": "Weeks counter + open questions chip group",
+      "data": {
+        "lastVisitDaysAgo": "number"
+      },
+      "layout": "Weeks display + chip row with context questions",
+      "variants": [
+        {
+          "name": "s2",
+          "description": "Questions: Resale ready?, Builder preference?, Loan pre-approval?"
+        },
+        {
+          "name": "s3",
+          "description": "Questions: Shortlist ready?, Site visit done?, Negotiation start?"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Question chip",
+          "role": "button",
+          "action": "Mark as done / show help"
+        }
+      ],
+      "tokens": ["--text-primary", "--text-secondary"],
+      "componentClass": "Decision velocity display + chips"
+    },
+    {
+      "id": "modStaleLocationNudge",
+      "name": "Stale Location Nudge",
+      "stages": [2, 3],
+      "description": "Amber left-border nudge asking if buyer wants to keep secondary location",
+      "data": {
+        "secondary": "string",
+        "lastVisitDaysAgo": "number"
+      },
+      "layout": "Amber left border + text + two buttons (Yes / No)",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Stale location nudge"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "Yes keep showing button",
+          "role": "button",
+          "action": "Keep secondary"
+        },
+        {
+          "element": "No button",
+          "role": "button",
+          "action": "Remove secondary"
+        }
+      ],
+      "tokens": ["--orange", "--amber", "--text-primary", "--border"],
+      "componentClass": "Nudge banner with border-left"
+    },
+    {
+      "id": "modPropertiesPrimary",
+      "name": "Properties Grid",
+      "stages": [1, 2, 3],
+      "description": "Horizontal scroll of ds-prop-card components for primary location with fallback transparency",
+      "data": {
+        "properties": "Property[]",
+        "primaryName": "string",
+        "secondaryName": "string | null"
+      },
+      "layout": "Horizontal scroll container with prop cards",
+      "variants": [
+        {
+          "name": "s1",
+          "description": "Single group of properties"
+        },
+        {
+          "name": "s2-s3",
+          "description": "Two labeled groups (primary / secondary) at S3"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "ds-shortlist heart",
+          "role": "button",
+          "action": "Save property"
+        },
+        {
+          "element": "See all X → button",
+          "role": "button",
+          "action": "View full list"
+        }
+      ],
+      "tokens": ["--surface", "--text-primary", "--border"],
+      "componentClass": "hscroll with ds-prop-card"
+    },
+    {
+      "id": "modNewInSectors",
+      "name": "New in Sectors / Fresh Listings",
+      "stages": [2, 3],
+      "description": "2-column grid of new property listings with freshness tag + feature tag",
+      "data": {
+        "properties": "Property[]",
+        "budgetMax": "number",
+        "bhkFilter": "string[]"
+      },
+      "layout": "2-column grid of ds-prop-card with custom badges",
+      "variants": [
+        {
+          "name": "default",
+          "description": "Grid of fresh new listings"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "ds-shortlist heart",
+          "role": "button",
+          "action": "Save property"
+        }
+      ],
+      "tokens": ["--surface", "--text-primary", "--purple"],
+      "componentClass": "fresh-grid with ds-prop-card"
+    },
+    {
+      "id": "modBudgetFit",
+      "name": "Budget Fit (Comparative)",
+      "stages": [3],
+      "description": "At S3, shows comparative budget fit for both primary and secondary",
+      "data": {
+        "primary": "string",
+        "secondary": "string",
+        "budgetMax": "number",
+        "localities": "Locality[]"
+      },
+      "layout": "ds-insight card with title + comparative body",
+      "variants": [
+        {
+          "name": "s3-comparative",
+          "description": "Compares budget fit across two localities"
+        }
+      ],
+      "interactive": [
+        {
+          "element": "CTAs",
+          "role": "button",
+          "action": "Filter or adjust"
+        }
+      ],
+      "tokens": ["--purple", "--purple-light", "--text-primary"],
+      "componentClass": "ds-insight"
+    },
+  ]
+}

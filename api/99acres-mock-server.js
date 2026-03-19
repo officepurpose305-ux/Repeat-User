@@ -1,11 +1,20 @@
 /**
  * Mock 99acres API server for local dev.
  * Serves: /debug/entities, /debug/search-urls, /search, /listings
+ * Also serves: /proxy/* → forwards to REAL_API_BASE (Anurag's server) with CORS headers added.
+ *
  * Run: node api/99acres-mock-server.js
- * Default: http://localhost:5003
+ * Default port: 5003
+ *
+ * To use the real API via proxy, set in config.js:
+ *   window.NINETY_NINE_ACRES_API_BASE = 'http://localhost:5003/proxy';
+ *
+ * To override the real API target (default: http://10.10.17.143:5003):
+ *   REAL_API_BASE=http://192.168.1.50:5003 node api/99acres-mock-server.js
  */
 const http = require('http');
-const url = require('url');
+
+const REAL_API_BASE = process.env.REAL_API_BASE || 'http://10.10.17.143:5003';
 
 const PORT = parseInt(process.env.PORT, 10) || 5003;
 const FALLBACK_IMGS = [
@@ -78,6 +87,33 @@ function mockListings(entities, limit = 8) {
   return list;
 }
 
+// Generate mock listing page content in the format expected by homepage's parseApiListings()
+function generateMockPageContent(entities, limit = 8) {
+  const city = entities.city || 'Noida';
+  const locality = entities.locality || city;
+  const bhk = entities.bedroom || '2';
+  const rtmOnly = !!entities.readyToMove;
+  const listings = [];
+
+  for (let i = 0; i < limit; i++) {
+    const isRtm = rtmOnly ? true : (i % 2 === 0);
+    const priceL = 70 + i * 3;
+    const sqft = 950 + i * 50;
+    const devs = ['ABC Builders', 'XYZ Developers', 'Premier Constructions', 'Diamond Projects'];
+
+    listings.push(
+      `Landing URL: https://www.99acres.com/property-${i + 1}\n` +
+      `Listing Title: ${bhk} BHK Luxury Apartment in ${locality}, ${city}\n` +
+      `Listing Image URL: ${FALLBACK_IMGS[i % FALLBACK_IMGS.length]}\n` +
+      `Listing Description: Premium ${bhk} bedroom apartment with modern amenities, ${sqft} sq ft carpet area. ₹${priceL}L. Located in ${locality}, ${city}.\n` +
+      `Posted by: ${devs[i % devs.length]}\n` +
+      `Possession Status: ${isRtm ? 'Ready to move' : 'Possession in 12-18 months'}`
+    );
+  }
+
+  return listings.join('\n\n');
+}
+
 const server = http.createServer((req, res) => {
   cors(res);
   if (req.method === 'OPTIONS') {
@@ -85,15 +121,17 @@ const server = http.createServer((req, res) => {
     res.end();
     return;
   }
-  const parsed = url.parse(req.url, true);
+  const parsed = new URL(req.url, 'http://localhost');
   const pathname = parsed.pathname;
-  const query = parsed.query;
+  const query = Object.fromEntries(parsed.searchParams);
 
   if (pathname === '/debug/entities') {
-    const searchQuery = query.query || '';
+    // Accept both ?text= (real API param) and ?query= (legacy mock param)
+    const searchQuery = query.text || query.query || '';
     const entities = parseQuery(searchQuery);
+    // Wrap in { entities: {...} } to match real API response shape
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(entities));
+    res.end(JSON.stringify({ entities }));
     return;
   }
 
@@ -102,11 +140,11 @@ const server = http.createServer((req, res) => {
     try {
       entities = typeof query.entities === 'string' ? JSON.parse(decodeURIComponent(query.entities)) : {};
     } catch (_) {}
-    const city = entities.city || 'Noida';
-    const locality = entities.locality || city;
-    const searchUrl = `https://www.99acres.com/search/property/buy/${(city + '-' + locality).toLowerCase().replace(/\s+/g, '-')}`;
+    const pageContent = generateMockPageContent(entities, 8);
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ url: searchUrl, search_url: searchUrl, buy_url: searchUrl }));
+    res.end(JSON.stringify({
+      content: [{ page_content: pageContent }]
+    }));
     return;
   }
 
@@ -133,6 +171,30 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ── Proxy to real 99acres API (adds CORS headers so browser can call it) ──────
+  // Browser calls http://localhost:5003/proxy/debug/entities?...
+  // This server forwards to http://10.10.17.143:5003/debug/entities?... server-to-server
+  // (no CORS restriction in Node), then returns the response with CORS headers set.
+  if (pathname.startsWith('/proxy/')) {
+    const targetPath = pathname.slice('/proxy'.length) + (req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '');
+    const targetUrl = new URL(REAL_API_BASE + targetPath);
+    const proxyReq = http.request(
+      { host: targetUrl.hostname, port: targetUrl.port || 80, path: targetUrl.pathname + targetUrl.search, method: 'GET' },
+      (proxyRes) => {
+        cors(res);
+        res.writeHead(proxyRes.statusCode, { 'Content-Type': proxyRes.headers['content-type'] || 'application/json' });
+        proxyRes.pipe(res);
+      }
+    );
+    proxyReq.on('error', (err) => {
+      cors(res);
+      res.writeHead(502, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Proxy error — real API unreachable', detail: err.message }));
+    });
+    proxyReq.end();
+    return;
+  }
+
   res.writeHead(404, { 'Content-Type': 'text/plain' });
   res.end('Not found');
 });
@@ -144,4 +206,6 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log('  GET /search?entities=...&limit=8');
   console.log('  GET /listings?entities=...&limit=8');
   console.log('  GET /api/properties?city=...&locality=...&bedroom=...&limit=8');
+  console.log('  GET /proxy/* → forwards to ' + REAL_API_BASE + ' (CORS-enabled)');
+  console.log('  To use real API: set NINETY_NINE_ACRES_API_BASE = "http://localhost:' + PORT + '/proxy" in config.js');
 });

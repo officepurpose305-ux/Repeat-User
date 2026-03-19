@@ -1,5 +1,5 @@
 -- Run this entire file once in Supabase: SQL Editor → New query → Paste → Run
--- Creates sessions + location_cache tables and RLS policies
+-- Creates sessions + location_cache + live_config tables and RLS policies
 
 -- ========== 001_sessions ==========
 create table if not exists public.sessions (
@@ -29,3 +29,14 @@ create index if not exists location_cache_key_idx on public.location_cache (loca
 create index if not exists location_cache_expires_idx on public.location_cache (expires_at);
 alter table public.location_cache enable row level security;
 create policy "Allow all for location_cache" on public.location_cache for all using (true) with check (true);
+
+-- ========== 003_live_config ==========
+-- Single-row table used for real-time panel → homepage sync.
+-- After running: enable real-time in Supabase Dashboard → Database → Replication → add public.live_config
+create table if not exists public.live_config (
+  id text primary key default 'default',
+  config jsonb not null,
+  updated_at timestamptz default now()
+);
+alter table public.live_config enable row level security;
+create policy "Allow all for live_config" on public.live_config for all using (true) with check (true);

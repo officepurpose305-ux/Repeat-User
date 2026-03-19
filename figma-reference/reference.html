@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>99acres Homepage — All Stages Reference</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="../apps/design-system/design-system.css">
+  <link rel="stylesheet" href="../v2/homepage/homepage.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background: #1a1a1a;
+      padding: 24px;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .header {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0 0 8px;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      font-size: 14px;
+      color: #999;
+      margin: 0;
+    }
+    .stages-container {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      padding-bottom: 24px;
+      align-items: flex-start;
+    }
+    .stage-col {
+      flex-shrink: 0;
+      width: 360px;
+    }
+    .stage-label {
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+    .phone-frame {
+      width: 360px;
+      background: #F0F0F0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .phone-screen {
+      width: 360px;
+      position: relative;
+    }
+    .module-annotation {
+      background: rgba(0,0,0,0.08);
+      color: #666;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 6px 12px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .module-wrapper { }
+    .sec { margin-bottom: 8px; }
+    .sec-pad { padding: 16px 14px 12px; }
+
+    /* Override styles for reference display */
+    .topnav { display: none; }
+    body { padding: 24px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>99acres Homepage</h1>
+    <p>All 5 Buyer Stages — Interactive Reference</p>
+  </div>
+
+  <div class="stages-container">
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- STAGE 1: Discovery -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="stage-col">
+      <div class="stage-label">Stage 1 — Discovery</div>
+      <div class="phone-frame">
+        <div class="phone-screen">
+
+          <!-- modContextChips (hidden at S1) -->
+
+          <!-- modHero -->
+          <div class="module-annotation">modHero</div>
+          <div class="hero-s1">
+            <div class="ds-page-heading">
+              Find your next home in <span class="hero-city">Noida</span>
+            </div>
+            <div class="hero-stats-bar">
+              1.3k properties <span class="hero-stat-dot">•</span> ₹70L–1.5Cr <span class="hero-stat-dot">•</span> All types
+            </div>
+            <div class="hero-search-hint">
+              <span style="color: #2563eb; font-weight: 600;">Search by locality</span>
+              <div class="hero-search-pulse"></div>
+            </div>
+          </div>
+
+          <!-- modBudgetAnchor -->
+          <div class="module-annotation">modBudgetAnchor</div>
+          <div class="sec sec-pad">
+            <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 12px; color: #111;">Budget-wise breakdown</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+              <div style="background: #dbeafe; border-radius: 8px; padding: 12px; text-align: center;">
+                <div style="font-size: 11px; color: #666; margin-bottom: 4px;">Entry</div>
+                <div style="font-size: 13px; font-weight: 700; color: #111;">₹70L–₹85L</div>
+                <div style="font-size: 10px; color: #999; margin-top: 4px;">~1.1k sqft</div>
+              </div>
+              <div style="background: #dbeafe; border-radius: 8px; padding: 12px; text-align: center;">
+                <div style="font-size: 11px; color: #666; margin-bottom: 4px;">Mid</div>
+                <div style="font-size: 13px; font-weight: 700; color: #111;">₹85L–₹1Cr</div>
+                <div style="font-size: 10px; color: #999; margin-top: 4px;">~1.2k sqft</div>
+              </div>
+              <div style="background: #dbeafe; border-radius: 8px; padding: 12px; text-align: center;">
+                <div style="font-size: 11px; color: #666; margin-bottom: 4px;">Premium</div>
+                <div style="font-size: 13px; font-weight: 700; color: #111;">₹1Cr–₹1.5Cr</div>
+                <div style="font-size: 10px; color: #999; margin-top: 4px;">~1.3k sqft</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modLocalitiesRadar -->
+          <div class="module-annotation">modLocalitiesRadar</div>
+          <div class="sec">
+            <div style="padding: 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.08);">
+              <h3 style="font-size: 14px; font-weight: 700; margin: 0; color: #111;">Explore localities</h3>
+              <span style="font-size: 12px; color: #2563eb; font-weight: 600;">All →</span>
+            </div>
+            <div style="display: flex; gap: 10px; overflow-x: auto; padding: 12px 14px; scrollbar-width: none;">
+              <div style="flex-shrink: 0; width: 160px; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; padding: 10px;">
+                <div style="font-weight: 700; font-size: 13px; margin-bottom: 6px;">Sector 150</div>
+                <div style="font-size: 10px; color: #666; margin-bottom: 8px;">₹72L–1.1Cr</div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666; margin-bottom: 3px;">
+                  <span>Avg price</span> <span style="font-weight: 600; color: #111;">₹8.1k/sqft</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666;">
+                  <span>YoY growth</span> <span style="font-weight: 600; color: #16a34a;">+18%</span>
+                </div>
+              </div>
+              <div style="flex-shrink: 0; width: 160px; background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; padding: 10px;">
+                <div style="font-weight: 700; font-size: 13px; margin-bottom: 6px;">Sector 128</div>
+                <div style="font-size: 10px; color: #666; margin-bottom: 8px;">₹68L–98L</div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666; margin-bottom: 3px;">
+                  <span>Avg price</span> <span style="font-weight: 600; color: #111;">₹7.8k/sqft</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666;">
+                  <span>YoY growth</span> <span style="font-weight: 600; color: #16a34a;">+16%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modNewLaunches -->
+          <div class="module-annotation">modNewLaunches</div>
+          <div class="sec" style="margin: 8px 14px;">
+            <div class="nl-wrap" style="margin: 0;">
+              <div class="nl-top">
+                <div class="nl-icon">✨</div>
+                <div>
+                  <div class="nl-title">New launches this month</div>
+                  <div class="nl-sub">Limited units available</div>
+                </div>
+              </div>
+              <div class="nl-card">
+                <div class="nl-new-label">NEW</div>
+                <div class="nl-row">
+                  <div class="nl-thumb" style="background: linear-gradient(135deg, #D0DFF0, #B8CCE0);"></div>
+                  <div>
+                    <div class="nl-name">Godrej Woods</div>
+                    <div class="nl-loc">Sector 150, Noida</div>
+                    <div class="nl-details-row">
+                      3 BHK <span class="nl-sep">•</span> ₹1.1Cr
+                    </div>
+                    <span class="nl-rera">RERA Registered</span>
+                  </div>
+                </div>
+              </div>
+              <div class="nl-footer">
+                <span class="nl-footer-text">Zero brokerage · Limited offer</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- modPriceTrend -->
+          <div class="module-annotation">modPriceTrend</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #f0fdf4; border-radius: 8px; margin: 8px 14px; cursor: pointer;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; color: #16a34a; font-size: 20px;">
+                <span class="material-icons" style="font-size: 20px;">trending_up</span>
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 15px; color: #16a34a;">+18% price growth</div>
+                <div style="font-size: 11px; color: #999;">Sector 150 · YoY appreciation</div>
+              </div>
+            </div>
+            <span class="material-icons" style="color: #999;">chevron_right</span>
+          </div>
+
+          <!-- modBudgetFit -->
+          <div class="module-annotation">modBudgetFit</div>
+          <div class="sec sec-pad" style="background: #f5f3ff; border: none; margin: 8px 14px; border-radius: 10px;">
+            <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px;">
+              <span class="material-icons" style="font-size: 16px; color: #6c30d4; flex-shrink: 0;">lightbulb</span>
+              <div style="font-weight: 700; color: #6c30d4;">Your budget fits premium segment</div>
+            </div>
+            <div style="font-size: 12px; color: #555; line-height: 1.5; margin-bottom: 12px;">
+              At ₹85L, you can access luxury 3BHK properties in Sector 150 with premium amenities.
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="ds-btn ds-btn-primary ds-btn-sm" style="flex: 1; cursor: pointer;">See properties</button>
+              <button class="ds-btn ds-btn-tertiary ds-btn-sm" style="flex: 1; cursor: pointer;">Adjust budget</button>
+            </div>
+          </div>
+
+          <!-- modTools (skipped at S1) -->
+
+          <!-- modArticles -->
+          <div class="module-annotation">modArticles</div>
+          <div class="sec">
+            <div style="padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+              <div style="font-size: 12px; color: #666;">📖 Buyer's guide</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">How to compare localities</div>
+              <div style="font-size: 11px; color: #999; margin-top: 3px;">5 min read</div>
+            </div>
+            <div style="padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+              <div style="font-size: 12px; color: #666;">📊 Market trends</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">Noida prices in Q1 2026</div>
+              <div style="font-size: 11px; color: #999; margin-top: 3px;">3 min read</div>
+            </div>
+          </div>
+
+          <!-- modQuickLinks -->
+          <div class="module-annotation">modQuickLinks</div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 14px;">
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Buy</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Rent</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">New Projects</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Price Trends</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- STAGE 2: Locality Awareness -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="stage-col">
+      <div class="stage-label">Stage 2 — Locality Awareness</div>
+      <div class="phone-frame">
+        <div class="phone-screen">
+
+          <!-- modContextChips -->
+          <div class="module-annotation">modContextChips</div>
+          <div style="display: flex; gap: 8px; padding: 12px 14px; overflow-x: auto;">
+            <span class="ds-chip ds-chip-md active" style="cursor: pointer;">Sector 150 ✕</span>
+            <span class="ds-chip ds-chip-md" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">+ Add another</span>
+          </div>
+
+          <!-- modLocalitySuggestions -->
+          <div class="module-annotation">modLocalitySuggestions</div>
+          <div class="sec sec-pad">
+            <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 12px; color: #111;">Nearby options</h3>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;">
+              <div class="ds-chip ds-chip-sm active" style="cursor: pointer;">All</div>
+              <div class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Metro</div>
+              <div class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Schools</div>
+              <div class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Malls</div>
+            </div>
+            <div style="font-size: 12px; color: #666; padding-bottom: 12px; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 12px;">
+              Sector 128 · 2.5km away · ₹7.8k/sqft
+            </div>
+            <div style="font-size: 12px; color: #666;">
+              Sector 137 · 3.2km away · ₹7.4k/sqft
+            </div>
+          </div>
+
+          <!-- modConsiderationSet -->
+          <div class="module-annotation">modConsiderationSet</div>
+          <div class="sec">
+            <div style="padding: 14px;">
+              <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 12px; color: #111;">What's your ideal property?</h3>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px; padding: 0 14px 14px;">
+              <div style="display: grid; grid-template-columns: 40px 1fr 20px; gap: 12px; align-items: center; padding: 12px 14px; border: 1.5px solid #2563eb; border-radius: 12px; background: #dbeafe; cursor: pointer;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: #2563eb; display: flex; align-items: center; justify-content: center; color: #fff;">
+                  <span class="material-icons" style="font-size: 20px;">check_circle</span>
+                </div>
+                <div><div style="font-weight: 700; color: #111;">Ready to move</div><div style="font-size: 12px; color: #555;">Move in now · No waiting</div></div>
+                <span class="material-icons" style="color: #2563eb;">check_circle</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 40px 1fr 20px; gap: 12px; align-items: center; padding: 12px 14px; border: 1.5px solid rgba(0,0,0,0.08); border-radius: 12px; background: #fff; cursor: pointer;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(37,99,235,0.1); display: flex; align-items: center; justify-content: center;">
+                  <span class="material-icons" style="font-size: 20px; color: #2563eb;">construction</span>
+                </div>
+                <div><div style="font-weight: 700; color: #111;">Under construction</div><div style="font-size: 12px; color: #555;">10–15% lower · Longer wait</div></div>
+              </div>
+              <div style="display: grid; grid-template-columns: 40px 1fr 20px; gap: 12px; align-items: center; padding: 12px 14px; border: 1.5px solid rgba(0,0,0,0.08); border-radius: 12px; background: #fff; cursor: pointer;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(37,99,235,0.1); display: flex; align-items: center; justify-content: center;">
+                  <span class="material-icons" style="font-size: 20px; color: #2563eb;">star_outline</span>
+                </div>
+                <div><div style="font-weight: 700; color: #111;">New launch</div><div style="font-size: 12px; color: #555;">Best prices · Full selection</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modContinue -->
+          <div class="module-annotation">modContinue</div>
+          <div class="sec">
+            <div style="background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%); padding: 14px; color: #fff;">
+              <div style="font-size: 14px; font-weight: 800;">Continue where you left off</div>
+              <div style="font-size: 12px; opacity: 0.8; margin-top: 2px;">Visited 2 days ago</div>
+            </div>
+            <div style="display: flex; gap: 8px; padding: 12px 14px; overflow-x: auto;">
+              <div style="flex-shrink: 0; width: 140px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.08);">
+                <div style="height: 100px; background: linear-gradient(135deg, #D0DFF0, #B8CCE0);"></div>
+                <div style="padding: 8px; font-size: 12px; font-weight: 700; color: #111;">ATS Tourmaline</div>
+                <div style="padding: 0 8px 8px; font-size: 11px; color: #666;">₹88L · 2 BHK</div>
+              </div>
+              <div style="flex-shrink: 0; width: 140px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.08);">
+                <div style="height: 100px; background: linear-gradient(135deg, #D0DFF0, #B8CCE0);"></div>
+                <div style="padding: 8px; font-size: 12px; font-weight: 700; color: #111;">Godrej Woods</div>
+                <div style="padding: 0 8px 8px; font-size: 11px; color: #666;">₹1.1Cr · 3 BHK</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modPriceTrend -->
+          <div class="module-annotation">modPriceTrend</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #f0fdf4; border-radius: 8px; margin: 8px 14px; cursor: pointer;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; color: #16a34a;">
+                <span class="material-icons" style="font-size: 20px;">trending_up</span>
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 15px; color: #16a34a;">+18% price growth</div>
+                <div style="font-size: 11px; color: #999;">Sector 150 · YoY appreciation</div>
+              </div>
+            </div>
+            <span class="material-icons" style="color: #999;">chevron_right</span>
+          </div>
+
+          <!-- modTools -->
+          <div class="module-annotation">modTools</div>
+          <div class="sec">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 14px;">
+              <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer;">
+                <div style="font-size: 16px; margin-bottom: 4px;">📊</div>
+                <div style="font-size: 12px; font-weight: 600; color: #111;">Price Trends</div>
+              </div>
+              <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer;">
+                <div style="font-size: 16px; margin-bottom: 4px;">📖</div>
+                <div style="font-size: 12px; font-weight: 600; color: #111;">Buyer's Guide</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modArticles -->
+          <div class="module-annotation">modArticles</div>
+          <div class="sec">
+            <div style="padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+              <div style="font-size: 12px; color: #666;">Sector 150 insights</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">Why this locality is trending</div>
+            </div>
+            <div style="padding: 14px;">
+              <div style="font-size: 12px; color: #666;">Investment guide</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">2BHK vs 3BHK comparison</div>
+            </div>
+          </div>
+
+          <!-- modQuickLinks -->
+          <div class="module-annotation">modQuickLinks</div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 14px;">
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Price Trends</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">EMI</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Loan Rates</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- STAGE 3: Comparison -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="stage-col">
+      <div class="stage-label">Stage 3 — Comparison</div>
+      <div class="phone-frame">
+        <div class="phone-screen">
+
+          <!-- modContextChips -->
+          <div class="module-annotation">modContextChips</div>
+          <div style="display: flex; gap: 8px; padding: 12px 14px; overflow-x: auto;">
+            <span class="ds-chip ds-chip-md active" style="cursor: pointer;">Sector 150 ✕</span>
+            <span class="ds-chip ds-chip-md active" style="cursor: pointer;">Sector 128 ✕</span>
+          </div>
+
+          <!-- modHeadToHead -->
+          <div class="module-annotation">modHeadToHead</div>
+          <div class="sec">
+            <div style="padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+              <h3 style="font-size: 14px; font-weight: 700; margin: 0; color: #111;">Sector 150 vs Sector 128</h3>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <thead style="background: #111; color: #fff;">
+                <tr>
+                  <th style="padding: 10px 12px; text-align: left; font-weight: 800; font-size: 13px;">Feature</th>
+                  <th style="padding: 10px 12px; text-align: center; font-weight: 800; font-size: 13px;">Sector 150</th>
+                  <th style="padding: 10px 12px; text-align: center; font-weight: 800; font-size: 13px;">Sector 128</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid rgba(0,0,0,0.08);">
+                  <td style="padding: 9px 12px; font-size: 11px; color: #999; font-weight: 600;">Entry price/sqft</td>
+                  <td style="padding: 9px 12px; text-align: center; font-weight: 700; color: #16a34a;">₹8.1k ✓</td>
+                  <td style="padding: 9px 12px; text-align: center; font-weight: 700;">₹7.8k</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(0,0,0,0.08);">
+                  <td style="padding: 9px 12px; font-size: 11px; color: #999; font-weight: 600;">YoY growth</td>
+                  <td style="padding: 9px 12px; text-align: center; font-weight: 700;">+18%</td>
+                  <td style="padding: 9px 12px; text-align: center; font-weight: 700; color: #16a34a;">+16% ✓</td>
+                </tr>
+                <tr>
+                  <td style="padding: 9px 12px; font-size: 11px; color: #999; font-weight: 600;">Metro distance</td>
+                  <td style="padding: 9px 12px; text-align: center; font-weight: 700; color: #16a34a;">800m ✓</td>
+                  <td style="padding: 9px 12px; text-align: center; font-weight: 700;">2.5km</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- modNearestLandmarks -->
+          <div class="module-annotation">modNearestLandmarks</div>
+          <div class="sec">
+            <div style="padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.08); font-size: 12px; color: #666;">
+              Landmarks within 3km
+            </div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <thead>
+                <tr style="border-bottom: 1px solid rgba(0,0,0,0.08);">
+                  <th style="padding: 8px 10px; text-align: left; font-weight: 700; font-size: 11px; color: #999; text-transform: uppercase;">Landmark</th>
+                  <th style="padding: 8px 10px; text-align: center; font-weight: 700; font-size: 11px; color: #999;">S150</th>
+                  <th style="padding: 8px 10px; text-align: center; font-weight: 700; font-size: 11px; color: #999;">S128</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid rgba(0,0,0,0.08);">
+                  <td style="padding: 8px 10px; font-size: 11px; color: #666;">🚇 Metro</td>
+                  <td style="padding: 8px 10px; text-align: center; font-size: 11px; color: #111; font-weight: 600;">800m</td>
+                  <td style="padding: 8px 10px; text-align: center; font-size: 11px; color: #111;">2.5km</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(0,0,0,0.08);">
+                  <td style="padding: 8px 10px; font-size: 11px; color: #666;">🏥 Hospital</td>
+                  <td style="padding: 8px 10px; text-align: center; font-size: 11px; color: #111; font-weight: 600;">Fortis</td>
+                  <td style="padding: 8px 10px; text-align: center; font-size: 11px; color: #111;">Kailash</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 10px; font-size: 11px; color: #666;">🛍️ Mall</td>
+                  <td style="padding: 8px 10px; text-align: center; font-size: 11px; color: #111; font-weight: 600;">DLF</td>
+                  <td style="padding: 8px 10px; text-align: center; font-size: 11px; color: #111;">Epicor</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- modPriceTrend -->
+          <div class="module-annotation">modPriceTrend</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #f0fdf4; border-radius: 8px; margin: 8px 14px; cursor: pointer;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; color: #16a34a;">
+                <span class="material-icons" style="font-size: 20px;">trending_up</span>
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 15px; color: #16a34a;">+18% price growth</div>
+                <div style="font-size: 11px; color: #999;">Sector 150 · YoY appreciation</div>
+              </div>
+            </div>
+            <span class="material-icons" style="color: #999;">chevron_right</span>
+          </div>
+
+          <!-- modTools -->
+          <div class="module-annotation">modTools</div>
+          <div class="sec">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 14px;">
+              <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer;">
+                <div style="font-size: 16px; margin-bottom: 4px;">💰</div>
+                <div style="font-size: 12px; font-weight: 600; color: #111;">EMI</div>
+              </div>
+              <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer;">
+                <div style="font-size: 16px; margin-bottom: 4px;">🏦</div>
+                <div style="font-size: 12px; font-weight: 600; color: #111;">Loan Guide</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modArticles -->
+          <div class="module-annotation">modArticles</div>
+          <div class="sec">
+            <div style="padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+              <div style="font-size: 12px; color: #666;">Why Sector 150 wins</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">Better metro connectivity</div>
+            </div>
+            <div style="padding: 14px;">
+              <div style="font-size: 12px; color: #666;">Price difference</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">₹15L–20L savings in S128</div>
+            </div>
+          </div>
+
+          <!-- modQuickLinks -->
+          <div class="module-annotation">modQuickLinks</div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 14px;">
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">EMI</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Loans</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">RERA</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- STAGE 4: Shortlist -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="stage-col">
+      <div class="stage-label">Stage 4 — Shortlist</div>
+      <div class="phone-frame">
+        <div class="phone-screen">
+
+          <!-- modContextChips -->
+          <div class="module-annotation">modContextChips</div>
+          <div style="display: flex; gap: 8px; padding: 12px 14px; overflow-x: auto;">
+            <span class="ds-chip ds-chip-md active" style="cursor: pointer;">Sector 150 ✕</span>
+          </div>
+
+          <!-- modDecisionSpotlight -->
+          <div class="module-annotation">modDecisionSpotlight</div>
+          <div class="sec" style="margin: 8px 14px; border: 2px solid #FF6B35; border-radius: 12px; overflow: hidden;">
+            <div style="background: linear-gradient(90deg, #FF6B35, #FF8C5A); padding: 9px 12px; display: flex; align-items: center; gap: 8px; color: #fff;">
+              <span style="font-size: 13px; font-weight: 800;">🔥 Your top choice</span>
+              <span style="background: rgba(255,255,255,0.25); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px;">Recommended</span>
+            </div>
+            <div style="background: #fff; padding: 12px;">
+              <div style="height: 120px; background: linear-gradient(135deg, #D0DFF0, #B8CCE0); border-radius: 8px; margin-bottom: 10px;"></div>
+              <div style="font-weight: 800; font-size: 16px; color: #111; margin-bottom: 2px;">ATS Tourmaline</div>
+              <div style="font-size: 20px; font-weight: 900; color: #111; margin-bottom: 8px;">₹88L</div>
+              <div style="font-size: 12px; color: #666; margin-bottom: 8px;">Sector 150 · 2 BHK · 1,050 sqft</div>
+              <div style="background: #f5f5f5; padding: 8px; border-radius: 6px; font-size: 12px; color: #666; margin-bottom: 10px;">
+                <div style="font-weight: 600; color: #111; margin-bottom: 3px;">EMI Estimate</div>
+                <div>₹65k/month @ 6.5% interest</div>
+              </div>
+              <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <button style="flex: 1; padding: 10px; border-radius: 24px; font-size: 13px; font-weight: 700; border: 1.5px solid rgba(0,0,0,0.16); background: transparent; color: #666; cursor: pointer;">Not interested</button>
+                <button style="flex: 1; padding: 10px; border-radius: 24px; font-size: 13px; font-weight: 700; background: #16a34a; color: #fff; border: none; cursor: pointer;">Schedule visit</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- modStillConsidering -->
+          <div class="module-annotation">modStillConsidering</div>
+          <div class="sec sec-pad">
+            <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 12px; color: #111;">Still in the running</h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; gap: 10px;">
+                <div style="width: 70px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, #D0DFF0, #B8CCE0); flex-shrink: 0;"></div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 800; font-size: 16px; color: #111;">Godrej Woods</div>
+                  <div style="font-size: 12px; color: #666;">₹1.1Cr · 3 BHK</div>
+                  <div style="font-size: 11px; color: #999; margin-top: 3px;">₹22L more than top pick</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 6px;">
+                <button style="padding: 4px 12px; border-radius: 14px; font-size: 12px; font-weight: 700; border: 1.5px solid #16a34a; color: #16a34a; background: transparent; cursor: pointer;">Yes</button>
+                <button style="padding: 4px 12px; border-radius: 14px; font-size: 12px; font-weight: 700; border: 1.5px solid #dc2626; color: #dc2626; background: transparent; cursor: pointer;">No</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- modPriceTrend -->
+          <div class="module-annotation">modPriceTrend</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #f0fdf4; border-radius: 8px; margin: 8px 14px; cursor: pointer;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; color: #16a34a;">
+                <span class="material-icons" style="font-size: 20px;">trending_up</span>
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 15px; color: #16a34a;">+18% price growth</div>
+                <div style="font-size: 11px; color: #999;">Sector 150 · YoY appreciation</div>
+              </div>
+            </div>
+            <span class="material-icons" style="color: #999;">chevron_right</span>
+          </div>
+
+          <!-- modTools -->
+          <div class="module-annotation">modTools</div>
+          <div class="sec">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 14px;">
+              <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer;">
+                <div style="font-size: 16px; margin-bottom: 4px;">💰</div>
+                <div style="font-size: 12px; font-weight: 600; color: #111;">EMI</div>
+              </div>
+              <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer;">
+                <div style="font-size: 16px; margin-bottom: 4px;">✅</div>
+                <div style="font-size: 12px; font-weight: 600; color: #111;">Checklist</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modArticles -->
+          <div class="module-annotation">modArticles</div>
+          <div class="sec">
+            <div style="padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+              <div style="font-size: 12px; color: #666;">Deal timeline</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">Next 3 months action plan</div>
+            </div>
+            <div style="padding: 14px;">
+              <div style="font-size: 12px; color: #666;">Document prep</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">What you'll need for bank</div>
+            </div>
+          </div>
+
+          <!-- modQuickLinks -->
+          <div class="module-annotation">modQuickLinks</div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 14px;">
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Loan</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Stamp Duty</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Lawyer</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- STAGE 5: Post-Visit -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="stage-col">
+      <div class="stage-label">Stage 5 — Post-Visit</div>
+      <div class="phone-frame">
+        <div class="phone-screen">
+
+          <!-- modContextChips -->
+          <div class="module-annotation">modContextChips</div>
+          <div style="display: flex; gap: 8px; padding: 12px 14px; overflow-x: auto;">
+            <span class="ds-chip ds-chip-md active" style="cursor: pointer;">Sector 150 ✕</span>
+          </div>
+
+          <!-- modPostVisitTools -->
+          <div class="module-annotation">modPostVisitTools</div>
+          <div class="sec">
+            <div style="padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+              <h3 style="font-size: 14px; font-weight: 700; margin: 0; color: #111;">Tools for your next step</h3>
+            </div>
+            <div style="display: flex; flex-direction: column;">
+              <div style="display: grid; grid-template-columns: 40px 1fr 20px; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,0.08); cursor: pointer;">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: #dbeafe; display: flex; align-items: center; justify-content: center; color: #2563eb;">
+                  <span class="material-icons" style="font-size: 20px;">calculate</span>
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: #111;">EMI Calculator</div>
+                  <div style="font-size: 12px; color: #666;">Estimate monthly outflow</div>
+                </div>
+                <span class="material-icons" style="color: #999;">chevron_right</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 40px 1fr 20px; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,0.08); cursor: pointer;">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: #f0fdf4; display: flex; align-items: center; justify-content: center; color: #16a34a;">
+                  <span class="material-icons" style="font-size: 20px;">account_balance</span>
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: #111;">Home Loan Guide</div>
+                  <div style="font-size: 12px; color: #666;">Compare rates & eligibility</div>
+                </div>
+                <span class="material-icons" style="color: #999;">chevron_right</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 40px 1fr 20px; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,0.08); cursor: pointer;">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: #FFF7ED; display: flex; align-items: center; justify-content: center; color: #FF6B35;">
+                  <span class="material-icons" style="font-size: 20px;">receipt</span>
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: #111;">Stamp Duty Estimator</div>
+                  <div style="font-size: 12px; color: #666;">Registration + legal fees</div>
+                </div>
+                <span class="material-icons" style="color: #999;">chevron_right</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 40px 1fr 20px; gap: 12px; align-items: center; padding: 12px 14px; cursor: pointer;">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: #ede9fe; display: flex; align-items: center; justify-content: center; color: #6c30d4;">
+                  <span class="material-icons" style="font-size: 20px;">checklist</span>
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: #111;">Possession Checklist</div>
+                  <div style="font-size: 12px; color: #666;">What to verify at handover</div>
+                </div>
+                <span class="material-icons" style="color: #999;">chevron_right</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- modStillConsidering -->
+          <div class="module-annotation">modStillConsidering</div>
+          <div class="sec sec-pad">
+            <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 12px; color: #111;">How did your visits compare?</h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; gap: 10px;">
+                <div style="width: 70px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, #D0DFF0, #B8CCE0); flex-shrink: 0;"></div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 800; font-size: 16px; color: #111;">Godrej Woods</div>
+                  <div style="font-size: 12px; color: #666;">₹1.1Cr · Visited</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 6px;">
+                <button style="padding: 4px 12px; border-radius: 14px; font-size: 12px; font-weight: 700; border: 1.5px solid #16a34a; color: #16a34a; background: transparent; cursor: pointer;">Yes</button>
+                <button style="padding: 4px 12px; border-radius: 14px; font-size: 12px; font-weight: 700; border: 1.5px solid #dc2626; color: #dc2626; background: transparent; cursor: pointer;">No</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- modPriceTrend -->
+          <div class="module-annotation">modPriceTrend</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #f0fdf4; border-radius: 8px; margin: 8px 14px; cursor: pointer;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; color: #16a34a;">
+                <span class="material-icons" style="font-size: 20px;">trending_up</span>
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 15px; color: #16a34a;">+18% price growth</div>
+                <div style="font-size: 11px; color: #999;">Sector 150 · YoY appreciation</div>
+              </div>
+            </div>
+            <span class="material-icons" style="color: #999;">chevron_right</span>
+          </div>
+
+          <!-- modArticles -->
+          <div class="module-annotation">modArticles</div>
+          <div class="sec">
+            <div style="padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.08);">
+              <div style="font-size: 12px; color: #666;">After site visit</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">Negotiation tips & timeline</div>
+            </div>
+            <div style="padding: 14px;">
+              <div style="font-size: 12px; color: #666;">Final checklist</div>
+              <div style="font-size: 13px; font-weight: 600; color: #111; margin-top: 4px;">30-day action plan to close</div>
+            </div>
+          </div>
+
+          <!-- modQuickLinks -->
+          <div class="module-annotation">modQuickLinks</div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 14px;">
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Lawyer</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Bank</button>
+            <button class="ds-chip ds-chip-sm" style="cursor: pointer; border: 1px solid rgba(0,0,0,0.08); background: #fff;">Closing</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
