@@ -1080,6 +1080,7 @@ function renderPage() {
 
   // ── S2-S3: resume + nudges ──────────────────────────────────────────────────
   mods.push(modContinue(stage, primary, secondary));           // suppressed S4, S5
+  mods.push(modNewInSectors(stage, primary));                  // "Fresh listings in {primary}" — right after Continue
   mods.push(modDecisionVelocity(stage));                       // how long into search + open questions
   mods.push(modStaleLocationNudge(stage, secondary, config.lastVisitDaysAgo));
 
@@ -1105,7 +1106,6 @@ function renderPage() {
   // ── S2-S3: properties ────────────────────────────────────────────────────────
   mods.push(modPropertiesPrimary(stage, primary, secondary));
   mods.push(modSimilarBHK(stage, bhk, primary));               // deduped against PropertiesPrimary
-  mods.push(modNewInSectors(stage, primary));                  // "New Launches in {primary}"
   mods.push(modNearbyLocalities(stage, primary));
   mods.push(modNearbyComparison(stage, primary));
 
@@ -1553,7 +1553,7 @@ function modTradeoff(stage, primary, secondary) {
 }
 
 function modPropertiesPrimary(stage, primary, secondary) {
-  if (stage === 4 || stage === 5) return null;
+  if (stage === 2 || stage === 4 || stage === 5) return null;  // Show S1, S3 only
 
   // ── INTELLIGENT FALLBACK FILTERING ──
   // Stage 1: Filter by exact primary location
