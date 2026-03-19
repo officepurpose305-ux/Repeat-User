@@ -1078,51 +1078,51 @@ function renderPage() {
   mods.push(modContextChips(stage, primary, secondary));
   mods.push(modHero(stage, city, primary, secondary));
 
-  // ── S2-S3: resume + nudges ──────────────────────────────────────────────────
-  mods.push(modContinue(stage, primary, secondary));           // suppressed S4, S5
-  mods.push(modNewInSectors(stage, primary));                  // "Fresh listings in {primary}" — right after Continue
-  mods.push(modDecisionVelocity(stage));                       // how long into search + open questions
-  mods.push(modStaleLocationNudge(stage, secondary, config.lastVisitDaysAgo));
+  // ── S1-S5: resume + nudges ──────────────────────────────────────────────────
+  mods.push(modContinue(stage, primary, secondary));           // Show S2-S5
+  mods.push(modNewInSectors(stage, primary));                  // "Fresh listings in {primary}" — right after Continue (S2-S3)
 
-  // ── S2: discovery + preferences ─────────────────────────────────────────────
-  mods.push(modConsiderationSet(stage));                       // moved to S2 (was S3)
-  mods.push(modLocalitySuggestions(stage, primary, secondary));
-  mods.push(modLocalitiesRadar(stage, city, primary));
+  // ── S2: locality discovery ──────────────────────────────────────────────────
+  mods.push(modLocalitiesRadar(stage, city, primary));         // Localities on your radar (S2)
+  mods.push(modLocalitySuggestions(stage, primary, secondary));// Locality suggestions (S2-S3, no secondary)
+  mods.push(modDecisionVelocity(stage));                       // Weeks in search + open questions (S2-S3)
+  mods.push(modStaleLocationNudge(stage, secondary, config.lastVisitDaysAgo)); // Stale location nudge (S2-S3)
 
   // ── S1 only ─────────────────────────────────────────────────────────────────
   mods.push(modBudgetAnchor(stage, primary));
 
-  // ── S1-S3: personalised budget context ──────────────────────────────────────
-  mods.push(modBudgetFit(stage, f, primary));                  // S1: city-level; S2: locality fit; S3: comparative
+  // ── S1-S3: properties + nearby ──────────────────────────────────────────────
+  mods.push(modPropertiesPrimary(stage, primary, secondary));  // Properties in primary (S1-S3)
+  mods.push(modSimilarBHK(stage, bhk, primary));               // Similar BHK (S2 only)
+  mods.push(modNearbyLocalities(stage, primary));              // Nearby localities (S2-S3)
+  mods.push(modNearbyComparison(stage, primary));              // Nearby comparison (S3 without secondary)
 
-  // ── S3: comparison suite ─────────────────────────────────────────────────────
-  mods.push(modPropertiesInSecondary(stage, secondary));
-  mods.push(modHeadToHead(stage, primary, secondary));         // guarded: requires secondary
-  mods.push(modNearestLandmarks(stage, primary, secondary));   // guarded: requires secondary
-  mods.push(modUpcomingDevelopments(stage, primary));          // moved before Tradeoff — inform before deciding
-  mods.push(modTradeoff(stage, primary, secondary));
-  mods.push(modExpertAgents(stage, primary, secondary));       // moved after Tradeoff — natural handoff
+  // ── S2: budget + filter confirmation ────────────────────────────────────────
+  mods.push(modBudgetFit(stage, f, primary));                  // Budget fit insight (S1-S3)
 
-  // ── S2-S3: properties ────────────────────────────────────────────────────────
-  mods.push(modPropertiesPrimary(stage, primary, secondary));
-  mods.push(modSimilarBHK(stage, bhk, primary));               // deduped against PropertiesPrimary
-  mods.push(modNearbyLocalities(stage, primary));
-  mods.push(modNearbyComparison(stage, primary));
+  // ── S3: comparison suite ────────────────────────────────────────────────────
+  mods.push(modConsiderationSet(stage));                       // Consideration set selector (S2 only)
+  mods.push(modPropertiesInSecondary(stage, secondary));       // Properties in secondary (S3 only)
+  mods.push(modHeadToHead(stage, primary, secondary));         // Comparison table (S3 with secondary)
+  mods.push(modNearestLandmarks(stage, primary, secondary));   // Nearest landmarks (S3 with secondary)
+  mods.push(modTradeoff(stage, primary, secondary));           // Tradeoff insight (S3 with secondary)
+  mods.push(modExpertAgents(stage, primary, secondary));       // Expert agents (S3 only)
+  mods.push(modUpcomingDevelopments(stage, primary));          // Upcoming developments (S3 only)
 
-  // ── S4-S5: decision + post-visit ─────────────────────────────────────────────
-  mods.push(modDecisionSpotlight(stage, primary));
-  mods.push(modStillConsidering(stage, primary));              // extended to S5 with post-visit framing
-  mods.push(modVisitPlanner(stage));
-  mods.push(modPostVisitTools(stage));
+  // ── S4-S5: decision + post-visit ────────────────────────────────────────────
+  mods.push(modDecisionSpotlight(stage, primary));             // Decision spotlight (S4 only)
+  mods.push(modStillConsidering(stage, primary));              // Shortlist manager (S4-S5)
+  mods.push(modVisitPlanner(stage));                           // Visit planner (S4 only)
+  mods.push(modPostVisitTools(stage));                         // Post-visit tools (S5 only)
 
   // ── S1 only: new launches entry point ────────────────────────────────────────
-  mods.push(modNewLaunches(stage, primary));                   // S2-S3 suppressed: NewInSectors covers it
+  mods.push(modNewLaunches(stage, primary));                   // S1-S3; S4+ hidden by modNewInSectors
 
-  // ── S1+: recommendations + signals ──────────────────────────────────────────
-  mods.push(modPeopleAlsoViewed(stage, primary));              // social proof at every stage
-  mods.push(modPriceTrend(stage, primary));                    // appreciation signal at every stage
+  // ── S1+: signals + footer ───────────────────────────────────────────────────
+  mods.push(modPriceTrend(stage, primary));                    // Price trend (all stages)
+  mods.push(modPeopleAlsoViewed(stage, primary));              // Social proof (all stages)
 
-  // ── Utilities + footer ───────────────────────────────────────────────────────
+  // ── Utilities + footer ──────────────────────────────────────────────────────
   mods.push(modTools(stage));
   mods.push(modArticles(stage, primary, secondary));
   mods.push(modQuickLinks());
@@ -1553,7 +1553,7 @@ function modTradeoff(stage, primary, secondary) {
 }
 
 function modPropertiesPrimary(stage, primary, secondary) {
-  if (stage === 2 || stage === 4 || stage === 5) return null;  // Show S1, S3 only
+  if (stage === 4 || stage === 5) return null;  // Show S1, S2, S3 per wireframes
 
   // ── INTELLIGENT FALLBACK FILTERING ──
   // Stage 1: Filter by exact primary location
