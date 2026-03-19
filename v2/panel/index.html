@@ -915,10 +915,9 @@
       user: { name: null, age: null, occupation: null, worksNear: null },
       stage: 1,
       lastVisitDaysAgo: 3,
-      location: { primary: null, secondary: null, openToNearby: false },
+      location: { primary: null, secondary: null, city: null, openToNearby: false },
       filters: { budgetMin: 70, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
-      behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'medium' },
-      openAIData: null
+      behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'medium' }
     };
   }
 
@@ -1155,6 +1154,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
   function collect() {
     const bhk = [];
     document.querySelectorAll('.bhk-chip.on').forEach(el => bhk.push(el.dataset.bhk));
+    const oldCity = profile.location && profile.location.city ? profile.location.city : null;
     profile = {
       user: {
         name: v('f-name') || null,
@@ -1166,6 +1166,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
       location: {
         primary: v('f-primary') || null,
         secondary: on('t-nearby') ? (v('f-secondary') || null) : null,
+        city: oldCity,
         openToNearby: on('t-nearby')
       },
       filters: {
@@ -1215,7 +1216,11 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     set('f-devcontact', b.developerContact || 'none');
     document.getElementById('t-visited').classList.toggle('on', !!b.visitedSite);
     set('f-pricesens', b.priceSensitivity || 'medium');
+    // Preserve location metadata (city, types) from incoming persona
+    const preservedCity = loc.city || null;
     collect();
+    // Restore city after collect() rebuilds location
+    profile.location.city = preservedCity;
     updateUI();
   }
 
@@ -1314,10 +1319,8 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     const p = PERSONAS[key];
     if (!p) return;
     activeSessionId = null;
-    fillForm(p);
-    collect();
+    fillForm(p);  // fillForm() calls collect() internally, no need to call it again
     if (p.stageOverride != null) profile.stage = p.stageOverride;
-    updateUI();
     sendToIframe(profile);
     if (!silent) toast('Loaded: ' + (p.user.name || key), 'success');
     renderSessionList();
@@ -1793,7 +1796,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     try { sessionStorage.setItem('v2-panel-view', view); } catch (_) {}
   }
 
-  /* ─── Live sync — always-on, fixed room 'default' ─── */
+  /* ─── Live sync — always-on, fixed row id='default' ─── */
   async function writeLiveConfig() {
     if (!sb) return;
     const payload = JSON.parse(JSON.stringify(profile));
@@ -1801,7 +1804,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     delete payload.apiBase;
     try {
       await sb.from('live_config').upsert({
-        room: 'default',
+        id: 'default',
         config: payload,
         updated_at: new Date().toISOString()
       });

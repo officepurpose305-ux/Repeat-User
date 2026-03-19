@@ -2348,13 +2348,13 @@ var _supaKey = (typeof window !== 'undefined' && window.SUPABASE_ANON_KEY) || ''
 var _inIframe = window.parent && window.parent !== window;
 
 if (!_inIframe && _supaUrl && _supaKey && window.supabase) {
-  // ── Standalone mode: always subscribe to fixed 'default' room ────────────────
+  // ── Standalone mode: always subscribe to fixed 'default' row ────────────────
   var _lsb = window.supabase.createClient(_supaUrl, _supaKey);
 
   renderPage(); // show empty/loading state while waiting
 
   // 1. Fetch the latest config immediately on load
-  _lsb.from('live_config').select('config').eq('room', 'default').single().then(function(res) {
+  _lsb.from('live_config').select('config').eq('id', 'default').single().then(function(res) {
     if (res.data && res.data.config) {
       _panelConnected = true;
       config = Object.assign(defaultConfig(), res.data.config);
@@ -2366,7 +2366,7 @@ if (!_inIframe && _supaUrl && _supaKey && window.supabase) {
   _lsb.channel('live:default')
     .on('postgres_changes', {
       event: '*', schema: 'public', table: 'live_config',
-      filter: 'room=eq.default'
+      filter: 'id=eq.default'
     }, function(payload) {
       if (payload.new && payload.new.config) {
         _panelConnected = true;
