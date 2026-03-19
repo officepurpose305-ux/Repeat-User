@@ -1184,7 +1184,7 @@ function reactionHtml(key, notePlaceholder) {
 }
 
 function modContinue(stage, primary, secondary) {
-  if (stage < 2 || stage === 4 || stage === 5) return null;
+  if (stage < 2) return null;  // Show S2, S3, S4, S5
   const props = data.properties.slice(0, 2);
   const lastDays = config.lastVisitDaysAgo;
 
@@ -1642,7 +1642,7 @@ function modPropertiesPrimary(stage, primary, secondary) {
 }
 
 function modNearbyLocalities(stage, primary) {
-  if (stage !== 2) return null;
+  if (stage < 2 || stage > 3) return null;  // Show S2, S3
   const adjs = data.adjacentLocalities.length ? data.adjacentLocalities : getMockData(config).adjacentLocalities;
   const propPool = data.properties.length > 5 ? data.properties : getMockData(config).properties;
 
@@ -1981,7 +1981,7 @@ function modNearbyComparison(stage, primary) {
 }
 
 function modNewLaunches(stage, primary) {
-  if (stage !== 1) return null; // S2-S3: redundant with modNewInSectors; S4+: discovery noise
+  if (stage > 3) return null; // Show S1-S3; S4+: discovery noise
   const nl = data.properties.filter(p=>!p.ready_to_move)[0] || getMockData(config).properties[2];
   return `<div class="nl-wrap">
     <div class="nl-top">
@@ -2103,11 +2103,12 @@ function modDecisionVelocity(stage) {
 }
 
 function modTools(stage) {
-  if (stage === 1 || stage === 5) return null;
+  if (stage === 1) return null;  // Show S2, S3, S4, S5
   const sets = {
     2:[{icon:'trending_up',name:'Price Trends',desc:'Locality history'},{icon:'menu_book',name:'Buyer Guide',desc:'Step-by-step checklist'}],
     3:[{icon:'trending_up',name:'Price Trends',desc:'Locality history'},{icon:'calculate',name:'EMI Calculator',desc:'Monthly outflow'},{icon:'account_balance',name:'Home Loan Guide',desc:'Rates & eligibility'},{icon:'menu_book',name:'Buyer Guide',desc:'Step-by-step checklist'}],
     4:[{icon:'calculate',name:'EMI Calculator',desc:'Monthly outflow'},{icon:'verified',name:'Loan Eligibility',desc:'Pre-qualify in 2 mins'},{icon:'trending_up',name:'Price Check',desc:'Current market rate'}],
+    5:[{icon:'calculate',name:'EMI Calculator',desc:'Loan monthly payment'},{icon:'account_balance',name:'Home Loan Guide',desc:'Final approval & rates'},{icon:'assignment',name:'Registration Guide',desc:'Stamp duty & costs'},{icon:'verified_user',name:'Possession Checklist',desc:'Move-in readiness'}],
   };
   const tools = (sets[stage]||sets[2]);
   return `<div class="sec">

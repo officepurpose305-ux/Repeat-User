@@ -856,53 +856,49 @@
   /* ─── Preset personas ─── */
   const PERSONAS = {
     priya: {
+      // S2: Broad city entry, locality aware, dual locality consideration
       user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 3,
-      location: { primary: 'Sector 137', secondary: 'Sector 143', openToNearby: true },
+      location: { primary: 'Sector 137', secondary: null, openToNearby: true },
       filters: { budgetMin: 70, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
-      behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'medium' }
+      behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'medium' },
+      stageOverride: 2
     },
     rahul: {
-      // Narrow locality entry, left one callback — expect Stage 2 (not over-bumped)
+      // S2: Narrow locality entry, single sector focus — NOT over-bumped despite callback
       user: { name: 'Rahul Sharma', age: 34, occupation: 'Software Engineer', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 5,
       location: { primary: 'Sector 137', secondary: null, openToNearby: false },
       filters: { budgetMin: 75, budgetMax: 90, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: '6m' },
-      behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'medium' }
+      behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'medium' },
+      stageOverride: 2
     },
     meera: {
-      // City-level, tight budget, high price sensitivity — expect Stage 2
+      // S3: Budget-constrained, comparing affordable zones
       user: { name: 'Meera Iyer', age: 29, occupation: 'Teacher', worksNear: null },
       lastVisitDaysAgo: 7,
       location: { primary: 'Noida', secondary: null, openToNearby: true },
       filters: { budgetMin: 50, budgetMax: 60, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: '6m+' },
-      behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'high' }
+      behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'high' },
+      stageOverride: 3
     },
     vikram: {
-      // Investor, city-level, left callback, soon intent — expect Stage 2/3
+      // S3: Investor mindset, appreciation-focused comparison
       user: { name: 'Vikram Nair', age: 45, occupation: 'Business Owner', worksNear: null },
       lastVisitDaysAgo: 2,
       location: { primary: 'Noida', secondary: null, openToNearby: true },
       filters: { budgetMin: 100, budgetMax: 150, bhk: ['2BHK', '3BHK'], readyToMove: 'either', buyTimeline: '3m' },
-      behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'low' }
+      behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'low' },
+      stageOverride: 3
     },
-    stage4: {
-      // Shortlist · Deciding — stage pinned to 4
-      stageOverride: 4,
-      user: { name: 'Generic Stage 4', age: null, occupation: null, worksNear: null },
+    upgrader: {
+      // S4: Shortlist/decision mode — owns 2BHK Sec 62, upgrading to 3BHK
+      user: { name: 'Ankit Verma', age: 38, occupation: 'Senior Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 1,
-      location: { primary: 'Sector 137', secondary: 'Sector 143', openToNearby: false },
-      filters: { budgetMin: 83, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'yes', buyTimeline: '1m' },
-      behavior: { developerContact: 'spoke', visitedSite: false, priceSensitivity: 'high' }
-    },
-    stage5: {
-      // Post-visit · Confirming — stage pinned to 5
-      stageOverride: 5,
-      user: { name: 'Generic Stage 5', age: null, occupation: null, worksNear: null },
-      lastVisitDaysAgo: 0,
       location: { primary: 'Sector 137', secondary: null, openToNearby: false },
-      filters: { budgetMin: 83, budgetMax: 90, bhk: ['2BHK'], readyToMove: 'yes', buyTimeline: '1m' },
-      behavior: { developerContact: 'spoke', visitedSite: true, priceSensitivity: 'high' }
+      filters: { budgetMin: 120, budgetMax: 150, bhk: ['3BHK'], readyToMove: 'either', buyTimeline: '3m' },
+      behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'medium' },
+      stageOverride: 4
     }
   };
 
@@ -1342,8 +1338,13 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
         console.warn('loadPersonas: no data returned');
         return;
       }
-      if (data.length === 0) {
-        console.log('loadPersonas: table empty, attempting to seed...');
+      // Check if personas match expected 5 from evolution framework
+      const expectedNames = ['Priya Mehta', 'Rahul Sharma', 'Meera Iyer', 'Vikram Nair', 'Ankit Verma'];
+      const namesInDb = (data || []).map(d => d.profile?.user?.name);
+      const needsReseed = expectedNames.some(k => !namesInDb.includes(k)) || data.length !== 5;
+
+      if (needsReseed) {
+        console.log('loadPersonas: persona list mismatch, reseeding...');
         await seedPersonas();
         return;
       }
@@ -1362,7 +1363,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     }
     try {
       console.log('seedPersonas: starting, PERSONAS keys:', Object.keys(PERSONAS));
-      const descMap = { priya:'Locality aware · Noida', rahul:'Narrow entry budget', meera:'Budget tight · comparison', vikram:'Investor mindset', stage4:'Shortlisting · deciding', stage5:'Post-visit confirming' };
+      const descMap = { priya:'Broad city entry · Locality aware · S2', rahul:'Narrow locality entry · Single sector · S2', meera:'Budget-constrained · Affordable zones · S3', vikram:'Investor mindset · Appreciation focus · S3', upgrader:'Upgrading 2→3BHK · Decision mode · S4' };
       const seeds = Object.keys(PERSONAS).map(key => {
         const p = PERSONAS[key];
         return {
@@ -1372,6 +1373,9 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
         };
       });
       console.log('seedPersonas: created seed objects:', seeds.length, seeds.map(s => s.name));
+      // Delete all existing personas before inserting new ones (replace mode)
+      const deleteResult = await sb.from('personas').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      console.log('seedPersonas: deleted old personas');
       const { data, error } = await sb.from('personas').insert(seeds).select();
       if (error) {
         console.error('seedPersonas insert error:', error.message, error.code, error.details);
