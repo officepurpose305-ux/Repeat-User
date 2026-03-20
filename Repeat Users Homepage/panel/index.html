@@ -579,6 +579,25 @@
 
     <div class="sidebar-scroll">
 
+      <!-- Built-in Personas (Quick Selector) -->
+      <div class="section">
+        <div class="section-title">Quick Load Persona</div>
+        <select id="persona-selector" onchange="window.loadPersona(this.value, true)" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;cursor:pointer;">
+          <option value="">— Select a persona —</option>
+          <optgroup label="── STAGE 2: LOCALITY AWARENESS ────">
+            <option value="s2_locality_explorer">s2_locality_explorer | Budget: ₹70–95L | Sector 137</option>
+            <option value="s2_locality_focused">s2_locality_focused | Budget: ₹75–90L | Sector 137</option>
+          </optgroup>
+          <optgroup label="── STAGE 3: COMPARISON ────────────">
+            <option value="s3_budget_comparison">s3_budget_comparison | Budget: ₹50–60L | Noida</option>
+            <option value="s3_investment_focus">s3_investment_focus | Budget: ₹100–150L | Noida</option>
+          </optgroup>
+          <optgroup label="── STAGE 4: DECISION ──────────────">
+            <option value="s4_property_upgrader">s4_property_upgrader | Budget: ₹120–150L | Sector 137</option>
+          </optgroup>
+        </select>
+      </div>
+
       <!-- Personas (DB-backed) -->
       <div class="section" id="personas-section">
         <div id="personas-header" class="section-title" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;user-select:none;">
@@ -855,8 +874,8 @@
 
   /* ─── Preset personas ─── */
   const PERSONAS = {
-    priya: {
-      // S2: Broad city entry, locality aware, dual locality consideration
+    s2_locality_explorer: {
+      // S2: Broad city entry, locality aware, exploring options
       user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 3,
       location: { primary: 'Sector 137', secondary: null, openToNearby: true },
@@ -864,7 +883,7 @@
       behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'medium' },
       stageOverride: 2
     },
-    rahul: {
+    s2_locality_focused: {
       // S2: Narrow locality entry, single sector focus — NOT over-bumped despite callback
       user: { name: 'Rahul Sharma', age: 34, occupation: 'Software Engineer', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 5,
@@ -873,7 +892,7 @@
       behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'medium' },
       stageOverride: 2
     },
-    meera: {
+    s3_budget_comparison: {
       // S3: Budget-constrained, comparing affordable zones
       user: { name: 'Meera Iyer', age: 29, occupation: 'Teacher', worksNear: null },
       lastVisitDaysAgo: 7,
@@ -882,7 +901,7 @@
       behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'high' },
       stageOverride: 3
     },
-    vikram: {
+    s3_investment_focus: {
       // S3: Investor mindset, appreciation-focused comparison
       user: { name: 'Vikram Nair', age: 45, occupation: 'Business Owner', worksNear: null },
       lastVisitDaysAgo: 2,
@@ -891,7 +910,7 @@
       behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'low' },
       stageOverride: 3
     },
-    upgrader: {
+    s4_property_upgrader: {
       // S4: Shortlist/decision mode — owns 2BHK Sec 62, upgrading to 3BHK
       user: { name: 'Ankit Verma', age: 38, occupation: 'Senior Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 1,
@@ -1373,7 +1392,13 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     }
     try {
       console.log('seedPersonas: starting, PERSONAS keys:', Object.keys(PERSONAS));
-      const descMap = { priya:'Broad city entry · Locality aware · S2', rahul:'Narrow locality entry · Single sector · S2', meera:'Budget-constrained · Affordable zones · S3', vikram:'Investor mindset · Appreciation focus · S3', upgrader:'Upgrading 2→3BHK · Decision mode · S4' };
+      const descMap = {
+        s2_locality_explorer: 'First-time buyer · Exploring localities · S2',
+        s2_locality_focused: 'Returning buyer · Single locality · S2',
+        s3_budget_comparison: 'Budget-constrained · Multi-locality compare · S3',
+        s3_investment_focus: 'Investor mindset · Appreciation focus · S3',
+        s4_property_upgrader: 'Upgrading 2→3BHK · Decision mode · S4'
+      };
       const seeds = Object.keys(PERSONAS).map(key => {
         const p = PERSONAS[key];
         return {
@@ -2002,7 +2027,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
 
   /* ─── Init ─── */
   function init() {
-    loadPersona('priya', true); // boot with Priya — fills form, scores stage
+    loadPersona('s2_locality_explorer', true); // boot with s2_locality_explorer — fills form, scores stage
     initSupabase();
 
     // Attach personas header click handler
