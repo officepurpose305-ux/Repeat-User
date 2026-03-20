@@ -1051,6 +1051,33 @@ Return 5 localities, 6 properties, 4 adjacent. Realistic for ${city}, India.`;
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
+// ── Commute time calculator ───────────────────────────────────────────────────
+// Simple heuristic-based commute estimation (in minutes)
+function estimateCommute(locality, worksNear) {
+  if (!locality || !worksNear) return null;
+
+  const loc = String(locality).toLowerCase();
+  const work = String(worksNear).toLowerCase();
+
+  // Same locality/sector = 10 mins
+  if (loc === work || loc.includes(work.split(' ')[0])) return 10;
+
+  // Adjacent sectors/nearby = 15-20 mins
+  if ((loc.includes('sector') && work.includes('sector')) ||
+      (loc.includes('noida') && work.includes('noida'))) {
+    const locNum = parseInt(loc.match(/\d+/)?.[0] || 0);
+    const workNum = parseInt(work.match(/\d+/)?.[0] || 0);
+    if (locNum && workNum) {
+      const diff = Math.abs(locNum - workNum);
+      if (diff <= 20) return 10 + (diff * 0.5);
+    }
+    return 18;
+  }
+
+  // Different city/far = 30+ mins
+  return 35;
+}
+
 function renderPage() {
   const page = document.getElementById('page');
   const loc = config.location||{};
@@ -1062,6 +1089,7 @@ function renderPage() {
   const bhk = (f.bhk && f.bhk.length) ? f.bhk.join(', ') : '2 BHK';
   const budget = f.budgetMax ? '₹'+f.budgetMin+'L–₹'+f.budgetMax+'L' : '';
   const rtmLabel = f.readyToMove === 'yes' ? 'Ready to move' : f.readyToMove === 'no' ? 'Under construction' : '';
+  const worksNear = (config.user && config.user.worksNear) || '';
 
   // Nav
   const navLabel = primary
@@ -1074,59 +1102,86 @@ function renderPage() {
   if (loading) { page.innerHTML = renderLoading(); return; }
 
   const mods = [];
-  // ── Always ──────────────────────────────────────────────────────────────────
-  mods.push(modContextChips(stage, primary, secondary));
-  mods.push(modHero(stage, city, primary, secondary));
 
-  // ── S1 entry point ──────────────────────────────────────────────────────────
-  mods.push(modBudgetAnchor(stage, primary));                  // S1-only budget anchor (entry point)
+  // ════════════════════════════════════════════════════════════════════════════════
+  // WIREFRAME-ALIGNED SECTION ORDER BY STAGE
+  // ════════════════════════════════════════════════════════════════════════════════
 
-  // ── S2-S5: resume + fresh listings ──────────────────────────────────────────
-  mods.push(modContinue(stage, primary, secondary));           // Show S2-S5
-  mods.push(modNewInSectors(stage, primary));                  // "Fresh listings in {primary}" — S2-S3
+  // ── Always present ───────────────────────────────────────────────────────────────
+  mods.push(modContextChips(stage, primary, secondary));       // Show location context (S2+)
+  mods.push(modHero(stage, city, primary, secondary));         // Hero section (S1 only)
+  mods.push(modBudgetAnchor(stage, primary));                  // Budget anchor (S1 only entry point)
 
-  // ── S1-S3: properties + nearby ──────────────────────────────────────────────
-  mods.push(modPropertiesPrimary(stage, primary, secondary));  // Properties in primary (S1-S3)
-  mods.push(modSimilarBHK(stage, bhk, primary));               // Similar BHK (S2 only)
-  mods.push(modNearbyLocalities(stage, primary));              // Nearby localities (S2-S3)
-  mods.push(modNearbyComparison(stage, primary));              // Nearby comparison (S3 without secondary)
+  // ── S1: DISCOVERY FLOW ───────────────────────────────────────────────────────────
+  // Continue → Fresh Listings → Similar BHK → Budget Check → Upcoming → Experts →
+  // Price Trend → Nearby → Articles → Tools
+  if (stage === 1) {
+    mods.push(modContinue(stage, primary, secondary));         // Continue (for returning S1 users)
+    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
+    mods.push(modSimilarBHK(stage, bhk, primary));             // Similar BHK
+    mods.push(modBudgetCheck(stage, f));                       // Budget validation
+    mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming projects
+    mods.push(modExpertAgents(stage, primary, secondary));     // Expert sellers
+    mods.push(modPriceTrend(stage, primary));                  // Price trend
+    mods.push(modNearbyLocalities(stage, primary));            // Buyers also explore nearby
+  }
 
-  // ── S1-S3: locality discovery ────────────────────────────────────────────────
-  mods.push(modLocalitiesRadar(stage, city, primary));         // Your journey so far (S1-S3)
-  mods.push(modLocalitySuggestions(stage, primary, secondary));// Locality suggestions (S2-S3, no secondary)
-  mods.push(modDecisionVelocity(stage));                       // Weeks in search + open questions (S2-S3)
-  mods.push(modStaleLocationNudge(stage, secondary, config.lastVisitDaysAgo)); // Stale location nudge (S2-S3)
+  // ── S2: LOCALITY AWARENESS FLOW ──────────────────────────────────────────────────
+  // Continue → Locations Radar → Consideration Set → Nearby Localities →
+  // Budget Check → Similar BHK → Preference Confirmation
+  else if (stage === 2) {
+    mods.push(modContinue(stage, primary, secondary));         // Continue (multi-sector view)
+    mods.push(modLocalitiesRadar(stage, city, primary));       // Locations on your radar
+    mods.push(modConsiderationSet(stage));                     // Which matters to daily routine?
+    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities
+    mods.push(modBudgetCheck(stage, f));                       // Open to view properties in ₹80-1 Cr?
+    mods.push(modSimilarBHK(stage, bhk, primary));             // Similar BHK
+    mods.push(modPreferenceConfirmation(stage, bhk));          // Do you want to continue with 2BHK?
+  }
 
-  // ── S2: budget + filter confirmation ────────────────────────────────────────
-  mods.push(modBudgetFit(stage, f, primary));                  // Budget fit insight (S1-S3)
+  // ── S3: COMPARISON FLOW ──────────────────────────────────────────────────────────
+  // Continue → Fresh Listings → Consideration Set → Properties Secondary →
+  // Head to Head → Landmarks → Expert Sellers → Upcoming → Price Trend → Nearby → Articles → Tools
+  else if (stage === 3) {
+    mods.push(modContinue(stage, primary, secondary));         // Continue
+    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
+    mods.push(modConsiderationSet(stage));                     // What is your consideration set?
+    mods.push(modPropertiesInSecondary(stage, secondary));     // Properties in secondary
+    mods.push(modHeadToHead(stage, primary, secondary, worksNear)); // H2H with commute times
+    mods.push(modNearestLandmarks(stage, primary, secondary)); // Landmarks/amenities
+    mods.push(modExpertAgents(stage, primary, secondary));     // Expert sellers
+    mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments
+    mods.push(modPriceTrend(stage, primary));                  // Price trend
+    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to consider
+  }
 
-  // ── S3: comparison suite ────────────────────────────────────────────────────
-  mods.push(modConsiderationSet(stage));                       // Consideration set selector (S2 only)
-  mods.push(modPropertiesInSecondary(stage, secondary));       // Properties in secondary (S3 only)
-  mods.push(modHeadToHead(stage, primary, secondary));         // Comparison table (S3 with secondary)
-  mods.push(modNearestLandmarks(stage, primary, secondary));   // Nearest landmarks (S3 with secondary)
-  mods.push(modTradeoff(stage, primary, secondary));           // Tradeoff insight (S3 with secondary)
-  mods.push(modExpertAgents(stage, primary, secondary));       // Expert agents (S3 only)
-  mods.push(modUpcomingDevelopments(stage, primary));          // Upcoming developments (S3 only)
+  // ── S4: SHORTLIST/DECISION FLOW ──────────────────────────────────────────────────
+  // Decision Spotlight → Social Proof → Still Considering → Decision CTA →
+  // Visit with Shortlist → Upcoming → Price Trend → Articles → Tools
+  else if (stage === 4) {
+    mods.push(modDecisionSpotlight(stage, primary, worksNear)); // Decision spotlight (commute context)
+    mods.push(modSocialProof(stage, primary));                 // Social proof (X people contacted)
+    mods.push(modStillConsidering(stage, primary));            // Still considering
+    mods.push(modDecisionCtaSection(stage));                   // Find home that feels right + CTAs (NEW)
+    mods.push(modVisitWithShortlist(stage, primary));          // Visit these places with shortlist (NEW)
+    mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments
+    mods.push(modPriceTrend(stage, primary));                  // Price trend
+  }
 
-  // ── S4-S5: decision + post-visit ────────────────────────────────────────────
-  mods.push(modDecisionSpotlight(stage, primary));             // Decision spotlight (S4 only)
-  mods.push(modStillConsidering(stage, primary));              // Shortlist manager (S4-S5)
-  mods.push(modVisitPlanner(stage));                           // Visit planner (S4 only)
-  mods.push(modPostVisitTools(stage));                         // Post-visit tools (S5 only)
+  // ── S5: POST-VISIT FLOW ──────────────────────────────────────────────────────────
+  // Still Considering → Post-visit Tools → Price Trend → Articles → Tools
+  else if (stage === 5) {
+    mods.push(modStillConsidering(stage, primary));            // Still considering
+    mods.push(modPostVisitTools(stage));                       // Post-visit tools (EMI, Loan, Registration)
+    mods.push(modPriceTrend(stage, primary));                  // Price trend
+  }
 
-  // ── S1 only: new launches entry point ────────────────────────────────────────
-  mods.push(modNewLaunches(stage, primary));                   // S1-S3; S4+ hidden by modNewInSectors
+  // ── Footer (all stages) ──────────────────────────────────────────────────────────
+  mods.push(modArticles(stage, primary, secondary));           // Articles
+  mods.push(modTools(stage));                                  // Tools & calculators
+  mods.push(modQuickLinks());                                  // Quick links
+  mods.push(modHelpful());                                     // Helpful feedback
 
-  // ── S1+: signals + footer ───────────────────────────────────────────────────
-  mods.push(modPriceTrend(stage, primary));                    // Price trend (all stages)
-  mods.push(modPeopleAlsoViewed(stage, primary));              // Social proof (all stages)
-
-  // ── Utilities + footer ──────────────────────────────────────────────────────
-  mods.push(modTools(stage));
-  mods.push(modArticles(stage, primary, secondary));
-  mods.push(modQuickLinks());
-  mods.push(modHelpful());
   page.innerHTML = mods.filter(Boolean).join('');
 }
 
@@ -1183,57 +1238,121 @@ function reactionHtml(key, notePlaceholder) {
   </div>`;
 }
 
-// CONSOLIDATED: modContinue, modNewInSectors, modPropertiesPrimary, modSimilarBHK merged into modFreshListings
-// This module shows properties with tabs: Recent | New | Top Picks | Similar
+// WIREFRAME-ALIGNED: modContinue now shows for all stages (S1-S5)
 function modContinue(stage, primary, secondary) {
-  if (stage !== 2) return null;  // Only show for S2 as "Recent" — consolidated into modFreshListings for S3+
-  const props = data.properties.slice(0, 2);
-  const lastDays = config.lastVisitDaysAgo;
+  if (stage < 1 || stage > 5) return null;  // Show for all stages
+  if (!primary && stage !== 1) return null; // S1 is okay with no primary
 
+  const props = data.properties.slice(0, 2);
+  if (!props.length) return null; // No data, skip
+
+  const lastDays = config.lastVisitDaysAgo;
   const timeBadge = !lastDays || lastDays === 0 ? 'Today'
     : lastDays === 1 ? '1d ago' : `${lastDays}d ago`;
 
-  const cards = props.length ? props.map((p, i) => {
+  // Simple version for S1-S2 (early discovery/locality stages)
+  // Rich version for S3+ (comparison/decision stages with more engagement)
+  const isEarlyStage = stage < 3;
+
+  if (isEarlyStage) {
+    // ── SIMPLE VERSION: Just image + basic info ──
+    const cards = props.map((p) => {
+      return `<div class="ds-prop-card">
+        <div class="ds-prop-card-img">
+          ${propImg(p)}
+          <div class="ds-image-tags"><span class="ds-image-tag">${timeBadge}</span></div>
+          <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+        </div>
+        <div class="ds-prop-card-body">
+          <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+          <div class="ds-prop-card-subtitle">${esc(p.bhk||'2 BHK')}</div>
+          <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
+          <div class="text-xs text-tertiary mt-4">${esc(p.lm ? p.lm.split('·')[0].trim() : '')}</div>
+          <div class="text-xs text-tertiary">${esc(p.sqft||'')} · ${p.ready_to_move ? 'Ready to move' : 'UC'}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="sec">
+      <div class="sec-pad" style="padding-bottom:8px;">
+        <div class="ds-section-heading">Continue Where You Left Off</div>
+        <div class="ds-heading-sub">Properties you recently viewed</div>
+      </div>
+      <div class="grid-2-col" style="padding:0 14px 12px;">
+        ${cards}
+      </div>
+    </div>`;
+  }
+
+  // ── RICH VERSION: Full details for engaged users (S3+) ──
+  const cards = props.map((p, i) => {
     const isMostViewed = i === 0;
     const noteKey = p.name || ('prop_cont_' + i);
 
-    // Engagement badges
-    const engageBadge = i === 0
-      ? `<span class="ds-image-tag"><span class="material-icons" aria-hidden="true" style="font-size:11px;vertical-align:-1px;">visibility</span> Viewed</span>`
-      : `<span class="ds-image-tag" style="background:rgba(217,119,6,0.88);"><span class="material-icons" aria-hidden="true" style="font-size:11px;vertical-align:-1px;">local_fire_department</span> 7 contacted</span>`;
+    // View counts (simulated: first property gets more views)
+    const viewCounts = [3, 1];
+    const viewCount = viewCounts[i] || 1;
 
-    return `<div class="ds-prop-card horizontal">
-      <div class="ds-prop-card-img">
-        ${propImg(p)}
-        <div class="ds-prop-card-badges" style="left:10px;right:auto;">
-          <span class="ds-image-tag">${timeBadge}</span>
-        </div>
-        <div class="ds-prop-card-badges" style="right:44px;">
-          ${engageBadge}
-        </div>
-        <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+    // Feedback chips (simulated from property features)
+    const feedbackChips = [
+      ['Layout', '2 Car Parking', 'Open Kitchen'],
+      ['Parking', 'Visit and confirm parking here']
+    ];
+    const chips = feedbackChips[i] || [];
+
+    // Commute info
+    const commute = config.user && config.user.worksNear ? estimateCommute(p.location, config.user.worksNear) : null;
+
+    // Image with badges
+    const imageBadges = `
+      <div class="ds-prop-card-badges" style="left:10px;right:auto;gap:4px;">
+        <span class="ds-image-tag">${viewCount}x</span>
+        ${isMostViewed ? `<span class="ds-image-tag" style="background:#111827;color:#fff;font-weight:800;">MOST VIEWED</span>` : ''}
       </div>
-      <div class="ds-prop-card-body">
-        <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
-        <div class="ds-prop-card-subtitle">${esc(p.bhk||'2 BHK')} · ${esc(p.dev||'')}</div>
-        <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
-        ${isMostViewed && lastDays ? `<div style="font-size:11px;color:var(--text3);margin-top:4px;">Viewed ${lastDays} day${lastDays>1?'s':''} ago · Shared with friend</div>` : ''}
-        ${stage === 3 ? reactionHtml(noteKey) : stage === 4 ? noteHtml(noteKey, stage) : stage === 5 ? reactionHtml(noteKey, 'How did it compare to expectations?') : ''}
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+    `;
+
+    return `<div class="card-rich">
+      <div class="card-grid-2-img">
+        <!-- Image -->
+        <div class="card-image-box">
+          ${propImg(p)}
+          ${imageBadges}
+        </div>
+        <!-- Details -->
+        <div>
+          <div class="flex-center gap-sm mb-4 text-xs text-tertiary">
+            <span class="material-icons" style="font-size:12px;">visibility</span> Viewed ${viewCount} time${viewCount > 1 ? 's' : ''}
+          </div>
+          <div class="text-md font-bold text-primary mb-2">${esc(p.bhk||'2 BHK')} · ${esc(p.price||'₹—')}</div>
+          <div class="text-base text-secondary mb-2">${esc(p.location||primary)}</div>
+          <div class="text-xs text-tertiary mb-6">${p.lm ? esc(p.lm.split('·')[0].trim()) : ''}</div>
+          ${commute ? `<div class="text-xs text-tertiary mb-6"><span class="material-icons" style="font-size:13px;vertical-align:-2px;">directions_car</span> ${commute} mins from ${config.user.worksNear}</div>` : ''}
+          <!-- Feedback chips -->
+          <div class="mb-8">
+            <div class="text-xs text-tertiary font-semibold mb-4 uppercase">What's working/not working for you?</div>
+            <div class="flex-wrap gap-sm">
+              ${chips.slice(0, 2).map(chip => `<button class="chip-muted">${esc(chip)}</button>`).join('')}
+              <button class="chip-muted">+ Add note</button>
+            </div>
+          </div>
+          <button class="ds-btn ds-btn-sm ds-btn-secondary" style="width:100%;">Contact Seller</button>
+        </div>
       </div>
     </div>`;
-  }) : [skHprop(), skHprop()];
+  }).join('');
 
   return `<div class="sec">
-    <div class="sec-pad" style="padding-bottom:8px;">
-      <div class="ds-section-heading">Continue where you left off</div>
-      <div class="ds-heading-sub">Your recent searches were in ${esc(primary)}${secondary?', '+esc(secondary):''}</div>
+    <div class="sec-pad" style="padding-bottom:12px;">
+      <div class="ds-section-heading">Continue Where You Left Off</div>
+      <div class="ds-heading-sub">Most properties are located in ${esc(primary)}${secondary?', '+esc(secondary):''}</div>
     </div>
-    <div class="hscroll">${cards.join('')}</div>
+    <div style="padding:0 14px;">${cards}</div>
   </div>`;
 }
 
-function modNewInSectors(stage, primary) {
-  if (stage < 2 || stage > 3) return null;
+function modNewInSectors(stage, primary, worksNear) {
+  if (stage < 1 || stage > 3) return null;
   const f = config.filters || {};
   const selectedBhk = f.bhk && f.bhk.length ? f.bhk : null;
   const pool = rawData.properties || data.properties;
@@ -1245,6 +1364,16 @@ function modNewInSectors(stage, primary) {
     const bhkFiltered = newProps.filter(p => nums.indexOf((p.bhk||'').replace(/\D/g,'').charAt(0)) !== -1);
     if (bhkFiltered.length) newProps = bhkFiltered;
   }
+
+  // Sort by commute time if worksNear is set
+  if (worksNear) {
+    newProps = newProps.sort((a, b) => {
+      const commuteA = estimateCommute(a.location, worksNear) || 999;
+      const commuteB = estimateCommute(b.location, worksNear) || 999;
+      return commuteA - commuteB;
+    });
+  }
+
   newProps = newProps.slice(0, 4);
   if (!newProps.length) return null;
 
@@ -1254,8 +1383,18 @@ function modNewInSectors(stage, primary) {
 
   const cards = newProps.map((p, i) => {
     const freshTime = i === 0 ? 'Today' : `${i}d ago`;
-    const featureTag = p.lm
-      ? `<div style="padding:7px 12px;border-top:1px solid rgba(108,48,212,0.12);font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--purple-text);background:var(--purple-light);">✦ ${esc(p.lm.split('·')[0].trim())}</div>`
+
+    // Show commute time if worksNear is set, otherwise use default lm
+    let featureText = '';
+    if (worksNear) {
+      const commute = estimateCommute(p.location, worksNear);
+      featureText = commute ? `${commute} mins to ${worksNear}` : (p.lm ? p.lm.split('·')[0].trim() : '');
+    } else {
+      featureText = p.lm ? p.lm.split('·')[0].trim() : '';
+    }
+
+    const featureTag = featureText
+      ? `<div style="padding:7px 12px;border-top:1px solid rgba(108,48,212,0.12);font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--purple-text);background:var(--purple-light);">✦ ${esc(featureText)}</div>`
       : '';
 
     return `<div class="ds-prop-card">
@@ -1443,29 +1582,61 @@ function modLocalitiesRadar(stage, city, primary) {
 }
 
 function modConsiderationSet(stage) {
-  if (stage !== 2) return null;
-  const opts = [
-    { icon:'check_circle', label:'Ready to Move', sub:'Move in immediately · No waiting period', sel:true },
-    { icon:'construction', label:'Under Construction', sub:'10–15% lower entry price · Longer wait', sel:false },
-    { icon:'new_releases', label:'New Launch', sub:'Best prices · Full unit selection', sel:false },
-  ];
-  return `<div class="sec">
-    <div class="sec-pad" style="padding-bottom:8px;">
-      <div class="ds-section-heading">What type of property are you open to?</div>
-    </div>
-    <div style="padding:0 14px;" role="radiogroup" aria-label="Property type options">
-      ${opts.map(o=>`<div style="display:grid;grid-template-columns:40px 1fr 20px;gap:10px;align-items:center;padding:12px;margin-bottom:8px;background:${o.sel?'var(--blue-light)':'white'};border:1px solid ${o.sel?'var(--blue)':'var(--border)'};border-radius:6px;cursor:pointer;" role="radio" aria-checked="${o.sel?'true':'false'}" tabindex="${o.sel?'0':'-1'}">
-        <div style="width:40px;height:40px;border-radius:50%;background:${o.sel?'var(--blue)':'rgba(37,99,235,0.1)'};display:flex;align-items:center;justify-content:center;color:${o.sel?'white':'var(--blue)'};flex-shrink:0;font-size:18px;">
-          <span class="material-icons" aria-hidden="true">${o.icon}</span>
-        </div>
-        <div>
-          <div style="font-weight:700;font-size:13px;color:var(--text-primary);margin-bottom:2px;">${o.label}</div>
-          <div style="font-size:12px;color:var(--text-secondary);">${o.sub}</div>
-        </div>
-        ${o.sel?'<span class="material-icons" aria-hidden="true" style="color:var(--blue);flex-shrink:0;font-size:18px;">check_circle</span>':''}
-      </div>`).join('')}
-    </div>
-  </div>`;
+  if (stage === 2) {
+    // S2: "Which of these matters most to your daily routine?" (factors like Metro, Hospital, School, Marketplace)
+    const factors = [
+      { icon:'train', label:'Metro Proximity', sub:'Within 1-2 km of metro station' },
+      { icon:'local_hospital', label:'Hospitals', sub:'Quick access to healthcare' },
+      { icon:'school', label:'Schools', sub:'Quality schools nearby' },
+      { icon:'shopping_center', label:'Markets', sub:'Shopping & markets close by' },
+    ];
+    return `<div class="sec">
+      <div class="sec-pad" style="padding-bottom:8px;">
+        <div class="ds-section-heading">Which of these matters most to your daily routine?</div>
+        <div class="ds-heading-sub">Select what's important for you</div>
+      </div>
+      <div style="padding:0 14px;display:flex;flex-wrap:wrap;gap:10px;">
+        ${factors.map(f=>`<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:white;border:1px solid var(--border);border-radius:6px;cursor:pointer;flex:0 0 calc(50% - 6px);">
+          <input type="checkbox" style="width:18px;height:18px;cursor:pointer;" />
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:12px;color:var(--text);display:flex;align-items:center;gap:6px;">
+              <span class="material-icons" aria-hidden="true" style="font-size:16px;">${f.icon}</span>
+              ${f.label}
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">${f.sub}</div>
+          </div>
+        </label>`).join('')}
+      </div>
+    </div>`;
+  }
+  else if (stage === 3) {
+    // S3: "What is your consideration set?" (priority factors for comparison)
+    const priorities = [
+      { icon:'trending_up', label:'Investment Potential', sub:'Appreciation focus', sel:false },
+      { icon:'location_on', label:'Proximity', sub:'Distance & connectivity', sel:false },
+      { icon:'price_change', label:'Value for Money', sub:'Cost efficiency', sel:true },
+      { icon:'home', label:'Lifestyle', sub:'Amenities & environment', sel:false },
+    ];
+    return `<div class="sec">
+      <div class="sec-pad" style="padding-bottom:8px;">
+        <div class="ds-section-heading">What is your consideration set?</div>
+        <div class="ds-heading-sub">What matters most in your decision?</div>
+      </div>
+      <div style="padding:0 14px;" role="radiogroup" aria-label="Priority options">
+        ${priorities.map(p=>`<div style="display:grid;grid-template-columns:40px 1fr 20px;gap:10px;align-items:center;padding:12px;margin-bottom:8px;background:${p.sel?'var(--blue-light)':'white'};border:1px solid ${p.sel?'var(--blue)':'var(--border)'};border-radius:6px;cursor:pointer;" role="radio" aria-checked="${p.sel?'true':'false'}" tabindex="${p.sel?'0':'-1'}">
+          <div style="width:40px;height:40px;border-radius:50%;background:${p.sel?'var(--blue)':'rgba(37,99,235,0.1)'};display:flex;align-items:center;justify-content:center;color:${p.sel?'white':'var(--blue)'};flex-shrink:0;font-size:18px;">
+            <span class="material-icons" aria-hidden="true">${p.icon}</span>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:13px;color:var(--text-primary);margin-bottom:2px;">${p.label}</div>
+            <div style="font-size:12px;color:var(--text-secondary);">${p.sub}</div>
+          </div>
+          ${p.sel?'<span class="material-icons" aria-hidden="true" style="color:var(--blue);flex-shrink:0;font-size:18px;">check_circle</span>':''}
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+  return null;
 }
 
 function modPropertiesInSecondary(stage, secondary) {
@@ -1483,7 +1654,7 @@ function modPropertiesInSecondary(stage, secondary) {
   </div>`;
 }
 
-function modHeadToHead(stage, primary, secondary) {
+function modHeadToHead(stage, primary, secondary, worksNear) {
   if (stage !== 3) return null;
   if (!secondary) return null;
   const _fb = getMockData(config);
@@ -1493,9 +1664,26 @@ function modHeadToHead(stage, primary, secondary) {
   const cap = filt.budgetMax || 85;
   const sqft1 = Math.round(cap * 100000 / (l1.avgPsqft || 8000) / 10) * 10;
   const sqft2 = Math.round(cap * 100000 / (l2.avgPsqft || 7000) / 10) * 10;
-  const worksNearLabel = (config.user && config.user.worksNear) ? 'Drive to '+config.user.worksNear : 'Drive to office';
+
+  // Calculate actual commute times if worksNear is available
+  let commuteLabel = 'Drive to office';
+  let commuteV1 = '5 mins';
+  let commuteV2 = '20–25 mins';
+  let commutWin = 0;
+
+  if (worksNear) {
+    commuteLabel = 'Drive to ' + worksNear;
+    const commute1 = estimateCommute(primary, worksNear);
+    const commute2 = estimateCommute(secondary, worksNear);
+    if (commute1 && commute2) {
+      commuteV1 = commute1 + ' mins';
+      commuteV2 = commute2 + ' mins';
+      commutWin = commute1 <= commute2 ? 0 : 1;
+    }
+  }
+
   const rows = [
-    { label: worksNearLabel, v1:'5 mins', v2:'20–25 mins', win:0 },
+    { label: commuteLabel, v1: commuteV1, v2: commuteV2, win: commutWin },
     { label:'Entry price / sqft', v1:'₹'+(l1.avgPsqft||8100), v2:'₹'+(l2.avgPsqft||6200), win: (l1.avgPsqft||8100) < (l2.avgPsqft||6200) ? 0 : 1 },
     { label:`Space for ₹${cap}L`, v1:'~'+sqft1+' sq ft', v2:'~'+sqft2+' sq ft', win: sqft1 >= sqft2 ? 0 : 1 },
     { label:'YoY appreciation', v1:'+'+( l1.yoy||12)+'%', v2:'+'+( l2.yoy||14)+'%', win: (l1.yoy||12) >= (l2.yoy||14) ? 0 : 1 },
@@ -1585,7 +1773,7 @@ function modTradeoff(stage, primary, secondary) {
   </div>`;
 }
 
-function modPropertiesPrimary(stage, primary, secondary) {
+function modPropertiesPrimary(stage, primary, secondary, worksNear) {
   if (stage === 4 || stage === 5) return null;  // Show S1, S2, S3 per wireframes
 
   // ── INTELLIGENT FALLBACK FILTERING ──
@@ -1622,12 +1810,22 @@ function modPropertiesPrimary(stage, primary, secondary) {
     return `<div class="sec sec-pad"><div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">No listings available</div><div class="empty-sub">Properties for ${esc(primary)} are being curated. Check back soon!</div></div></div>`;
   }
 
-  // Score each property using stage-aware scoring
+  // Score each property using stage-aware scoring, and enrich with commute time if worksNear is set
   const scored = candidateProperties
-    .map(p => ({
-      ...p,
-      score: scoreProperty(p, config, stage)
-    }))
+    .map(p => {
+      const propWithScore = {
+        ...p,
+        score: scoreProperty(p, config, stage)
+      };
+      // Add commute info to lm field if worksNear is available
+      if (worksNear) {
+        const commute = estimateCommute(p.location, worksNear);
+        if (commute) {
+          propWithScore.lm = `${commute} mins to ${worksNear}${p.lm ? ' · ' + p.lm : ''}`;
+        }
+      }
+      return propWithScore;
+    })
     .sort(function(a, b) { return b.score - a.score; });
 
   // ── LABEL & TRANSPARENCY ──
@@ -1804,7 +2002,7 @@ function modBudgetFit(stage, f, primary, secondary) {
   </div>`;
 }
 
-function modDecisionSpotlight(stage, primary) {
+function modDecisionSpotlight(stage, primary, worksNear) {
   if (stage !== 4) return null;
   const prop = data.properties[0];
   if (!prop) return null;
@@ -1813,6 +2011,16 @@ function modDecisionSpotlight(stage, primary) {
   // EMI estimate: approx (price in lakhs * 100000 * 0.0085) / 1000 = rough ₹/mo
   const priceLakhs = parsePriceLakhs(prop.price);
   const emiK = priceLakhs ? Math.round(priceLakhs * 0.85) : null; // ~0.85% of price per month at 8.5% 20yr
+
+  // Calculate commute time if worksNear is available
+  let commuteText = 'Check commute from your office';
+  if (worksNear) {
+    const commute = estimateCommute(prop.location, worksNear);
+    if (commute) {
+      commuteText = `${commute} mins to ${worksNear} from here`;
+    }
+  }
+
   return `<div class="spotlight">
     <div class="spotlight-header">
       <div class="sph-title">✦ Your Top Pick</div>
@@ -1834,7 +2042,7 @@ function modDecisionSpotlight(stage, primary) {
       </div>
       <div class="sp-landmarks">
         ${prop.lm?`<div class="sp-lm">📍 ${esc(prop.lm)}</div>`:''}
-        <div class="sp-lm">🚗 Check commute from ${esc((config.user && config.user.worksNear) || 'your office')}</div>
+        <div class="sp-lm">🚗 ${esc(commuteText)}</div>
         <div class="sp-lm">📈 ${esc(primary)} prices grew +${yoy}% last year</div>
       </div>
       ${noteHtml(prop.name || 'spotlight_prop', 4)}
@@ -1857,30 +2065,45 @@ function modStillConsidering(stage, primary) {
     let delta = '', isGood = false;
     if (topPrice && propPrice) {
       const diff = Math.round(propPrice - topPrice);
-      if (diff < 0) { delta = `₹${Math.abs(diff)}L cheaper than your top pick`; isGood = true; }
-      else if (diff > 0) { delta = `₹${diff}L more than your top pick`; isGood = false; }
+      if (diff < 0) { delta = `₹${Math.abs(diff)}L cheaper`; isGood = true; }
+      else if (diff > 0) { delta = `₹${diff}L more`; isGood = false; }
       else { delta = 'Same price as your top pick'; isGood = true; }
     }
+
+    // Engagement metrics (simulated from data)
+    const engagements = ['4x', '3x', '2x'];
+    const engagementText = engagements[i] || '2x';
+    const shareActions = ['shared this with your friend', 'viewed this property', 'shortlisted this'];
+    const shareAction = shareActions[i] || 'viewed this property';
+
+    // Distance to landmark (extract from lm field)
+    const landmarkDist = p.lm ? p.lm.split('·').slice(1).join('·').trim() : '';
+
+    // Badge for new properties
+    const newBadge = !p.ready_to_move ? `<div style="position:absolute;top:8px;left:8px;background:#111827;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;">NEW</div>` : '';
+
     const noteKey = p.name || ('prop_sc_' + i);
-    return `<div style="padding:11px 14px;border-bottom:1px solid var(--border);">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <span style="font-size:11px;color:var(--text-tertiary);line-height:1.4;">${esc(p.bhk||'2 BHK')} · ${esc(p.location||primary)}</span>
-      </div>
-      <div style="display:flex;gap:10px;margin-bottom:8px;">
-        <div style="width:70px;height:60px;border-radius:6px;background:linear-gradient(135deg,#D0DFF0,#B8CCE0);overflow:hidden;flex-shrink:0;">${propImg(p)}</div>
+    return `<div style="padding:14px;border-bottom:1px solid var(--border);position:relative;">
+      <div class="flex gap-lg mb-10">
+        <div style="position:relative;width:80px;height:70px;border-radius:6px;background:var(--bg);overflow:hidden;flex-shrink:0;">
+          ${propImg(p)}
+          ${newBadge}
+        </div>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:16px;font-weight:800;color:var(--text-primary);">${esc(p.price||'₹—')}</div>
-          <div style="font-size:12px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(p.bhk||'2 BHK')} · ${esc(primary)}, ${esc(p.sqft||'')}</div>
-          <div style="font-size:11px;color:var(--text-tertiary);margin-top:3px;"><span style="color:${isGood?'var(--green)':'var(--text-tertiary)'};font-weight:${isGood?'700':'400'};"><span aria-hidden="true">${isGood?'✓':'•'}</span> ${esc(delta)}</span></div>
+          <div class="text-xs text-tertiary mb-2"><span class="material-icons" style="font-size:12px;vertical-align:-2px;">visibility</span> ${engagementText} · ${shareAction}</div>
+          <div class="text-lg font-bold text-primary mb-2">${esc(p.bhk||'2 BHK')} · ${esc(p.price||'₹—')}</div>
+          <div class="text-base text-secondary mb-4">${esc(p.sqft||'')} sq ft · ${p.ready_to_move ? 'Ready to move' : 'UC'} · ${esc(p.location||primary)}</div>
+          ${delta ? `<div class="text-xs text-tertiary mb-4"><span style="color:${isGood?'var(--green)':'var(--text-tertiary)'};font-weight:${isGood?'700':'400'};"><span aria-hidden="true">${isGood?'✓':'•'}</span> ${esc(delta)}</span></div>` : ''}
+          ${landmarkDist ? `<div class="text-xs text-tertiary italic">${esc(landmarkDist)}</div>` : ''}
         </div>
         <button class="ds-btn ds-btn-xs ds-btn-quaternary" style="flex-shrink:0;" aria-label="Save property"><span class="material-icons" aria-hidden="true" style="font-size:16px;">bookmark_border</span></button>
       </div>
       <div style="padding:8px 0;border-top:1px solid var(--border);">
-        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;">Still in the running?</div>
-        <div style="display:flex;gap:6px;">
+        <div class="text-base text-secondary mb-6">${stage === 5 ? 'How did your visit compare?' : 'Still in the running?'}</div>
+        <div class="flex gap-sm">
           <button class="ds-btn ds-btn-xs ds-btn-primary" style="flex:1;">Yes</button>
           <button class="ds-btn ds-btn-xs ds-btn-tertiary" style="flex:1;">No</button>
-          <button class="ds-btn ds-btn-xs ds-btn-secondary" style="flex:1;">Details</button>
+          <button class="ds-btn ds-btn-xs ds-btn-secondary" style="flex:1;">Details →</button>
         </div>
       </div>
       ${noteHtml(noteKey, 4)}
@@ -1888,8 +2111,12 @@ function modStillConsidering(stage, primary) {
   }).join('');
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:4px;">
-      <div class="ds-section-heading">${stage === 5 ? 'How did your visits compare?' : 'Still Considering'}</div>
-      <div class="ds-heading-sub">${stage === 5 ? 'Review the properties you visited and decide your next step' : 'Your other shortlisted properties'}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div class="ds-section-heading">${stage === 5 ? 'How did your visits compare?' : 'Still Considering'}</div>
+          <div class="ds-heading-sub">${stage === 5 ? 'Review the properties you visited and decide your next step' : `${props.length} others`}</div>
+        </div>
+      </div>
     </div>
     ${cards}
     <div style="padding:10px 14px 12px;display:flex;gap:8px;">
@@ -2223,6 +2450,115 @@ function modQuickLinks() {
 
 function modHelpful() {
   return `<div class="helpful-row"><span>Is this page helpful?</span><div class="helpful-btns"><button class="ds-btn ds-btn-xs ds-btn-secondary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_up</span> Yes</button><button class="ds-btn ds-btn-xs ds-btn-tertiary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_down</span> No</button></div></div>`;
+}
+
+// ════════════════════════════════════════════════════════════════════════════════
+// NEW MODULES (Wireframe-aligned)
+// ════════════════════════════════════════════════════════════════════════════════
+
+// Budget Check: Validate user's budget (S1-S2)
+function modBudgetCheck(stage, filters) {
+  if (stage < 1 || stage > 2) return null;
+  if (!filters || !filters.budgetMin || !filters.budgetMax) return null;
+
+  const budgetDisplay = `₹${filters.budgetMin}L–₹${filters.budgetMax}L`;
+  return `<div class="sec">
+    <div class="sec-pad">
+      <div style="background:#EBF1FE;border-radius:8px;padding:14px 16px;border:1px solid rgba(37,99,235,0.15);">
+        <div style="font-size:13px;color:var(--text);margin-bottom:10px;">We see your budget is around <b>${budgetDisplay}</b>. Is that correct?</div>
+        <div style="display:flex;gap:8px;">
+          <button class="ds-btn ds-btn-sm ds-btn-primary" style="flex:1;">Yes</button>
+          <button class="ds-btn ds-btn-sm ds-btn-tertiary" style="flex:1;">+ Add budget</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Preference Confirmation: "Do you want to continue with 2BHK?" (S2)
+function modPreferenceConfirmation(stage, bhk) {
+  if (stage !== 2) return null;
+  if (!bhk || !bhk.length) return null;
+
+  const primaryBhk = Array.isArray(bhk) ? bhk[0] : bhk;
+  // If they've viewed multiple BHK types, ask about the alternate one
+  const alternateBhk = primaryBhk === '2BHK' ? '3BHK' : '2BHK';
+
+  return `<div class="sec sec-pad">
+    <div style="background:#FFF7ED;border-radius:8px;padding:14px 16px;border:1px solid rgba(217,119,6,0.15);">
+      <div class="text-base text-primary font-bold mb-10">Do you want to continue viewing <b>${esc(alternateBhk)}s</b>?</div>
+      <div class="flex gap-md">
+        <button class="ds-btn ds-btn-sm ds-btn-primary" style="flex:1;">Yes</button>
+        <button class="ds-btn ds-btn-sm ds-btn-tertiary" style="flex:1;">No</button>
+        <button class="ds-btn ds-btn-sm ds-btn-secondary" style="flex:1;">Only ${esc(primaryBhk)}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Social Proof: "X people contacted this week" (S4)
+function modSocialProof(stage, primary) {
+  if (stage !== 4) return null;
+
+  // Mock data: simulate "12 people contacted this week"
+  const peopleContacted = Math.floor(Math.random() * 20) + 5;
+
+  return `<div class="sec">
+    <div class="sec-pad" style="background:#F0FDF4;border-left:3px solid var(--green);border-radius:8px;padding:14px 16px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="material-icons" aria-hidden="true" style="color:var(--green);font-size:20px;">people</span>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${peopleContacted} people contacted</div>
+          <div style="font-size:11px;color:var(--text3);">in the last week on this property</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Decision CTA Section: "Find the home that feels right for you" (S4)
+function modDecisionCtaSection(stage) {
+  if (stage !== 4) return null;
+
+  return `<div class="sec">
+    <div class="sec-pad" style="text-align:center;padding-bottom:20px;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;">Find the home that feels right for you</div>
+      <div style="display:flex;gap:8px;">
+        <button class="ds-btn ds-btn-secondary" style="flex:1;"><span class="material-icons" aria-hidden="true" style="font-size:16px;vertical-align:-2px;">compare</span> Compare</button>
+        <button class="ds-btn ds-btn-primary" style="flex:1;"><span class="material-icons" aria-hidden="true" style="font-size:16px;vertical-align:-2px;">calendar_today</span> Plan Visits</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Visit with Shortlist: "Visit these places along with your shortlist" (S4)
+function modVisitWithShortlist(stage, primary) {
+  if (stage !== 4) return null;
+  if (!primary) return null;
+
+  const props = data.properties ? data.properties.slice(0, 3) : [];
+  if (!props.length) return null;
+
+  const cards = props.map(p => `<div class="ds-prop-card" style="flex:0 0 calc(50% - 6px);">
+    <div class="ds-prop-card-img" style="height:100px;">
+      ${propImg(p)}
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Save to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+      <div class="ds-prop-card-subtitle" style="font-size:11px;">${esc(p.bhk||'')} · ${esc(p.location||primary)}</div>
+    </div>
+  </div>`).join('');
+
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading">Visit these places along with your shortlist</div>
+      <div class="ds-heading-sub">Properties in the same area</div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;padding:0 14px 14px;justify-content:space-between;">
+      ${cards}
+    </div>
+  </div>`;
 }
 
 // ── Shared prop card ──────────────────────────────────────────────────────────
