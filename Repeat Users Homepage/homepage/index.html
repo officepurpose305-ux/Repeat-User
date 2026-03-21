@@ -1331,7 +1331,7 @@ function modContextChips(stage, primary, secondary) {
   const locations = [primary];
   if (secondary && secondary !== primary) locations.push(secondary);
   const chips = locations.map(loc => `<button class="ds-chip ds-chip-md">${esc(loc)}</button>`).join('');
-  return `<div class="ds-chip-group" style="padding:10px 14px;background:#fff;border-bottom:1px solid var(--border);display:flex;gap:8px;overflow-x:auto;">${chips}</div>`;
+  return `<div class="ds-chip-group" style="padding:10px 14px;background:#fff;display:flex;gap:8px;overflow-x:auto;">${chips}</div>`;
 }
 
 function modHero(stage, city, primary, secondary) {
