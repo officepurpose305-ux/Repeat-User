@@ -587,6 +587,8 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Image area */
@@ -646,7 +648,7 @@ body {
 }
 
 /* Card body */
-.ds-prop-card-body { padding: var(--space-3) var(--space-4) var(--space-2); }
+.ds-prop-card-body { padding: var(--space-3) var(--space-4) var(--space-2); flex: 1; }
 
 .ds-prop-card-title-row {
   display: flex;

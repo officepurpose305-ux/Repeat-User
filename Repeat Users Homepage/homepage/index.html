@@ -673,15 +673,17 @@ function applyFilters(result, cfg) {
   if (f.bhk && f.bhk.length) {
     var selectedNums = f.bhk.map(function(b) { return b.replace(/\D/g, ''); });
     var filtered = props.filter(function(p) {
-      var pNum = (p.bhk || '').replace(/\D/g, '').charAt(0);
+      // Handle both string and array bhk formats
+      var bhkStr = Array.isArray(p.bhk) ? p.bhk.join(', ') : (p.bhk || '');
+      var pNum = bhkStr.replace(/\D/g, '').charAt(0);
       return selectedNums.indexOf(pNum) !== -1;
     });
     // Only apply if results remain — avoids blanking the page on stale cached data
     if (filtered.length > 0) props = filtered;
   }
 
-  // Budget filter — only apply when both min and max are set
-  if (f.budgetMin && f.budgetMax) {
+  // Budget filter — only apply when both min and max are valid (> 0)
+  if ((f.budgetMin || 0) > 0 && (f.budgetMax || 0) > 0) {
     props = props.filter(function(p) {
       var val = parsePriceLakhs(p.price);
       if (val === null) return true; // keep if unparseable
@@ -1667,7 +1669,6 @@ function modLocalitySuggestions(stage, primary, secondary) {
       <div class="ds-chip ds-chip-sm">🛒 Marketplace</div>
       <div class="ds-chip ds-chip-sm"><span class="material-icons" aria-hidden="true" style="font-size:14px;">add</span> Add landmark</div>
     </div>
-    <div class="divider" style="margin:4px 0 0;"></div>
   </div>`;
 }
 
@@ -1735,17 +1736,17 @@ function modLocalitiesRadar(stage, city, primary) {
       ? `<div style="display:inline-block;background:rgba(59,130,246,0.15);color:#2563eb;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;margin-bottom:6px;">💡 SUGGESTED</div>`
       : '';
 
-    return `<div style="flex-shrink:0;width:220px;background:white;border:1px solid ${borderColor};border-radius:8px;padding:12px;opacity:${opacity};">
+    return `<div style="flex-shrink:0;width:220px;background:white;border:1px solid ${borderColor};border-radius:8px;padding:12px;opacity:${opacity};display:flex;flex-direction:column;">
+      ${badgeHtml}
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
         <div style="flex:1;"><div style="font-size:13px;font-weight:800;color:var(--text);">${esc(card.name)}</div></div>
       </div>
-      ${badgeHtml}
       ${card.isSuggested ? `<div style="font-size:10px;color:var(--text2);margin-bottom:8px;">≈ ${Math.abs(card.distance).toFixed(1)}km from ${esc(primary)}</div>` : ''}
       <div style="font-size:12px;color:#555555;margin-bottom:8px;">${esc(card.meta?.bhkRange||'2-3 BHK')}</div>
       <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:#999999;">₹/sqft</span><span style="color:#111111;font-weight:700;">₹${card.meta?.avgPsqft||'—'}</span></div>
       <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:#999999;">Price growth</span><span style="color:#16a34a;font-weight:700;">+${card.meta?.yoy||'—'}% YoY</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:11px;"><span style="color:#999999;">Metro</span><span style="color:#111111;font-weight:700;">${esc(card.meta?.metro||'—')}</span></div>
-      <button class="ds-btn ds-btn-tertiary ds-btn-xs" style="width:100%;">View properties →</button>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:11px;flex:1;"><span style="color:#999999;">Metro</span><span style="color:#111111;font-weight:700;">${esc(card.meta?.metro||'—')}</span></div>
+      <button class="ds-btn ds-btn-tertiary ds-btn-xs" style="width:100%;margin-top:auto;">View properties →</button>
     </div>`;
   }).join('');
 
@@ -1755,7 +1756,6 @@ function modLocalitiesRadar(stage, city, primary) {
       <div class="ds-heading-sub">Your top views + nearby alternatives</div>
     </div>
     <div class="hscroll">${cards}</div>
-    <div class="divider" style="margin:4px 0 0;"></div>
   </div>`;
 }
 
@@ -1768,19 +1768,22 @@ function modConsiderationSet(stage) {
       { icon:'school', label:'School' },
       { icon:'shopping_center', label:'Market/shops' },
     ];
-    return `<div class="sec">
+    return `<div class="sec" style="padding:16px 0;">
       <div class="sec-pad">
         <div class="ds-section-heading">Which of these matters most to your daily routine?</div>
         <div class="ds-heading-sub">Accordingly let's help in figuring out a locality for you</div>
       </div>
       <div style="padding:0 14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-        ${factors.map(f=>`<button class="ds-chip" style="padding:10px 14px;cursor:pointer;border:1px solid var(--border);background:white;border-radius:6px;font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px;transition:all 0.2s;">
-          <span class="material-icons" aria-hidden="true" style="font-size:16px;">${f.icon}</span> ${f.label}
+        ${factors.slice(0, 3).map(f=>`<button class="ds-chip ds-chip-md">
+          <span class="material-icons" aria-hidden="true">${f.icon}</span> ${f.label}
         </button>`).join('')}
       </div>
-      <div style="padding:0 14px;">
-        <button style="padding:10px 14px;cursor:pointer;border:1px solid var(--border);background:white;border-radius:6px;font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px;transition:all 0.2s;" title="Add custom landmark">
-          <span class="material-icons" aria-hidden="true" style="font-size:16px;">add</span> Add a landmark
+      <div style="padding:0 14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <button class="ds-chip ds-chip-md">
+          <span class="material-icons" aria-hidden="true">shopping_center</span> Market
+        </button>
+        <button class="ds-chip ds-chip-md">
+          <span class="material-icons" aria-hidden="true">add</span> Add a landmark
         </button>
       </div>
     </div>`;
@@ -2943,6 +2946,16 @@ var _supaKey = (typeof window !== 'undefined' && window.SUPABASE_ANON_KEY) || ''
 console.log('[init] page URL:', window.location.href);
 console.log('[init] Supabase configured:', !!_supaUrl, 'window.supabase:', !!window.supabase);
 
+// Initialize Supabase client if not already initialized by config.js
+if (_supaUrl && _supaKey && typeof supabase !== 'undefined' && !window.supabase) {
+  try {
+    window.supabase = supabase.createClient(_supaUrl, _supaKey);
+    console.log('[init] ✓ Created Supabase client for real-time');
+  } catch(e) {
+    console.log('[init] Could not create Supabase client:', e.message);
+  }
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // PRIORITY: Panel (postMessage) > Supabase > Demo fallback
 // NOTE: Always try panel mode first - don't rely on iframe detection
@@ -2970,6 +2983,56 @@ var _readyTimer = setInterval(function() {
   _signalReady();
 }, 300);
 
+// ── Supabase real-time subscription for standalone mode ──────────────────────
+// Subscribe to live_config table so standalone homepage stays in sync with panel
+setTimeout(function() {
+  console.log('[init] Attempting real-time subscription setup...');
+  console.log('[init] _supaUrl:', !!_supaUrl, '_supaKey:', !!_supaKey);
+  console.log('[init] typeof supabase:', typeof supabase);
+
+  // Create Supabase client if not already created
+  if (_supaUrl && _supaKey && typeof supabase !== 'undefined' && !window._sbClient) {
+    try {
+      window._sbClient = supabase.createClient(_supaUrl, _supaKey);
+      console.log('[init] ✓ Created Supabase client');
+    } catch(e) {
+      console.log('[init] ✗ Failed to create client:', e.message);
+      return;
+    }
+  }
+
+  var sb = window._sbClient;
+  if (!sb) {
+    console.log('[init] ✗ No Supabase client available');
+    return;
+  }
+
+  try {
+    console.log('[init] Setting up real-time subscription to live_config...');
+    var channel = sb.channel('live_config_changes');
+    channel
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'live_config',
+        filter: 'id=eq.default'
+      }, function(payload) {
+        console.log('[supabase-realtime] ✓ Change detected:', payload.eventType);
+        if (payload.new && payload.new.config) {
+          console.log('[supabase-realtime] → Applying new config');
+          config = Object.assign(defaultConfig(), payload.new.config || {});
+          fetchAndRender();
+        }
+      })
+      .subscribe(function(status) {
+        console.log('[supabase-realtime] Subscription status:', status);
+      });
+    console.log('[init] ✓ Real-time subscription active');
+  } catch(err) {
+    console.log('[init] ✗ Subscription error:', err.message);
+  }
+}, 1000);
+
 // Load demo config immediately (for standalone usage)
 // When panel connects via postMessage, it will override this with real config
 console.log('[init] Loading demo config for standalone/fallback...');
@@ -2978,7 +3041,7 @@ console.log('%c1. RECOMMENDED: Open /panel/index.html', 'color: #16a34a; font-we
 console.log('   → The researcher panel with embedded homepage preview');
 console.log('   → Select personas from the dropdown to test different stages');
 console.log('%c2. ALTERNATIVE: Open /homepage/index.html directly', 'color: #16a34a; font-weight: bold;');
-console.log('   → Standalone demo showing Priya Mehta (S3) persona');
+console.log('   → Standalone mode: syncs with panel via Supabase');
 console.log('%c3. IMAGES: For images to load, serve files over HTTP:', 'color: #dc2626; font-weight: bold;');
 console.log('   → Run: python3 -m http.server 8000');
 console.log('   → Or: npx http-server');
@@ -2987,6 +3050,7 @@ console.log('%cCONSOLE TIPS:', 'font-weight: bold;');
 console.log('   • Watch for [img-load] messages when images load');
 console.log('   • Watch for [img-error] if images fail (file:// protocol limitation)');
 console.log('   • Watch for [homepage-listener] messages for panel-homepage sync');
+console.log('   • Watch for [supabase-realtime] messages for standalone sync');
 loadDemoConfig();
 
 // After 30 seconds of waiting, log a warning but keep trying

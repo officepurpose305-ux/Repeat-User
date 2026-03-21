@@ -1342,10 +1342,12 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
 
   function sendToIframe(p) {
     const iframe = document.getElementById('preview-iframe');
+    console.log('[sendToIframe] Attempting to send... iframe exists?', !!iframe);
     if (!iframe) {
       console.log('[sendToIframe] ✗ iframe not found');
       return false;
     }
+    console.log('[sendToIframe] iframe.contentWindow exists?', !!iframe.contentWindow);
     if (!iframe.contentWindow) {
       console.log('[sendToIframe] ✗ iframe.contentWindow not accessible (still loading?)');
       return false;
@@ -1354,8 +1356,9 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
       const payload = JSON.parse(JSON.stringify(p));
       if (window.NINETY_NINE_ACRES_API_BASE) payload.apiBase = window.NINETY_NINE_ACRES_API_BASE;
       if (window.OPENAI_API_KEY) payload.openAIKey = window.OPENAI_API_KEY;
-      console.log('[sendToIframe] → Sending CONFIG_UPDATE, stage:', payload.stage, 'location:', payload.location?.primary || 'unset', 'BHK:', payload.filters?.bhk || []);
+      console.log('[sendToIframe] ✓ About to post CONFIG_UPDATE with stage:', payload.stage, 'primary:', payload.location?.primary, 'secondary:', payload.location?.secondary);
       iframe.contentWindow.postMessage({ type: 'CONFIG_UPDATE', config: payload }, '*');
+      console.log('[sendToIframe] ✓✓ CONFIG_UPDATE posted successfully');
       // Update status indicator when successfully sending
       const dbLabel = document.getElementById('db-label');
       if (dbLabel) dbLabel.textContent = '✓ Homepage Synced';
@@ -1802,7 +1805,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
 
   /* ─── Init ─── */
   function init() {
-    loadPersona('s2_locality_explorer', true); // boot with s2_locality_explorer — fills form, scores stage
+    loadPersona('priya', true); // boot with Priya persona — fills form, scores stage
     initSupabase();
 
     // Attach personas header click handler
