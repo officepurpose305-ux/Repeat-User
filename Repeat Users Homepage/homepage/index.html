@@ -1815,7 +1815,7 @@ function modPropertiesInSecondary(stage, secondary) {
   const props = data.properties.slice(2, 4);
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;"><div class="ds-section-heading">Properties in ${esc(secondary)}${budget?' · '+budget:''}</div><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all</a></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;"><div class="ds-section-heading">Properties in ${esc(secondary)}${budget?' · '+budget:''}</div><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all</a></div>
     </div>
     <div class="hscroll">
       ${props.length ? props.map(p=>propCard(p, {showBadge:true, horizontal:true})).join('') : skCard()+skCard()}
@@ -2031,7 +2031,7 @@ function modPropertiesPrimary(stage, primary, secondary, worksNear) {
   const topProps = scored.slice(0, 6);
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;">
         <div class="ds-section-heading">${label}</div>
         <a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all ${candidateProperties.length > 4 ? candidateProperties.length+'+' : ''}</a>
       </div>
@@ -2080,7 +2080,7 @@ function modNearbyLocalities(stage, primary) {
   const saving = adjs[0] ? adjs[0].delta : 6;
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:4px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;"><div class="ds-section-heading">Nearby Localities</div><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all 3</a></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;"><div class="ds-section-heading">Nearby Localities</div><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all 3</a></div>
     </div>
     ${cards}
   </div>`;
@@ -2347,7 +2347,7 @@ function modSimilarBHK(stage, bhk, primary) {
   </div>`).join('');
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;"><div class="ds-section-heading">More ${esc(bhk)} options in ${esc(primary)}</div><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all</a></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;"><div class="ds-section-heading">More ${esc(bhk)} options in ${esc(primary)}</div><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all</a></div>
     </div>
     <div class="hscroll">${cards}</div>
   </div>`;
@@ -2434,7 +2434,7 @@ function modUpcomingProjects(stage, primary) {
   const newCount = props.length;
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;">
         <div class="ds-section-heading">Upcoming Projects in ${esc(primary)}</div>
         <a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all</a>
       </div>
