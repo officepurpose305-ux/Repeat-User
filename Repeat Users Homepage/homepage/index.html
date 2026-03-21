@@ -1815,7 +1815,7 @@ function modPropertiesInSecondary(stage, secondary) {
   const props = data.properties.slice(2, 4);
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;"><div class="ds-section-heading">Properties in ${esc(secondary)}${budget?' · '+budget:''}</div><button class="ds-btn ds-btn-secondary ds-btn-xs">See all</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;"><div class="ds-section-heading">Properties in ${esc(secondary)}${budget?' · '+budget:''}</div><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all</a></div>
     </div>
     <div class="hscroll">
       ${props.length ? props.map(p=>propCard(p, {showBadge:true, horizontal:true})).join('') : skCard()+skCard()}
@@ -2023,7 +2023,7 @@ function modPropertiesPrimary(stage, primary, secondary, worksNear) {
       <div class="hscroll">${primary_props.map((p,i)=>propCard(p,{showBadge:p.score>70,horizontal:true})).join('')}</div>
       <div class="group-label" style="margin-top:4px;"><div class="group-dot orange"></div>${esc(secondary)}</div>
       <div class="hscroll">${secondary_props.map(p=>propCard(p,{showBadge:p.score>70,horizontal:true})).join('')}</div>
-      <div style="padding:4px 20px 12px;"><button class="ds-btn ds-btn-secondary ds-btn-xs">See all 9+ properties</button></div>
+      <div style="padding:4px 10px 12px;"><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all 9+ properties</a></div>
     </div>`;
   }
 
@@ -2031,9 +2031,9 @@ function modPropertiesPrimary(stage, primary, secondary, worksNear) {
   const topProps = scored.slice(0, 6);
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;">
         <div class="ds-section-heading">${label}</div>
-        <button class="ds-btn ds-btn-secondary ds-btn-xs">See all ${candidateProperties.length > 4 ? candidateProperties.length+'+' : ''}</button>
+        <a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all ${candidateProperties.length > 4 ? candidateProperties.length+'+' : ''}</a>
       </div>
     </div>
     ${transparencyBadge}
@@ -2080,7 +2080,7 @@ function modNearbyLocalities(stage, primary) {
   const saving = adjs[0] ? adjs[0].delta : 6;
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:4px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;"><div class="ds-section-heading">Nearby Localities</div><button class="ds-btn ds-btn-secondary ds-btn-xs">See all 3</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;"><div class="ds-section-heading">Nearby Localities</div><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all 3</a></div>
     </div>
     ${cards}
   </div>`;
@@ -2347,7 +2347,7 @@ function modSimilarBHK(stage, bhk, primary) {
   </div>`).join('');
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;"><div class="ds-section-heading">More ${esc(bhk)} options in ${esc(primary)}</div><button class="ds-btn ds-btn-secondary ds-btn-xs">See all</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;"><div class="ds-section-heading">More ${esc(bhk)} options in ${esc(primary)}</div><a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all</a></div>
     </div>
     <div class="hscroll">${cards}</div>
   </div>`;
@@ -2434,9 +2434,9 @@ function modUpcomingProjects(stage, primary) {
   const newCount = props.length;
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 10px;">
         <div class="ds-section-heading">Upcoming Projects in ${esc(primary)}</div>
-        <button class="ds-btn ds-btn-secondary ds-btn-xs">See all</button>
+        <a style="color:var(--blue);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;text-decoration:none;">See all</a>
       </div>
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;padding:0 14px 14px;justify-content:space-between;">
