@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-03-19T12:00:04.501Z",
+  "totalScreens": 1,
+  "passed": 0,
+  "failed": 1,
+  "overallAccuracy": 94.5,
+  "screens": [
+    {
+      "id": "homepage",
+      "name": "Homepage Demo",
+      "accuracy": 94.5,
+      "passed": false,
+      "issueCount": 6
+    }
+  ]
+}

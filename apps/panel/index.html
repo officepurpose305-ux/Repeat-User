@@ -1,718 +1,1542 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Researcher Panel · 99acres</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>99acres · Researcher Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    :root{
-      --sidebar-w:320px;
-      --blue:#2B3BE5;
-      --blue-mid:#5B6EFA;
-      --dark:#0F1117;
-      --dark2:#1A1D2E;
-      --dark3:#22273A;
-      --border:rgba(255,255,255,0.07);
-      --text:rgba(255,255,255,0.9);
-      --text2:rgba(255,255,255,0.5);
-      --text3:rgba(255,255,255,0.25);
-      --green:#1DB97C;
-      --red:#E53E3E;
-      --r:8px;
-      --r-sm:6px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sidebar-w:  340px;
+      --blue:       #2B3BE5;
+      --blue-lt:    #EEF2FF;
+      --blue-mid:   #5B6EFA;
+      --dark:       #0F1117;
+      --dark2:      #1A1D2E;
+      --dark3:      #22273A;
+      --dark4:      #2C3150;
+      --border:     rgba(255,255,255,0.07);
+      --text:       rgba(255,255,255,0.85);
+      --text2:      rgba(255,255,255,0.45);
+      --text3:      rgba(255,255,255,0.25);
+      --green:      #1DB97C;
+      --green-lt:   #0A3D2A;
+      --amber:      #F5A623;
+      --red:        #E53E3E;
+      --r:          8px;
+      --r-sm:       6px;
     }
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--dark);color:var(--text);height:100vh;overflow:hidden;}
-    .layout{display:flex;height:100vh;}
-    .sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
-    .sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
-    .brand{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex:1;min-width:0;}
-    .btn-new-cta{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:opacity .15s;}
-    .btn-new-cta:hover{opacity:.9;}
-    .sidebar-header .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
-    .brand-logo{width:32px;height:32px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;}
-    .brand-name{font-size:14px;font-weight:700;}
-    .brand-sub{font-size:11px;color:var(--text2);}
-    .session-help{font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.4;}
-    .session-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-    .session-legend{list-style:none;font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:12px;padding:0;}
-    .session-legend li{margin-bottom:6px;}
-    .session-legend strong{color:var(--text);}
-    .sidebar-footer{flex-shrink:0;padding:12px 16px;border-top:1px solid var(--border);}
-    .btn-apply{width:100%;padding:10px 16px;font-size:13px;}
-    .btn{padding:6px 12px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:opacity .15s;}
-    .btn:hover{opacity:.9;}
-    .btn-primary{background:var(--blue);color:#fff;}
-    .btn-secondary{background:var(--dark3);color:var(--text);border:1px solid var(--border);}
-    .btn-green{background:var(--green);color:#fff;}
-    .db-status{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text2);}
-    .db-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);}
-    .db-dot.connected{background:var(--green);}
-    .db-dot.error{background:var(--red);}
-    .sidebar-scroll{flex:1;overflow-y:auto;padding:12px 0;}
-    .s-section{padding:0 16px 14px;margin-bottom:4px;border-bottom:1px solid var(--border);}
-    .s-section:last-child{border-bottom:none;}
-    .s-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:8px;}
-    .field{margin-bottom:8px;}
-    .field label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px;}
-    .field input,.field select,.field textarea{width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 10px;font-size:12px;color:var(--text);font-family:inherit;outline:none;}
-    .field input:focus,.field select:focus{border-color:var(--blue-mid);}
-    .field-row{display:flex;gap:8px;}
-    .field-row .field{flex:1;}
-    .stage-btns{display:flex;gap:4px;}
-    .stg-btn{flex:1;padding:6px 4px;border-radius:var(--r-sm);font-size:11px;font-weight:600;text-align:center;border:1px solid var(--border);background:var(--dark3);color:var(--text2);cursor:pointer;}
-    .stg-btn.on{border-color:var(--blue);background:var(--blue);color:#fff;}
-    .toggle{width:36px;height:20px;border-radius:10px;background:var(--dark3);border:1px solid var(--border);cursor:pointer;position:relative;flex-shrink:0;}
-    .toggle::after{content:'';position:absolute;left:3px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--text2);transition:left .2s;}
-    .toggle.on{background:var(--blue);border-color:var(--blue);}
-    .toggle.on::after{left:19px;background:#fff;}
-    .behavior-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);}
-    .behavior-row:last-child{border-bottom:none;}
-    .session-list{margin-top:8px;}
-    .session-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r-sm);background:var(--dark3);border:1px solid var(--border);margin-bottom:6px;cursor:pointer;}
-    .session-item:hover,.session-item.active{border-color:var(--blue-mid);}
-    .session-item.active{border-color:var(--blue);}
-    .si-name{font-size:12px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
-    .si-meta{font-size:10px;color:var(--text2);}
-    .si-acts{display:flex;gap:4px;}
-    .si-act{padding:3px 6px;font-size:10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;}
-    .si-act:hover{color:var(--text);}
-    .preview-panel{flex:1;background:#1A1A2E;display:flex;flex-direction:column;overflow:hidden;}
-    .preview-header{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-    .preview-title{font-size:13px;font-weight:600;}
-    .preview-meta{font-size:11px;color:var(--text2);}
-    .preview-body{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow:auto;}
-    .phone-outer{background:#111;border-radius:46px;padding:10px;box-shadow:0 24px 60px rgba(0,0,0,.6);}
-    .phone-inner{border-radius:38px;overflow:hidden;background:#f5f5f5;}
-    .phone-iframe{width:360px;height:760px;border:none;display:block;}
-    #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:#fff;padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;z-index:9999;transition:transform .3s;}
-    #toast.show{transform:translateX(-50%) translateY(0);}
-    .bhk-row{display:flex;gap:6px;flex-wrap:wrap;}
-    .bhk-cb{padding:6px 10px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--dark3);font-size:11px;color:var(--text2);cursor:pointer;}
-    .bhk-cb.on{border-color:var(--blue);background:rgba(43,59,229,.2);color:var(--text);}
-    .slider-val{font-size:11px;color:var(--text);}
-    input[type=range]{width:100%;margin:4px 0;}
-    .stg-labels{display:flex;gap:2px;margin-top:4px;}
-    .stg-lbl{flex:1;font-size:9px;color:var(--text3);text-align:center;}
-    .field-optional label::after{content:' (optional)';font-weight:400;color:var(--text3);}
-    .section-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0;}
-    .section-toggle:hover{color:var(--blue-mid);}
-    .view-toggle{display:none;position:fixed;top:0;left:0;right:0;z-index:100;padding:8px 12px;gap:6px;background:var(--dark2);border-bottom:1px solid var(--border);}
-    .view-toggle .view-btn{padding:8px 16px;border-radius:var(--r-sm);font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--dark3);color:var(--text2);cursor:pointer;flex:1;}
-    .view-toggle .view-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;}
-    .view-toggle .view-btn:not(.active):hover{color:var(--text);}
-    @media (max-width: 900px) {
-      .view-toggle{display:flex;}
-      body{padding-top:48px;}
-      .layout{flex-direction:column;height:calc(100vh - 48px);}
-      .sidebar{width:100%;max-width:100%;min-width:0;max-height:none;flex:1;border-right:none;border-bottom:none;}
-      .preview-panel{flex:1;min-height:0;}
-      .preview-body{padding:16px;}
-      .phone-outer{transform:scale(0.85);transform-origin:top center;}
-      .layout--show-preview .sidebar{display:none;}
-      .layout--show-form .preview-panel{display:none;}
+
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
     }
-    @media (max-width: 600px) {
-      .sidebar-header{padding:12px;}
-      .session-actions{flex-direction:column;}
-      .session-actions .btn{flex:1;min-width:0;}
-      .field-row{flex-direction:column;}
-      .stage-btns .stg-btn{padding:8px 4px;}
+
+    /* ── Layout ─────────────────────────────────────── */
+    .layout {
+      display: flex;
+      height: 100vh;
     }
+
+    /* ── Sidebar ─────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      background: var(--dark2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 16px 18px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .brand-logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 900; color: #fff;
+    }
+    .brand-name { font-size: 14px; font-weight: 700; color: var(--text); }
+    .brand-sub  { font-size: 11px; color: var(--text2); }
+
+    .session-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .session-badge {
+      flex: 1; background: var(--dark3); border-radius: var(--r-sm);
+      padding: 7px 10px;
+      font-size: 12px; color: var(--text);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .session-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+
+    .sidebar-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 0;
+    }
+    .sidebar-scroll::-webkit-scrollbar { width: 3px; }
+    .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+    /* ── Sections inside sidebar ─────────────────── */
+    .s-section {
+      padding: 0 18px 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+    .s-section:last-child { border-bottom: none; }
+
+    .s-title {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--text2);
+      margin-bottom: 10px;
+      margin-top: 14px;
+    }
+
+    /* Labels & inputs */
+    .field { margin-bottom: 10px; }
+    .field label {
+      display: block; font-size: 11px; color: var(--text2);
+      margin-bottom: 5px; font-weight: 500;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%; background: var(--dark3);
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+      padding: 8px 10px; font-size: 12.5px;
+      color: var(--text); font-family: inherit;
+      outline: none; transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus { border-color: var(--blue-mid); }
+    .field select option { background: #1A1D2E; }
+    .field-row { display: flex; gap: 8px; }
+    .field-row .field { flex: 1; }
+
+    /* Persona presets */
+    .personas { display: flex; gap: 6px; flex-wrap: wrap; }
+    .persona-btn {
+      padding: 5px 11px; border-radius: 20px;
+      font-size: 11.5px; font-weight: 500;
+      border: 1px solid var(--border); background: var(--dark3);
+      color: var(--text2); cursor: pointer; transition: all 0.15s;
+    }
+    .persona-btn:hover { border-color: var(--blue-mid); color: var(--text); }
+    .persona-btn.on { border-color: var(--blue); background: var(--blue); color: #fff; }
+
+    /* Stage selector */
+    .stage-btns { display: flex; gap: 4px; }
+    .stg-btn {
+      flex: 1; padding: 7px 4px; border-radius: var(--r-sm);
+      font-size: 11px; font-weight: 600; text-align: center;
+      border: 1px solid var(--border); background: var(--dark3);
+      color: var(--text2); cursor: pointer; transition: all 0.15s;
+    }
+    .stg-btn:hover { border-color: var(--blue-mid); color: var(--text); }
+    .stg-btn.on { border-color: var(--blue); background: var(--blue); color: #fff; }
+    .stg-labels { display: flex; gap: 4px; margin-top: 4px; }
+    .stg-lbl { flex: 1; font-size: 9px; color: var(--text3); text-align: center; line-height: 1.3; }
+
+    /* BHK checkboxes */
+    .bhk-row { display: flex; gap: 6px; }
+    .bhk-cb {
+      flex: 1; padding: 6px 4px; text-align: center;
+      border-radius: var(--r-sm); border: 1px solid var(--border);
+      background: var(--dark3); font-size: 11.5px;
+      color: var(--text2); cursor: pointer; transition: all 0.15s;
+    }
+    .bhk-cb:hover { border-color: var(--blue-mid); }
+    .bhk-cb.on { border-color: var(--blue); background: rgba(43,59,229,0.2); color: var(--text); }
+
+    /* Behavior toggles */
+    .behavior-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .behavior-row:last-child { border-bottom: none; }
+    .beh-lbl { font-size: 12px; color: var(--text); }
+    .beh-sub { font-size: 10.5px; color: var(--text2); margin-top: 1px; }
+    .toggle {
+      width: 36px; height: 20px;
+      border-radius: 10px; background: var(--dark4);
+      position: relative; cursor: pointer; flex-shrink: 0;
+      border: 1px solid var(--border); transition: background 0.2s;
+    }
+    .toggle::after {
+      content: ''; position: absolute;
+      left: 3px; top: 3px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--text2); transition: all 0.2s;
+    }
+    .toggle.on { background: var(--blue); border-color: var(--blue); }
+    .toggle.on::after { left: 19px; background: #fff; }
+
+    /* Slider */
+    .slider-track { position: relative; margin-top: 6px; }
+    .slider-track input[type=range] {
+      width: 100%; -webkit-appearance: none;
+      background: transparent; height: 4px; padding: 0; border: none;
+    }
+    .slider-track input[type=range]::-webkit-slider-runnable-track {
+      height: 4px; border-radius: 2px; background: var(--dark4);
+    }
+    .slider-track input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--blue); margin-top: -6px;
+      cursor: pointer; border: 2px solid #fff;
+    }
+    .slider-val { font-size: 12px; color: var(--text); font-weight: 600; }
+
+    /* Action buttons */
+    .action-btn {
+      width: 100%; padding: 9px 12px; border-radius: var(--r);
+      font-size: 12.5px; font-weight: 600;
+      cursor: pointer; border: none; margin-bottom: 6px;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      transition: opacity 0.15s;
+    }
+    .action-btn:last-child { margin-bottom: 0; }
+    .action-btn:hover { opacity: 0.88; }
+    .btn-primary  { background: var(--blue); color: #fff; }
+    .btn-secondary{ background: var(--dark3); color: var(--text); border: 1px solid var(--border); }
+    .btn-green    { background: var(--green); color: #fff; }
+    .btn-amber    { background: rgba(245,166,35,0.15); color: var(--amber); border: 1px solid rgba(245,166,35,0.3); }
+    .btn-red      { background: rgba(229,62,62,0.12); color: var(--red); border: 1px solid rgba(229,62,62,0.25); }
+    .btn-row { display: flex; gap: 6px; }
+    .btn-row .action-btn { margin-bottom: 0; }
+
+    /* Session list */
+    .session-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: var(--r-sm);
+      background: var(--dark3); border: 1px solid var(--border);
+      margin-bottom: 6px; cursor: pointer; transition: border-color 0.15s;
+    }
+    .session-item:last-child { margin-bottom: 0; }
+    .session-item:hover { border-color: var(--blue-mid); }
+    .session-item.active { border-color: var(--blue); }
+    .si-stage {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--blue); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .si-info { flex: 1; min-width: 0; }
+    .si-name  { font-size: 12.5px; font-weight: 600; color: var(--text); }
+    .si-meta  { font-size: 11px; color: var(--text2); }
+    .si-actions { display: flex; gap: 4px; }
+    .si-act {
+      padding: 4px 8px; border-radius: 4px;
+      font-size: 10px; font-weight: 600;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text2); cursor: pointer;
+    }
+    .si-act:hover { color: var(--text); border-color: var(--text2); }
+
+    /* Summary panel */
+    .summary-box {
+      background: var(--dark3); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 12px; margin-top: 8px;
+      font-size: 12px; color: var(--text); line-height: 1.6;
+    }
+    .summary-box.loading { color: var(--text2); font-style: italic; }
+
+    /* ── Preview panel ─────────────────────────────── */
+    .preview-panel {
+      flex: 1;
+      background: #1A1A2E;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .preview-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .preview-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .preview-meta  { font-size: 11px; color: var(--text2); }
+
+    .preview-top-row { display: flex; align-items: center; gap: 10px; }
+    .stage-indicator {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--dark3); border-radius: 20px;
+      padding: 5px 12px; font-size: 12px;
+    }
+    .stage-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+    .stage-name { font-weight: 600; }
+
+    .live-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(29,185,124,0.15);
+      border: 1px solid rgba(29,185,124,0.3);
+      border-radius: 20px; padding: 4px 10px;
+      font-size: 11px; font-weight: 700; color: var(--green);
+    }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+    .preview-body {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 28px 24px;
+      overflow-y: auto;
+    }
+
+    /* Phone frame in preview */
+    .phone-frame-shell {
+      width: 370px;
+      flex-shrink: 0;
+    }
+    .phone-outer {
+      background: #111;
+      border-radius: 46px;
+      padding: 10px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08);
+    }
+    .phone-inner {
+      border-radius: 38px;
+      overflow: hidden;
+      position: relative;
+      background: #F0F0F5;
+    }
+    .phone-notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 28px;
+      background: #111; border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+    .phone-iframe {
+      width: 360px; height: 760px;
+      border: none; display: block;
+    }
+
+    /* Right panel info boxes */
+    .info-stack {
+      margin-left: 24px;
+      width: 220px;
+      flex-shrink: 0;
+    }
+    .info-card {
+      background: var(--dark2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .info-card-title {
+      font-size: 11px; font-weight: 700;
+      color: var(--text2); text-transform: uppercase;
+      letter-spacing: 0.6px; margin-bottom: 10px;
+    }
+    .info-row {
+      display: flex; justify-content: space-between;
+      padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 12px;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .lbl { color: var(--text2); }
+    .info-row .val { color: var(--text); font-weight: 600; }
+
+    .config-json {
+      background: var(--dark); border-radius: var(--r-sm);
+      padding: 10px; font-size: 10.5px;
+      color: rgba(43,255,130,0.8); font-family: 'SF Mono', 'Fira Mono', monospace;
+      white-space: pre-wrap; word-break: break-word;
+      max-height: 200px; overflow-y: auto; line-height: 1.5;
+    }
+    .config-json::-webkit-scrollbar { width: 3px; }
+    .config-json::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+    /* Toasts */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1DB97C; color: #fff;
+      padding: 10px 20px; border-radius: 20px;
+      font-size: 13px; font-weight: 600;
+      z-index: 9999; pointer-events: none;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Dividers */
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+    /* Observations textarea */
+    .obs-textarea {
+      width: 100%; background: var(--dark3);
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+      padding: 8px 10px; font-size: 12px;
+      color: var(--text); font-family: inherit; resize: vertical;
+      min-height: 72px; outline: none; transition: border-color 0.15s;
+      line-height: 1.5;
+    }
+    .obs-textarea:focus { border-color: var(--blue-mid); }
+    .obs-textarea::placeholder { color: var(--text3); }
+
+    /* Supabase status */
+    .db-status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 10.5px; color: var(--text2);
+      padding: 4px 0;
+    }
+    .db-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
+    .db-dot.connected { background: var(--green); }
+    .db-dot.error { background: var(--red); }
+
+    /* API status pill */
+    .api-status {
+      padding: 7px 10px; border-radius: var(--r-sm);
+      font-size: 11.5px; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 7px; line-height: 1.4;
+    }
+    .api-idle    { background: var(--dark3); color: var(--text2); border: 1px solid var(--border); }
+    .api-loading { background: rgba(245,166,35,0.1); color: var(--amber); border: 1px solid rgba(245,166,35,0.3); }
+    .api-success { background: rgba(29,185,124,0.1); color: var(--green); border: 1px solid rgba(29,185,124,0.3); }
+    .api-error   { background: rgba(229,62,62,0.1); color: var(--red); border: 1px solid rgba(229,62,62,0.25); }
+    .api-url {
+      margin-top: 6px; font-size: 10.5px;
+      color: var(--blue-mid); word-break: break-all; line-height: 1.5;
+    }
+    .api-url a { color: var(--blue-mid); text-decoration: none; }
+    .api-url a:hover { text-decoration: underline; }
+    .props-found {
+      font-size: 11px; color: var(--text2); margin-top: 6px;
+      padding: 5px 8px; background: var(--dark3); border-radius: var(--r-sm);
+    }
+
+    /* Scrollbar for whole page */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
   </style>
 </head>
 <body>
-<div class="view-toggle" id="view-toggle" aria-label="Switch between form and preview">
-  <button type="button" class="view-btn active" data-view="form" onclick="setPanelView('form')">Form</button>
-  <button type="button" class="view-btn" data-view="preview" onclick="setPanelView('preview')">Preview</button>
-</div>
-<div class="layout layout--show-form" id="layout">
-  <aside class="sidebar">
+
+<div class="layout">
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <div class="sidebar">
+
     <div class="sidebar-header">
       <div class="brand">
         <div class="brand-logo">9</div>
         <div>
-          <div class="brand-name">Researcher Panel</div>
-          <div class="brand-sub">99acres · UX Research</div>
+          <div class="brand-name">Researcher Dashboard</div>
+          <div class="brand-sub">99acres · UX Research Tool</div>
         </div>
       </div>
-      <div class="header-right">
-        <button type="button" class="btn-new-cta" title="New session — clear form and start fresh" onclick="newSession()" aria-label="New session">+</button>
-        <div class="db-status">
-          <span class="db-dot" id="db-dot"></span>
-          <span id="db-label">Supabase: —</span>
+      <div class="session-row">
+        <div class="session-badge">
+          <div class="session-dot" id="session-dot"></div>
+          <span id="session-label">No active session</span>
         </div>
+        <button class="action-btn btn-secondary" style="width:auto;flex:0;padding:7px 10px;margin:0;font-size:11px" onclick="newSession()">+ New</button>
+      </div>
+      <div class="db-status" style="margin-top:8px">
+        <div class="db-dot" id="db-dot"></div>
+        <span id="db-label">Supabase: not configured</span>
+        <a href="sessions.html" target="_blank" style="margin-left:auto;font-size:10.5px;color:var(--blue-mid);text-decoration:none">View all sessions →</a>
       </div>
     </div>
+
     <div class="sidebar-scroll">
+
+      <!-- ── Persona presets ────────────────── -->
       <div class="s-section">
-        <div class="s-title">User identity</div>
-        <div class="field"><label>Name</label><input id="f-name" type="text" placeholder="e.g. Priya Mehta" oninput="syncForm()"/></div>
-        <div class="field-row">
-          <div class="field field-optional"><label>Age</label><input id="f-age" type="number" min="18" max="99" placeholder="—" oninput="syncForm()"/></div>
-          <div class="field field-optional"><label>Occupation</label><input id="f-occ" type="text" placeholder="—" oninput="syncForm()"/></div>
+        <div class="s-title">Persona Presets</div>
+        <div class="personas">
+          <button class="persona-btn" onclick="loadPersona('priya')">Priya · S2</button>
+          <button class="persona-btn" onclick="loadPersona('rahul')">Rahul · S1</button>
+          <button class="persona-btn" onclick="loadPersona('meera')">Meera · S3</button>
+          <button class="persona-btn" onclick="loadPersona('vikram')">Vikram · S4</button>
+          <button class="persona-btn" onclick="loadPersona('upgrader')">Upgrader · S5</button>
         </div>
-        <div class="field field-optional"><label>Works near</label><input id="f-worksNear" type="text" placeholder="Locality" oninput="syncForm()"/></div>
       </div>
+
+      <!-- ── Buyer identity ─────────────────── -->
       <div class="s-section">
-        <div class="s-title">Last visit</div>
-        <div class="field"><label>Days ago</label><input id="f-lastVisit" type="number" min="0" max="90" value="3" oninput="syncForm()"/></div>
+        <div class="s-title">Buyer Identity</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Name</label>
+            <input id="f-name" type="text" value="Priya Mehta" oninput="updateConfig()"/>
+          </div>
+          <div class="field">
+            <label>Age</label>
+            <input id="f-age" type="number" value="32" min="22" max="65" style="width:60px" oninput="updateConfig()"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Occupation</label>
+          <input id="f-occ" type="text" value="Product Manager" oninput="updateConfig()"/>
+        </div>
       </div>
+
+      <!-- ── Buyer stage ────────────────────── -->
+      <div class="s-section">
+        <div class="s-title">Journey Stage</div>
+        <div class="stage-btns">
+          <button class="stg-btn" onclick="setStage(1)">1</button>
+          <button class="stg-btn on" onclick="setStage(2)">2</button>
+          <button class="stg-btn" onclick="setStage(3)">3</button>
+          <button class="stg-btn" onclick="setStage(4)">4</button>
+          <button class="stg-btn" onclick="setStage(5)">5</button>
+        </div>
+        <div class="stg-labels">
+          <div class="stg-lbl">Discovery</div>
+          <div class="stg-lbl">Locality</div>
+          <div class="stg-lbl">Compare</div>
+          <div class="stg-lbl">Shortlist</div>
+          <div class="stg-lbl">Post-Visit</div>
+        </div>
+        <div style="margin-top:8px">
+          <button class="action-btn btn-amber" onclick="detectStage()" style="margin-bottom:0;font-size:11.5px;padding:7px 12px">
+            ✦ Detect Stage from Signals
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Location ───────────────────────── -->
       <div class="s-section">
         <div class="s-title">Location</div>
-        <div class="field"><label>Primary</label><input id="f-primary" type="text" placeholder="e.g. Sector 137" oninput="syncForm()"/></div>
-        <div class="behavior-row" style="margin-top:8px;"><span class="beh-lbl">Open to other / similar / nearby localities</span><div class="toggle" id="t-open-nearby" onclick="toggleOpenNearby()"></div></div>
-        <div class="field loc-extra" id="loc-extra" style="display:none;margin-top:8px;"><label>Another locality (to compare)</label><input id="f-secondary" type="text" placeholder="e.g. Sector 143" oninput="syncForm()"/></div>
+        <div class="field">
+          <label>City</label>
+          <input id="f-city" type="text" value="Noida" oninput="updateConfig()"/>
+        </div>
+        <div class="field">
+          <label>Primary locality</label>
+          <input id="f-loc1" type="text" value="Sector 137" oninput="updateConfig()"/>
+        </div>
+        <div class="field">
+          <label>Secondary locality (for comparison)</label>
+          <input id="f-loc2" type="text" value="Sector 143" oninput="updateConfig()"/>
+        </div>
+        <div class="field">
+          <label>Adjacent locality</label>
+          <input id="f-loc3" type="text" value="Sector 128" oninput="updateConfig()"/>
+        </div>
       </div>
+
+      <!-- ── Filters ────────────────────────── -->
       <div class="s-section">
         <div class="s-title">Filters</div>
-        <div class="field-row">
-          <div class="field"><label>Budget min (L)</label><input id="f-bmin" type="number" min="0" value="70" oninput="syncForm()"/></div>
-          <div class="field"><label>Budget max (L)</label><input id="f-bmax" type="number" min="0" value="95" oninput="syncForm()"/></div>
+        <div class="field">
+          <label>Budget min: <span class="slider-val" id="bmin-val">₹75L</span></label>
+          <div class="slider-track">
+            <input type="range" id="f-bmin" min="30" max="200" value="75" oninput="updateBudget()"/>
+          </div>
         </div>
-        <div class="field"><label>BHK</label><div class="bhk-row" id="bhk-row"><span class="bhk-cb" data-bhk="1BHK">1BHK</span><span class="bhk-cb on" data-bhk="2BHK">2BHK</span><span class="bhk-cb" data-bhk="3BHK">3BHK</span><span class="bhk-cb" data-bhk="4BHK+">4BHK+</span></div></div>
-        <div class="field"><label>Ready to move</label><select id="f-rtm" onchange="syncForm()"><option value="either">Either</option><option value="yes">Yes</option><option value="no">No</option></select></div>
-        <div class="field"><label>How soon do you want to buy?</label><select id="f-buyTimeline" onchange="syncForm()"><option value="">—</option><option value="1m">Within 1 month</option><option value="3m">1–3 months</option><option value="6m">3–6 months</option><option value="6m+">6+ months</option><option value="exploring" selected>Just exploring</option></select></div>
-      </div>
-      <div class="s-section">
-        <div class="s-title">Behavior</div>
-        <div class="behavior-row"><span class="beh-lbl">Contacted developer</span><div class="toggle" id="t-contact" onclick="toggleContact()"></div></div>
-        <div class="behavior-row"><span class="beh-lbl">Visited site</span><div class="toggle" id="t-visited" onclick="toggleVisited()"></div></div>
-        <div class="field"><label>Price sensitivity</label><select id="f-priceSens" onchange="syncForm()"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
-      </div>
-      <div class="s-section">
-        <div class="s-title">Inferred stage</div>
-        <p class="session-help" style="margin:0;font-size:12px;color:var(--text3);">Stage is inferred from location openness, budget, BHK, possession, price sensitivity, buy timeline, open to nearby, contact and visit (combined). Shown in preview header.</p>
-        <div id="inferred-stage-display" style="margin-top:6px;font-weight:600;font-size:13px;">—</div>
-      </div>
-      <div class="s-section">
-        <div class="s-title">Saved sessions</div>
-        <p class="session-help">Use <strong>+</strong> at top to start fresh. Save or duplicate below. Open any saved session by clicking it in the list.</p>
-        <div class="session-actions">
-          <button type="button" class="btn btn-primary" title="Save current form to the cloud (create or update)" onclick="saveSession()">Save</button>
-          <button type="button" class="btn btn-green" title="Copy current session as a new saved session" onclick="duplicateSession()">Duplicate</button>
+        <div class="field">
+          <label>Budget max: <span class="slider-val" id="bmax-val">₹95L</span></label>
+          <div class="slider-track">
+            <input type="range" id="f-bmax" min="50" max="500" value="95" oninput="updateBudget()"/>
+          </div>
         </div>
-        <ul class="session-legend">
-          <li><strong>+</strong> (top) — New session: clear the form and start fresh.</li>
-          <li><strong>Save</strong> — Store the current setup in the cloud. Updates the open session or creates a new one.</li>
-          <li><strong>Duplicate</strong> — Copy the current session into a new saved session so you can tweak a variant.</li>
-        </ul>
-        <div class="session-list" id="session-list">Loading…</div>
+        <div class="field">
+          <label>BHK preference</label>
+          <div class="bhk-row">
+            <div class="bhk-cb" data-bhk="1BHK" onclick="toggleBHK(this)">1 BHK</div>
+            <div class="bhk-cb on" data-bhk="2BHK" onclick="toggleBHK(this)">2 BHK</div>
+            <div class="bhk-cb" data-bhk="3BHK" onclick="toggleBHK(this)">3 BHK</div>
+            <div class="bhk-cb" data-bhk="4BHK+" onclick="toggleBHK(this)">4 BHK+</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Possession</label>
+          <select id="f-rtm" onchange="updateConfig()">
+            <option value="either" selected>Any</option>
+            <option value="yes">Ready To Move</option>
+            <option value="no">Under Construction</option>
+          </select>
+        </div>
       </div>
+
+      <!-- ── Live property data ────────────── -->
+      <div class="s-section">
+        <div class="s-title">Live Property Data</div>
+        <div class="api-status api-idle" id="api-status">Ready to fetch</div>
+        <button class="action-btn btn-primary" id="fetch-btn" onclick="fetchLiveProperties()">
+          🔄 Fetch Live Properties
+        </button>
+        <div id="api-result" style="display:none">
+          <div class="props-found" id="api-prop-count"></div>
+          <div class="api-url" id="api-search-url"></div>
+        </div>
+      </div>
+
+      <!-- ── Behavior signals ───────────────── -->
+      <div class="s-section">
+        <div class="s-title">Behavior Signals</div>
+        <div class="field">
+          <label>Property views: <span class="slider-val" id="views-val">7</span></label>
+          <div class="slider-track">
+            <input type="range" id="f-views" min="1" max="30" value="7" oninput="updateViews()"/>
+          </div>
+        </div>
+        <div class="behavior-row">
+          <div>
+            <div class="beh-lbl">Contacted developer</div>
+            <div class="beh-sub">Called or sent inquiry</div>
+          </div>
+          <div class="toggle on" id="tog-contacted" onclick="toggleBeh(this,'contactedDeveloper')"></div>
+        </div>
+        <div class="behavior-row">
+          <div>
+            <div class="beh-lbl">Visited site</div>
+            <div class="beh-sub">Physical site visit done</div>
+          </div>
+          <div class="toggle" id="tog-visited" onclick="toggleBeh(this,'visitedSite')"></div>
+        </div>
+        <div class="field" style="margin-top:8px">
+          <label>Price sensitivity</label>
+          <select id="f-psens" onchange="updateConfig()">
+            <option value="low">Low — budget flexible</option>
+            <option value="medium" selected>Medium — ₹5L flexibility</option>
+            <option value="high">High — very price conscious</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Last visit (days ago)</label>
+          <input type="number" id="f-lastvisit" value="3" min="0" max="180" oninput="updateConfig()"/>
+        </div>
+      </div>
+
+      <!-- ── Session management ─────────────── -->
+      <div class="s-section">
+        <div class="s-title">Session Management</div>
+        <div class="btn-row" style="margin-bottom:8px">
+          <button class="action-btn btn-secondary" onclick="saveSession()" style="font-size:11.5px;padding:8px">💾 Save Session</button>
+          <button class="action-btn btn-secondary" onclick="duplicateSession()" style="font-size:11.5px;padding:8px">⎘ Duplicate</button>
+        </div>
+        <div id="session-list">
+          <!-- dynamically populated -->
+          <div style="font-size:11px;color:var(--text3);text-align:center;padding:8px 0">No saved sessions yet</div>
+        </div>
+
+        <!-- Observations (shown when session is active) -->
+        <div id="obs-panel" style="display:none;margin-top:10px">
+          <div class="field">
+            <label>Observations for this session</label>
+            <textarea id="f-observations" class="obs-textarea" placeholder="Note what you observed during this session…"></textarea>
+          </div>
+          <button class="action-btn btn-secondary" onclick="saveObservation()" style="font-size:11.5px;padding:7px">💾 Save observation</button>
+        </div>
+      </div>
+
+      <!-- ── AI tools ───────────────────────── -->
+      <div class="s-section">
+        <div class="s-title">AI Tools</div>
+        <button class="action-btn btn-amber" onclick="detectStage()" style="font-size:11.5px">
+          ✦ Detect Stage from Signals
+        </button>
+        <button class="action-btn btn-secondary" onclick="generateSummary()" style="font-size:11.5px">
+          📝 Generate Research Summary
+        </button>
+        <div id="ai-output" style="display:none">
+          <div class="summary-box loading" id="ai-summary-box">Generating…</div>
+        </div>
+      </div>
+
+      <!-- ── Reset ──────────────────────────── -->
+      <div class="s-section">
+        <div class="s-title">Session Controls</div>
+        <div class="btn-row">
+          <button class="action-btn btn-secondary" onclick="resetSession()" style="font-size:11.5px">↺ Reset</button>
+          <button class="action-btn btn-red" onclick="endSession()" style="font-size:11.5px">■ End Session</button>
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
     </div>
-    <div class="sidebar-footer">
-      <button type="button" class="btn btn-primary btn-apply" onclick="applyToPreview()">Apply</button>
-    </div>
-  </aside>
-  <main class="preview-panel">
+  </div>
+
+  <!-- ═══════════════ PREVIEW PANEL ═══════════════ -->
+  <div class="preview-panel">
+
     <div class="preview-header">
-      <span class="preview-title" id="preview-title">Preview</span>
-      <span class="preview-meta" id="preview-meta">Stage 2 · Locality Awareness</span>
-    </div>
-    <div class="preview-body">
-      <div class="phone-outer">
-        <div class="phone-inner">
-          <iframe id="preview-iframe" class="phone-iframe" title="Homepage preview" src="../homepage/index.html"></iframe>
+      <div>
+        <div class="preview-title">Buyer Homepage Preview</div>
+        <div class="preview-meta" id="preview-persona-name">Priya Mehta · Product Manager · 32</div>
+      </div>
+      <div class="preview-top-row">
+        <div class="stage-indicator">
+          <div class="stage-dot"></div>
+          <span class="stage-name" id="preview-stage-name">Stage 2 · Locality Awareness</span>
         </div>
+        <div class="live-pill">
+          <div class="live-dot"></div>
+          LIVE
+        </div>
+        <button class="action-btn btn-secondary" style="width:auto;flex:0;padding:7px 12px;margin:0;font-size:11.5px" onclick="copySnapshotLink()">
+          🔗 Snapshot link
+        </button>
       </div>
     </div>
-  </main>
+
+    <div class="preview-body">
+
+      <!-- Phone mockup -->
+      <div class="phone-frame-shell">
+        <div class="phone-outer">
+          <div class="phone-inner">
+            <div class="phone-notch"></div>
+            <iframe
+              id="homepage-iframe"
+              class="phone-iframe"
+              src="../homepage/index.html"
+              scrolling="yes">
+            </iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info stack -->
+      <div class="info-stack">
+        <div class="info-card">
+          <div class="info-card-title">Current Config</div>
+          <div class="info-row"><span class="lbl">Stage</span><span class="val" id="info-stage">2 · Awareness</span></div>
+          <div class="info-row"><span class="lbl">Buyer</span><span class="val" id="info-buyer">Priya Mehta</span></div>
+          <div class="info-row"><span class="lbl">Location</span><span class="val" id="info-loc">Sector 137</span></div>
+          <div class="info-row"><span class="lbl">Budget</span><span class="val" id="info-budget">₹75L – ₹95L</span></div>
+          <div class="info-row"><span class="lbl">BHK</span><span class="val" id="info-bhk">2 BHK</span></div>
+          <div class="info-row"><span class="lbl">Views</span><span class="val" id="info-views">7 times</span></div>
+          <div class="info-row"><span class="lbl">Contacted</span><span class="val" id="info-contacted">Yes</span></div>
+          <div class="info-row"><span class="lbl">Visited site</span><span class="val" id="info-visited">No</span></div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">Module Visibility</div>
+          <div id="module-visibility">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">API · Entity Map</div>
+          <div class="config-json" id="entities-json-view" style="max-height:120px">—</div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">Config JSON</div>
+          <div class="config-json" id="config-json-view">{}</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
-<div id="toast"></div>
 
-<script src="config.js"></script>
+<!-- Toast -->
+<div id="toast">Session saved!</div>
+
 <script>
-(function(){
-  const STAGE_NAMES = { 1:'Discovery', 2:'Locality Awareness', 3:'Comparison', 4:'Shortlist', 5:'Post-Visit' };
-  let sb = null;
-  let activeSessionId = null;
-  let sessions = [];
-  let profile = getDefaultProfile();
+/* ─── Supabase config ───────────────────────────────────── */
+// Paste your project URL and anon key here after creating a Supabase project.
+// Guide: https://supabase.com → New project → Settings → API
+const SUPABASE_URL = window.CONFIG_ENV?.SUPABASE_URL || '';
+const SUPABASE_KEY = window.CONFIG_ENV?.SUPABASE_KEY || '';
 
-  function getDefaultProfile() {
-    return {
-      user: { name: '', age: null, occupation: '', worksNear: '' },
-      stage: 2,
-      lastVisitDaysAgo: 3,
-      location: { primary: '', secondary: null, openToNearby: false, city: null, primaryMeta: null, secondaryMeta: null, adjacentLocalities: [] },
-      filters: { budgetMin: 70, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
-      behavior: { savedProperties: [], contactedDeveloper: false, visitedSite: false, priceSensitivity: 'medium' },
-      openAIData: null
-    };
+let sb = null;
+function initSupabase() {
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    setDbStatus('unconfigured', 'Supabase: add URL + key above');
+    return;
   }
-
-  function initSupabase() {
-    const url = window.SUPABASE_URL || '';
-    const key = window.SUPABASE_ANON_KEY || '';
-    const dot = document.getElementById('db-dot');
-    const lbl = document.getElementById('db-label');
-    if (!url || !key) {
-      lbl.textContent = 'Supabase: add config.js (see config.example.js)';
-      return;
-    }
-    try {
-      sb = supabase.createClient(url, key);
-      lbl.textContent = 'Supabase: connecting…';
-      sb.from('sessions').select('id', { count: 'exact', head: true }).then(({ error }) => {
+  try {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    setDbStatus('connecting', 'Supabase: connecting…');
+    // Verify connection with a lightweight query
+    sb.from('sessions').select('id', { count: 'exact', head: true })
+      .then(({ error }) => {
         if (error) {
-          dot.classList.add('error');
-          lbl.textContent = 'Supabase: ' + error.message;
+          setDbStatus('error', `Supabase: ${error.message}`);
         } else {
-          dot.classList.add('connected');
-          lbl.textContent = 'Supabase: connected';
+          setDbStatus('connected', 'Supabase: connected');
           loadSessionsFromDB();
         }
       });
-    } catch (e) {
-      dot.classList.add('error');
-      lbl.textContent = 'Supabase: ' + e.message;
-    }
+  } catch (e) {
+    setDbStatus('error', `Supabase init failed: ${e.message}`);
   }
+}
 
-  async function loadSessionsFromDB() {
-    if (!sb) return;
-    const { data, error } = await sb.from('sessions').select('*').order('updated_at', { ascending: false }).limit(50);
-    if (error) { console.error(error); return; }
-    sessions = (data || []).map(r => ({ id: r.id, name: r.name, profile: r.profile, updated_at: r.updated_at }));
-    renderSessionList();
+function setDbStatus(state, msg) {
+  const dot = document.getElementById('db-dot');
+  const lbl = document.getElementById('db-label');
+  if (!dot || !lbl) return;
+  dot.className = 'db-dot' + (state === 'connected' ? ' connected' : state === 'error' ? ' error' : '');
+  lbl.textContent = msg;
+}
+
+/* ─── State ─────────────────────────────────────────────── */
+const STAGE_NAMES = {
+  1: 'Discovery',
+  2: 'Locality Awareness',
+  3: 'Comparison',
+  4: 'Shortlist · Decision',
+  5: 'Post-Visit'
+};
+
+const MODULE_MATRIX = {
+  1: { 'Search Bar': true, 'Trending Localities': true, 'Property Cards': true, 'Social Proof': true, 'New Launches': true, 'Continue Left Off': false, 'Locality Radar': false, 'Comparison Table': false, 'Budget Nudge': false, 'Decision Spotlight': false, 'Articles': false },
+  2: { 'Search Bar': true, 'Continue Left Off': true, 'Locality Radar': true, 'Property Cards': true, 'Nearby Localities': true, 'Budget Nudge': true, 'New Launches': true, 'Articles': true, 'Trending Localities': false, 'Comparison Table': false, 'Decision Spotlight': false },
+  3: { 'Search Bar': true, 'Comparison Table': true, 'Property Cards': true, 'BHK Confirmation': true, 'Nearby Localities': true, 'New Launches': true, 'Tools': true, 'Articles': true, 'Continue Left Off': false, 'Trending Localities': false, 'Decision Spotlight': false },
+  4: { 'Search Bar': true, 'Decision Spotlight': true, 'Shortlist Manager': true, 'Visit Planner': true, 'EMI Tools': true, 'Articles': true, 'Budget Nudge': false, 'New Launches': false, 'Trending Localities': false },
+  5: { 'Search Bar': true, 'Social Proof (7x)': true, 'Post-Visit Feedback': true, 'EMI / Loan': true, 'Price Appreciation': true, 'Similar Homes': true, 'Articles': true, 'Decision Spotlight': false },
+};
+
+let CONFIG = {
+  stage: 2,
+  user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager' },
+  location: { city: 'Noida', primary: 'Sector 137', secondary: 'Sector 143', adjacent: 'Sector 128' },
+  filters: { budgetMin: 75, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either' },
+  behavior: { viewCount: 7, contactedDeveloper: true, visitedSite: false, savedCount: 3, priceSensitivity: 'medium', lastVisitDaysAgo: 3 },
+};
+
+let sessions = JSON.parse(localStorage.getItem('99acres_sessions') || '[]');
+let activeSessionId = null;
+let sendTimer = null;
+
+/* ─── Personas ────────────────────────────────────────────── */
+const PERSONAS = {
+  priya: {
+    name: 'Priya Mehta', age: 32, occupation: 'Product Manager',
+    stage: 2, city: 'Noida', primary: 'Sector 137', secondary: 'Sector 143', adjacent: 'Sector 128',
+    budgetMin: 75, budgetMax: 95, bhk: ['2BHK'], rtm: 'either',
+    viewCount: 7, contacted: true, visited: false, psens: 'medium', lastVisit: 3
+  },
+  rahul: {
+    name: 'Rahul Sharma', age: 28, occupation: 'Software Engineer',
+    stage: 1, city: 'Bangalore', primary: 'Whitefield', secondary: 'Marathahalli', adjacent: 'Sarjapur',
+    budgetMin: 60, budgetMax: 85, bhk: ['1BHK','2BHK'], rtm: 'either',
+    viewCount: 2, contacted: false, visited: false, psens: 'high', lastVisit: 0
+  },
+  meera: {
+    name: 'Meera Krishnan', age: 38, occupation: 'Doctor',
+    stage: 3, city: 'Mumbai', primary: 'Powai', secondary: 'Vikhroli', adjacent: 'Mulund',
+    budgetMin: 150, budgetMax: 220, bhk: ['2BHK','3BHK'], rtm: 'yes',
+    viewCount: 12, contacted: true, visited: false, psens: 'low', lastVisit: 5
+  },
+  vikram: {
+    name: 'Vikram Nair', age: 44, occupation: 'Sales Director',
+    stage: 4, city: 'Gurgaon', primary: 'Sector 57', secondary: 'Sohna Road', adjacent: 'Golf Course Ext.',
+    budgetMin: 180, budgetMax: 260, bhk: ['3BHK','4BHK+'], rtm: 'yes',
+    viewCount: 18, contacted: true, visited: true, psens: 'low', lastVisit: 7
+  },
+  upgrader: {
+    name: 'Anita Desai', age: 51, occupation: 'Professor',
+    stage: 5, city: 'Pune', primary: 'Baner', secondary: 'Balewadi', adjacent: 'Wakad',
+    budgetMin: 120, budgetMax: 175, bhk: ['3BHK'], rtm: 'either',
+    viewCount: 22, contacted: true, visited: true, psens: 'medium', lastVisit: 1
   }
+};
 
-  function renderSessionList() {
-    const el = document.getElementById('session-list');
-    if (!sessions.length) { el.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:8px 0">No saved sessions</div>'; return; }
-    el.innerHTML = sessions.map(s => `
-      <div class="session-item ${s.id === activeSessionId ? 'active' : ''}" data-id="${s.id}">
-        <div style="flex:1;min-width:0">
-          <div class="si-name">${escapeHtml(s.name)}</div>
-          <div class="si-meta">Stage ${s.profile && s.profile.stage ? s.profile.stage : '—'}</div>
-        </div>
-        <div class="si-acts">
-          <button type="button" class="si-act" onclick="event.stopPropagation();loadSession('${s.id}')">Load</button>
-          <button type="button" class="si-act" onclick="event.stopPropagation();duplicateSessionFrom('${s.id}')">Copy</button>
-        </div>
-      </div>
-    `).join('');
-    el.querySelectorAll('.session-item').forEach(item => {
-      item.addEventListener('click', function() { loadSession(this.dataset.id); });
-    });
-  }
+/* ─── Load persona ────────────────────────────────────────── */
+function loadPersona(key) {
+  const p = PERSONAS[key];
+  if (!p) return;
 
-  function escapeHtml(s) {
-    const div = document.createElement('div');
-    div.textContent = s;
-    return div.innerHTML;
-  }
+  // update form fields
+  document.getElementById('f-name').value = p.name;
+  document.getElementById('f-age').value = p.age;
+  document.getElementById('f-occ').value = p.occupation;
+  document.getElementById('f-city').value = p.city;
+  document.getElementById('f-loc1').value = p.primary;
+  document.getElementById('f-loc2').value = p.secondary;
+  document.getElementById('f-loc3').value = p.adjacent;
+  document.getElementById('f-bmin').value = p.budgetMin;
+  document.getElementById('f-bmax').value = p.budgetMax;
+  document.getElementById('f-rtm').value = p.rtm;
+  document.getElementById('f-views').value = p.viewCount;
+  document.getElementById('f-psens').value = p.psens;
+  document.getElementById('f-lastvisit').value = p.lastVisit;
 
-  function isCityName(text) {
-    if (!text || !text.trim()) return false;
-    var t = text.trim().toLowerCase();
-    return t === 'noida' || t === 'bangalore' || t === 'bengaluru' || t === 'gurgaon' || t === 'gurugram' || t === 'mumbai' || t === 'pune' || t === 'ghaziabad' || t === 'faridabad' || t === 'hyderabad' || t === 'chennai' || t === 'delhi' || t === 'greater noida';
-  }
-  function inferStageFromBehavior(p) {
-    const b = p.behavior || {};
-    const loc = p.location || {};
-    const f = p.filters || {};
-    const hasPrimary = !!(loc.primary && loc.primary.trim());
-    const hasSecondary = !!(loc.secondary && loc.secondary.trim());
-    const openToNearby = !!loc.openToNearby;
-    const primaryIsCity = loc.primaryType === 'city' || isCityName(loc.primary);
-    const contacted = !!b.contactedDeveloper;
-    const visited = !!b.visitedSite;
-    const priceSens = b.priceSensitivity || 'medium';
-    const buyTimeline = f.buyTimeline || 'exploring';
-
-    var min = f.budgetMin != null ? f.budgetMin : 70, max = f.budgetMax != null ? f.budgetMax : 95;
-    var bhk = f.bhk && f.bhk.length ? f.bhk : ['2BHK'];
-    var rtm = f.readyToMove || 'either';
-    var refinedBudget = (max - min) < 25 || min !== 70 || max !== 95;
-    var refinedBHK = bhk.length !== 1 || bhk[0] !== '2BHK';
-    var possessionSpecific = rtm === 'yes' || rtm === 'no';
-    var soonIntent = buyTimeline === '1m' || buyTimeline === '3m';
-
-    var base = 1;
-    if (!hasPrimary) base = 1;
-    else if (primaryIsCity) base = 1;
-    else if (hasPrimary && hasSecondary) base = 3;
-    else {
-      var highPriceSensitivity = priceSens === 'high';
-      var lowPriceSensitivity = priceSens === 'low';
-      if (lowPriceSensitivity && !refinedBudget && !refinedBHK && !possessionSpecific) base = 2;
-      else if (refinedBudget || refinedBHK || possessionSpecific || highPriceSensitivity) base = 3;
-      else if (openToNearby && (refinedBudget || refinedBHK || highPriceSensitivity)) base = 3;
-      else if (openToNearby) base = 2;
-      else base = 2;
-    }
-
-    if (visited) {
-      if (base >= 3) return 5;
-      if (base === 2) return 4;
-      return 3;
-    }
-    if (contacted) {
-      if (base >= 3) return 4;
-      if (base === 2) return soonIntent ? 4 : 3;
-      return soonIntent ? 3 : 2;
-    }
-    if (soonIntent && base === 2) return 3;
-    return base;
-  }
-
-  function collectProfile() {
-    const bhk = [];
-    document.querySelectorAll('.bhk-cb.on').forEach(cb => bhk.push(cb.dataset.bhk));
-    profile = {
-      user: {
-        name: document.getElementById('f-name').value.trim() || null,
-        age: parseInt(document.getElementById('f-age').value, 10) || null,
-        occupation: document.getElementById('f-occ').value.trim() || null,
-        worksNear: document.getElementById('f-worksNear').value.trim() || null
-      },
-      stage: 2,
-      lastVisitDaysAgo: parseInt(document.getElementById('f-lastVisit').value, 10) || 0,
-      location: {
-        primary: document.getElementById('f-primary').value.trim() || null,
-        secondary: document.getElementById('t-open-nearby').classList.contains('on') ? (document.getElementById('f-secondary').value.trim() || null) : null,
-        openToNearby: document.getElementById('t-open-nearby').classList.contains('on'),
-        city: profile.location && profile.location.city ? profile.location.city : null,
-        primaryType: profile.location && profile.location.primaryType || null,
-        secondaryType: profile.location && profile.location.secondaryType || null,
-        primaryMeta: profile.location && profile.location.primaryMeta ? profile.location.primaryMeta : null,
-        secondaryMeta: profile.location && profile.location.secondaryMeta ? profile.location.secondaryMeta : null,
-        adjacentLocalities: profile.location && profile.location.adjacentLocalities ? profile.location.adjacentLocalities : []
-      },
-      filters: {
-        budgetMin: parseInt(document.getElementById('f-bmin').value, 10) || 0,
-        budgetMax: parseInt(document.getElementById('f-bmax').value, 10) || 0,
-        bhk: bhk.length ? bhk : ['2BHK'],
-        readyToMove: document.getElementById('f-rtm').value,
-        buyTimeline: document.getElementById('f-buyTimeline').value || 'exploring'
-      },
-      behavior: {
-        savedProperties: profile.behavior && profile.behavior.savedProperties ? profile.behavior.savedProperties : [],
-        contactedDeveloper: document.getElementById('t-contact').classList.contains('on'),
-        visitedSite: document.getElementById('t-visited').classList.contains('on'),
-        priceSensitivity: document.getElementById('f-priceSens').value
-      },
-      openAIData: profile.openAIData || null
-    };
-    profile.stage = inferStageFromBehavior(profile);
-    return profile;
-  }
-
-  function updateInferredStageDisplay() {
-    const el = document.getElementById('inferred-stage-display');
-    if (el) el.textContent = 'Stage ' + profile.stage + ' · ' + (STAGE_NAMES[profile.stage] || '');
-  }
-
-  function toggleOpenNearby() {
-    document.getElementById('t-open-nearby').classList.toggle('on');
-    document.getElementById('loc-extra').style.display = document.getElementById('t-open-nearby').classList.contains('on') ? 'block' : 'none';
-    syncForm();
-  }
-
-  function fillForm(p) {
-    if (!p) return;
-    const u = p.user || {};
-    document.getElementById('f-name').value = u.name || '';
-    document.getElementById('f-age').value = u.age != null ? u.age : '';
-    document.getElementById('f-occ').value = u.occupation || '';
-    document.getElementById('f-worksNear').value = u.worksNear || '';
-    profile = JSON.parse(JSON.stringify(p));
-    document.getElementById('f-lastVisit').value = p.lastVisitDaysAgo != null ? p.lastVisitDaysAgo : 0;
-    const loc = p.location || {};
-    document.getElementById('f-primary').value = loc.primary || '';
-    document.getElementById('f-secondary').value = loc.secondary || '';
-    const hasSec = !!(loc.secondary && loc.secondary.trim());
-    const openNearby = !!loc.openToNearby || hasSec;
-    document.getElementById('t-open-nearby').classList.toggle('on', openNearby);
-    document.getElementById('loc-extra').style.display = openNearby ? 'block' : 'none';
-    const f = p.filters || {};
-    document.getElementById('f-bmin').value = f.budgetMin != null ? f.budgetMin : 70;
-    document.getElementById('f-bmax').value = f.budgetMax != null ? f.budgetMax : 95;
-    document.querySelectorAll('.bhk-cb').forEach(cb => { cb.classList.toggle('on', (f.bhk || []).indexOf(cb.dataset.bhk) >= 0); });
-    document.getElementById('f-rtm').value = f.readyToMove || 'either';
-    document.getElementById('f-buyTimeline').value = f.buyTimeline || 'exploring';
-    const b = p.behavior || {};
-    document.getElementById('t-contact').classList.toggle('on', !!b.contactedDeveloper);
-    document.getElementById('t-visited').classList.toggle('on', !!b.visitedSite);
-    document.getElementById('f-priceSens').value = b.priceSensitivity || 'medium';
-    collectProfile();
-    updateInferredStageDisplay();
-    updatePreviewMeta();
-  }
-
-  function toggleContact() { document.getElementById('t-contact').classList.toggle('on'); syncForm(); }
-  function toggleVisited() { document.getElementById('t-visited').classList.toggle('on'); syncForm(); }
-
-  document.getElementById('bhk-row').addEventListener('click', function(e) {
-    const cb = e.target.closest('.bhk-cb');
-    if (cb) { cb.classList.toggle('on'); syncForm(); }
+  // BHK checkboxes
+  document.querySelectorAll('.bhk-cb').forEach(el => {
+    el.classList.toggle('on', p.bhk.includes(el.dataset.bhk));
   });
 
-  var pushToPreviewTimer = null;
-  async function sendConfigToPreview() {
-    collectProfile();
-    var hasLocationInput = (profile.location && profile.location.primary) || (profile.location && profile.location.secondary) || (profile.user && profile.user.worksNear);
-    if (window.OPENAI_API_KEY && hasLocationInput) {
-      try { await resolveLocationWithOpenAI(); } catch (_) {}
-      try { await fetchRealDataWithOpenAI(); } catch (_) {}
-    }
-    collectProfile();
-    var payload = Object.assign({}, profile);
-    if (window.NINETY_NINE_ACRES_API_BASE) payload.apiBase = window.NINETY_NINE_ACRES_API_BASE;
-    var iframe = document.getElementById('preview-iframe');
-    if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'CONFIG_UPDATE', config: payload }, '*');
+  // Behavior toggles
+  setToggle('tog-contacted', p.contacted);
+  setToggle('tog-visited', p.visited);
+
+  // Stage
+  setStage(p.stage);
+
+  // Persona button highlight
+  document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('on'));
+  event.target.classList.add('on');
+
+  updateSliderDisplays();
+  scheduleConfigUpdate();
+  showToast(`Loaded persona: ${p.name}`);
+}
+
+/* ─── Helpers ─────────────────────────────────────────────── */
+function setToggle(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('on', !!val);
+}
+
+function setStage(n) {
+  CONFIG.stage = n;
+  document.querySelectorAll('.stg-btn').forEach((b,i) => b.classList.toggle('on', i === n-1));
+  const sName = STAGE_NAMES[n] || '';
+  document.getElementById('preview-stage-name').textContent = `Stage ${n} · ${sName}`;
+  document.getElementById('info-stage').textContent = `${n} · ${sName}`;
+  scheduleConfigUpdate();
+}
+
+function toggleBHK(el) {
+  el.classList.toggle('on');
+  scheduleConfigUpdate();
+}
+
+function toggleBeh(el, key) {
+  el.classList.toggle('on');
+  CONFIG.behavior[key] = el.classList.contains('on');
+  scheduleConfigUpdate();
+}
+
+function updateBudget() {
+  const min = parseInt(document.getElementById('f-bmin').value);
+  const max = parseInt(document.getElementById('f-bmax').value);
+  document.getElementById('bmin-val').textContent = `₹${min}L`;
+  document.getElementById('bmax-val').textContent = `₹${max}L`;
+  scheduleConfigUpdate();
+}
+
+function updateViews() {
+  const v = document.getElementById('f-views').value;
+  document.getElementById('views-val').textContent = v;
+  scheduleConfigUpdate();
+}
+
+function updateSliderDisplays() {
+  document.getElementById('bmin-val').textContent = `₹${document.getElementById('f-bmin').value}L`;
+  document.getElementById('bmax-val').textContent = `₹${document.getElementById('f-bmax').value}L`;
+  document.getElementById('views-val').textContent = document.getElementById('f-views').value;
+}
+
+function updateConfig() {
+  scheduleConfigUpdate();
+}
+
+/* ─── Schedule debounced config push ─────────────────────── */
+function scheduleConfigUpdate() {
+  clearTimeout(sendTimer);
+  sendTimer = setTimeout(pushConfig, 120);
+}
+
+/* ─── Collect current form state into CONFIG ──────────────── */
+function collectConfig() {
+  const bhk = Array.from(document.querySelectorAll('.bhk-cb.on')).map(el => el.dataset.bhk);
+  CONFIG = {
+    stage: CONFIG.stage,
+    user: {
+      name: document.getElementById('f-name').value,
+      age: parseInt(document.getElementById('f-age').value),
+      occupation: document.getElementById('f-occ').value,
+    },
+    location: {
+      city: document.getElementById('f-city').value,
+      primary: document.getElementById('f-loc1').value,
+      secondary: document.getElementById('f-loc2').value,
+      adjacent: document.getElementById('f-loc3').value,
+    },
+    filters: {
+      budgetMin: parseInt(document.getElementById('f-bmin').value),
+      budgetMax: parseInt(document.getElementById('f-bmax').value),
+      bhk: bhk.length ? bhk : ['2BHK'],
+      readyToMove: document.getElementById('f-rtm').value,
+    },
+    behavior: {
+      viewCount: parseInt(document.getElementById('f-views').value),
+      contactedDeveloper: document.getElementById('tog-contacted').classList.contains('on'),
+      visitedSite: document.getElementById('tog-visited').classList.contains('on'),
+      savedCount: 3,
+      priceSensitivity: document.getElementById('f-psens').value,
+      lastVisitDaysAgo: parseInt(document.getElementById('f-lastvisit').value),
+    },
+  };
+  return CONFIG;
+}
+
+/* ─── Push config to iframe ───────────────────────────────── */
+function pushConfig() {
+  collectConfig();
+  const iframe = document.getElementById('homepage-iframe');
+  if (iframe.contentWindow) {
+    iframe.contentWindow.postMessage({ type: 'CONFIG_UPDATE', config: CONFIG }, '*');
   }
-  function schedulePushToPreview() {
-    clearTimeout(pushToPreviewTimer);
-    pushToPreviewTimer = setTimeout(sendConfigToPreview, 450);
-  }
-  function syncForm() {
-    collectProfile();
-    updateInferredStageDisplay();
-    updatePreviewMeta();
-    schedulePushToPreview();
-  }
+  updateInfoPanel();
+  updateModuleVisibility();
+  updateConfigJSON();
+}
 
-  function inferCityFromLocality(text) {
-    if (!text || !text.trim()) return null;
-    var t = text.trim().toLowerCase();
-    if (t.indexOf('sarjapur') !== -1 || t.indexOf('koramangala') !== -1 || t.indexOf('whitefield') !== -1 || t.indexOf('bellandur') !== -1 || t.indexOf('hsr') !== -1 || t.indexOf('marathahalli') !== -1 || t.indexOf('indiranagar') !== -1 || t.indexOf('bangalore') !== -1) return 'Bangalore';
-    if (t.indexOf('dlf') !== -1 || t.indexOf('gurgaon') !== -1 || t.indexOf('gurugram') !== -1 || t.indexOf('cyber') !== -1) return 'Gurgaon';
-    if (t.indexOf('sector') !== -1 && (t.indexOf('noida') !== -1 || t.indexOf('137') !== -1 || t.indexOf('143') !== -1 || t.indexOf('50') !== -1)) return 'Noida';
-    if (t.indexOf('noida') !== -1) return 'Noida';
-    if (t.indexOf('ghaziabad') !== -1) return 'Ghaziabad';
-    if (t.indexOf('faridabad') !== -1) return 'Faridabad';
-    if (t.indexOf('mumbai') !== -1 || t.indexOf('thane') !== -1) return 'Mumbai';
-    return null;
-  }
+/* ─── Update info panel ───────────────────────────────────── */
+function updateInfoPanel() {
+  document.getElementById('preview-persona-name').textContent =
+    `${CONFIG.user.name} · ${CONFIG.user.occupation} · ${CONFIG.user.age}`;
+  document.getElementById('info-buyer').textContent = CONFIG.user.name;
+  document.getElementById('info-loc').textContent = CONFIG.location.primary;
+  document.getElementById('info-budget').textContent = `₹${CONFIG.filters.budgetMin}L – ₹${CONFIG.filters.budgetMax}L`;
+  document.getElementById('info-bhk').textContent = CONFIG.filters.bhk.join(', ');
+  document.getElementById('info-views').textContent = `${CONFIG.behavior.viewCount} times`;
+  document.getElementById('info-contacted').textContent = CONFIG.behavior.contactedDeveloper ? 'Yes' : 'No';
+  document.getElementById('info-visited').textContent = CONFIG.behavior.visitedSite ? 'Yes' : 'No';
+}
 
-  async function resolveLocationWithOpenAI() {
-    const apiKey = window.OPENAI_API_KEY;
-    const primary = (profile.location && profile.location.primary) || '';
-    const secondary = (profile.location && profile.location.secondary) || '';
-    const worksNear = (profile.user && profile.user.worksNear) || '';
-    const inputs = [primary, secondary, worksNear].filter(Boolean);
-    if (inputs.length === 0) return;
+function updateModuleVisibility() {
+  const mods = MODULE_MATRIX[CONFIG.stage] || {};
+  const el = document.getElementById('module-visibility');
+  el.innerHTML = Object.entries(mods).map(([name, visible]) => `
+    <div class="info-row">
+      <span class="lbl" style="font-size:11px">${name}</span>
+      <span class="val" style="color:${visible ? 'var(--green)' : 'var(--text3)'};font-size:12px">${visible ? '✓' : '—'}</span>
+    </div>
+  `).join('');
+}
 
-    var resolvedCity = inferCityFromLocality(primary) || inferCityFromLocality(secondary) || inferCityFromLocality(worksNear);
-    if (resolvedCity) profile.location.city = resolvedCity;
-    if (primary) {
-      profile.location.primary = primary.trim();
-      if (!profile.location.primaryType) profile.location.primaryType = isCityName(primary.trim()) ? 'city' : 'locality';
-    }
-    if (secondary) profile.location.secondary = secondary.trim() || null;
-    if (secondary && !profile.location.secondaryType) profile.location.secondaryType = isCityName(secondary.trim()) ? 'city' : 'locality';
-    if (worksNear && profile.user) profile.user.worksNear = worksNear.trim();
+function updateConfigJSON() {
+  document.getElementById('config-json-view').textContent = JSON.stringify(CONFIG, null, 2);
+}
 
-    if (!apiKey) return;
-    const prompt = `You are a real estate location expert for India. Map the given location inputs to city and classify each as "city" (whole city e.g. Noida, Bangalore) or "locality" (area/sector within a city e.g. Sector 137, Sarjapur).
+/* ─── Session management ──────────────────────────────────── */
+function newSession() {
+  activeSessionId = null; // new unsaved session
+  document.getElementById('session-dot').style.background = 'var(--green)';
+  document.getElementById('session-label').textContent = `Session ${sessions.length + 1} · Active`;
+  document.getElementById('obs-panel').style.display = 'none';
+  document.getElementById('f-observations').value = '';
+  showToast('New session started');
+}
 
-CRITICAL: Sarjapur, Koramangala, Whitefield, Sector 137, Sector 143, DLF Phase 1 → locality. Noida, Bangalore, Gurgaon, Mumbai → city.
-Return city for the area: Sarjapur/Koramangala/Whitefield → Bangalore; Sector 137/143/50, Noida Expressway → Noida; DLF, Cyber City → Gurgaon.
+async function saveSession() {
+  collectConfig();
+  const now = new Date();
+  const sessionRow = {
+    name:     `${CONFIG.user.name} · Stage ${CONFIG.stage}`,
+    stage:    CONFIG.stage,
+    config:   CONFIG,
+    summary:  '',
+    observations: document.getElementById('f-observations').value || '',
+    researcher: CONFIG.user.name,
+    updated_at: now.toISOString(),
+  };
 
-Given inputs - primary: "${primary}", secondary: "${secondary || ''}", works near: "${worksNear}".
-Return ONLY a valid JSON object, no markdown:
-{"city":"Bangalore|Noida|Gurgaon|Mumbai|Ghaziabad|Faridabad","primary":"exact primary string","secondary":null or "exact secondary string","worksNear":null or "exact string","primaryType":"city or locality","secondaryType":null or "city or locality"}
-Use primaryType "city" only when the primary is a city name (Noida, Bangalore, Gurgaon, Mumbai, etc.). Use "locality" for sectors, areas, neighbourhoods. Return only the JSON.`;
-    try {
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [{ role: 'user', content: prompt }],
-          max_tokens: 220,
-          temperature: 0.1
-        })
-      });
-      if (!res.ok) throw new Error('OpenAI ' + res.status);
-      const data = await res.json();
-      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
-      const start = text.indexOf('{');
-      const end = text.lastIndexOf('}') + 1;
-      const json = start >= 0 && end > start ? JSON.parse(text.slice(start, end)) : {};
-      if (json.city) profile.location.city = json.city;
-      if (json.primary != null) profile.location.primary = (json.primary || profile.location.primary || '').trim() || null;
-      if (json.secondary != null) profile.location.secondary = (json.secondary || '').trim() || null;
-      if (json.worksNear != null && profile.user) profile.user.worksNear = (json.worksNear || '').trim() || null;
-      if (json.primaryType === 'city' || json.primaryType === 'locality') profile.location.primaryType = json.primaryType;
-      if (json.secondaryType === 'city' || json.secondaryType === 'locality') profile.location.secondaryType = json.secondaryType;
-    } catch (e) {
-      console.warn('OpenAI location resolve failed:', e.message);
-    }
-    if (!profile.location.primaryType && profile.location.primary) profile.location.primaryType = isCityName(profile.location.primary) ? 'city' : 'locality';
-    if (!profile.location.secondaryType && profile.location.secondary) profile.location.secondaryType = isCityName(profile.location.secondary) ? 'city' : 'locality';
-  }
-
-  async function fetchRealDataWithOpenAI() {
-    const apiKey = window.OPENAI_API_KEY;
-    if (!apiKey) { profile.openAIData = null; return; }
-    const city = profile.location.city || 'Noida';
-    const loc = profile.location.primary || city;
-    const bhk = (profile.filters.bhk && profile.filters.bhk[0]) ? profile.filters.bhk[0] : '2BHK';
-    const minL = profile.filters.budgetMin != null ? profile.filters.budgetMin : 70;
-    const maxL = profile.filters.budgetMax != null ? profile.filters.budgetMax : 95;
-    const rtm = profile.filters.readyToMove === 'yes' ? ' ready to move only' : '';
-    const prompt = `You are a real estate data expert for India. For city "${city}" and locality "${loc}", return REAL market-relevant data as JSON only, no markdown.
-
-1. localities: array of 6-8 real locality/area names in or near ${city} that buyers search (e.g. Sector 137, Koramangala). Each: { "name": "Locality Name", "avgPricePerSqft": number in thousands (e.g. 12.5) }.
-
-2. properties: array of 6-8 realistic residential listings. Each: { "name": "Project or building name", "location": "Locality, City", "price": "₹XXL", "priceNum": number in lakhs, "bhk": "2 BHK", "sqft": "1,050 sq ft", "status": "Ready to move" or "Under construction", "ready_to_move": boolean }. Use budget ${minL}-${maxL}L and ${bhk}${rtm}. Base on real projects/localities in ${city}.
-
-Return ONLY valid JSON: {"localities":[{"name":"...","avgPricePerSqft":...},...],"properties":[{"name":"...","location":"...","price":"...","priceNum":...,"bhk":"...","sqft":"...","status":"...","ready_to_move":...},...]}`;
-    try {
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-        body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], max_tokens: 1200, temperature: 0.3 })
-      });
-      if (!res.ok) throw new Error('OpenAI ' + res.status);
-      const data = await res.json();
-      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
-      const start = text.indexOf('{');
-      const end = text.lastIndexOf('}') + 1;
-      const json = start >= 0 && end > start ? JSON.parse(text.slice(start, end)) : {};
-      const localities = Array.isArray(json.localities) ? json.localities : [];
-      const properties = Array.isArray(json.properties) ? json.properties : [];
-      profile.openAIData = { localities: localities, properties: properties };
-    } catch (e) {
-      console.warn('OpenAI real data failed:', e.message);
-      profile.openAIData = null;
-    }
-  }
-
-  async function applyToPreview() {
-    collectProfile();
-    try {
-      await resolveLocationWithOpenAI();
-    } catch (_) {}
-    if (window.OPENAI_API_KEY) {
-      try {
-        await fetchRealDataWithOpenAI();
-      } catch (_) {}
-    }
-    updatePreviewMeta();
-    sendConfigToPreview();
-    showToast('Changes applied to preview');
-  }
-
-  function updatePreviewMeta() {
-    document.getElementById('preview-title').textContent = profile.user && profile.user.name ? profile.user.name + ' · Preview' : 'Preview';
-    document.getElementById('preview-meta').textContent = 'Stage ' + profile.stage + ' · ' + (STAGE_NAMES[profile.stage] || '');
-  }
-
-  function newSession() {
-    activeSessionId = null;
-    profile = getDefaultProfile();
-    fillForm(profile);
-    syncForm(); // infer stage from default form (e.g. no primary → stage 1)
-    showToast('New session');
-  }
-
-  async function saveSession() {
-    collectProfile();
-    const name = (profile.user && profile.user.name) ? profile.user.name + ' · Stage ' + profile.stage : 'Session ' + (sessions.length + 1);
-    if (!sb) { showToast('Supabase not configured'); return; }
-    try {
-      if (activeSessionId) {
-        await sb.from('sessions').update({ name, profile, updated_at: new Date().toISOString() }).eq('id', activeSessionId);
-        showToast('Session updated');
-      } else {
-        const { data, error } = await sb.from('sessions').insert({ name, profile }).select().single();
-        if (error) throw error;
-        activeSessionId = data.id;
-        sessions.unshift({ id: data.id, name, profile, updated_at: data.updated_at });
-        renderSessionList();
-        showToast('Session saved');
-      }
-      loadSessionsFromDB();
-    } catch (e) {
-      showToast('Error: ' + e.message);
-      console.error(e);
-    }
-  }
-
-  function loadSession(id) {
-    const s = sessions.find(x => x.id === id);
-    if (!s) return;
-    activeSessionId = s.id;
-    fillForm(s.profile);
-    applyToPreview();
-    renderSessionList();
-    showToast('Loaded: ' + s.name);
-  }
-
-  function duplicateSession() {
-    if (!activeSessionId) { saveSession(); return; }
-    duplicateSessionFrom(activeSessionId);
-  }
-
-  async function duplicateSessionFrom(id) {
-    const s = sessions.find(x => x.id === id);
-    if (!s || !sb) return;
-    activeSessionId = null;
-    fillForm(s.profile);
-    syncForm();
-    sendConfigToPreview();
-    const name = (s.name || 'Copy') + ' (copy)';
-    try {
-      const { data, error } = await sb.from('sessions').insert({ name, profile: s.profile }).select().single();
-      if (error) throw error;
+  if (sb) {
+    // Supabase upsert
+    const upsertData = activeSessionId
+      ? { ...sessionRow, id: activeSessionId }
+      : sessionRow;
+    const { data, error } = await sb.from('sessions').upsert(upsertData).select().single();
+    if (error) {
+      showToast('Supabase error — saved locally');
+      console.error('[Supabase save]', error);
+      saveLocalFallback(sessionRow, now);
+    } else {
       activeSessionId = data.id;
       await loadSessionsFromDB();
-      showToast('Duplicated');
-    } catch (e) {
-      showToast('Error: ' + e.message);
+      showToast('Session saved to Supabase!');
     }
+  } else {
+    saveLocalFallback(sessionRow, now);
+    showToast('Session saved locally (Supabase not configured)');
   }
 
-  function showToast(msg) {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
-    clearTimeout(window._toastT);
-    window._toastT = setTimeout(() => el.classList.remove('show'), 2500);
+  document.getElementById('session-dot').style.background = 'var(--green)';
+  document.getElementById('session-label').textContent = sessionRow.name;
+  document.getElementById('obs-panel').style.display = 'block';
+}
+
+function saveLocalFallback(sessionRow, now) {
+  const localSession = {
+    id: activeSessionId || Date.now().toString(),
+    ...sessionRow,
+    savedAt: now.toLocaleTimeString(),
+  };
+  const existing = sessions.findIndex(s => s.id === localSession.id);
+  if (existing >= 0) sessions[existing] = localSession;
+  else { sessions.push(localSession); activeSessionId = localSession.id; }
+  localStorage.setItem('99acres_sessions', JSON.stringify(sessions));
+  renderSessionList();
+}
+
+async function loadSessionsFromDB() {
+  if (!sb) return;
+  const { data, error } = await sb.from('sessions')
+    .select('*')
+    .order('updated_at', { ascending: false })
+    .limit(50);
+  if (error) { console.error('[Supabase load]', error); return; }
+  // Merge into local sessions array (Supabase is source of truth)
+  sessions = (data || []).map(r => ({
+    id:          r.id,
+    name:        r.name,
+    stage:       r.stage,
+    config:      r.config,
+    observations: r.observations || '',
+    summary:     r.summary || '',
+    savedAt:     new Date(r.updated_at).toLocaleString(),
+  }));
+  localStorage.setItem('99acres_sessions', JSON.stringify(sessions));
+  renderSessionList();
+}
+
+function loadSession(id) {
+  const s = sessions.find(x => x.id === id);
+  if (!s) return;
+  activeSessionId = id;
+  const c = s.config;
+
+  document.getElementById('f-name').value = c.user?.name || '';
+  document.getElementById('f-age').value = c.user?.age || 30;
+  document.getElementById('f-occ').value = c.user?.occupation || '';
+  document.getElementById('f-city').value = c.location?.city || '';
+  document.getElementById('f-loc1').value = c.location?.primary || '';
+  document.getElementById('f-loc2').value = c.location?.secondary || '';
+  document.getElementById('f-loc3').value = c.location?.adjacent || '';
+  document.getElementById('f-bmin').value = c.filters?.budgetMin || 75;
+  document.getElementById('f-bmax').value = c.filters?.budgetMax || 95;
+  document.getElementById('f-rtm').value = c.filters?.readyToMove || 'either';
+  document.getElementById('f-views').value = c.behavior?.viewCount || 5;
+  document.getElementById('f-psens').value = c.behavior?.priceSensitivity || 'medium';
+  document.getElementById('f-lastvisit').value = c.behavior?.lastVisitDaysAgo || 0;
+
+  document.querySelectorAll('.bhk-cb').forEach(el => {
+    el.classList.toggle('on', (c.filters?.bhk || ['2BHK']).includes(el.dataset.bhk));
+  });
+  setToggle('tog-contacted', c.behavior?.contactedDeveloper);
+  setToggle('tog-visited', c.behavior?.visitedSite);
+  setStage(c.stage || 2);
+  updateSliderDisplays();
+  scheduleConfigUpdate();
+
+  // Load observations
+  document.getElementById('f-observations').value = s.observations || '';
+  document.getElementById('obs-panel').style.display = 'block';
+  document.getElementById('session-label').textContent = s.name;
+  document.getElementById('session-dot').style.background = 'var(--green)';
+  renderSessionList();
+  showToast(`Loaded: ${s.name}`);
+}
+
+async function deleteSession(id) {
+  if (sb) {
+    const { error } = await sb.from('sessions').delete().eq('id', id);
+    if (error) console.error('[Supabase delete]', error);
+  }
+  sessions = sessions.filter(s => s.id !== id);
+  localStorage.setItem('99acres_sessions', JSON.stringify(sessions));
+  if (activeSessionId === id) {
+    activeSessionId = null;
+    document.getElementById('obs-panel').style.display = 'none';
+  }
+  renderSessionList();
+  showToast('Session deleted');
+}
+
+function duplicateSession() {
+  collectConfig();
+  const dup = {
+    name:     `${CONFIG.user.name} · Stage ${CONFIG.stage} (copy)`,
+    stage:    CONFIG.stage,
+    config:   JSON.parse(JSON.stringify(CONFIG)),
+    observations: '',
+    summary:  '',
+    savedAt:  new Date().toLocaleTimeString(),
+    id:       Date.now().toString(),
+  };
+  // Save duplicate (will use Supabase if configured)
+  activeSessionId = null;
+  saveSession();
+  showToast('Session duplicated');
+}
+
+function resetSession() {
+  loadPersona('priya');
+  document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('on'));
+  document.querySelector('.persona-btn').classList.add('on');
+  showToast('Session reset to defaults');
+}
+
+async function endSession() {
+  generateSummary();
+  // Save final summary to Supabase if session exists
+  if (sb && activeSessionId) {
+    const box = document.getElementById('ai-summary-box');
+    await sb.from('sessions').update({
+      summary: box ? box.textContent : '',
+      updated_at: new Date().toISOString(),
+    }).eq('id', activeSessionId);
+  }
+  document.getElementById('session-dot').style.background = 'var(--text3)';
+  document.getElementById('session-label').textContent = 'Session ended';
+  activeSessionId = null;
+  document.getElementById('obs-panel').style.display = 'none';
+  showToast('Session ended. Summary saved.');
+}
+
+async function saveObservation() {
+  const text = document.getElementById('f-observations').value;
+  if (!activeSessionId) { showToast('Save the session first'); return; }
+
+  // Update in-memory
+  const s = sessions.find(x => x.id === activeSessionId);
+  if (s) s.observations = text;
+  localStorage.setItem('99acres_sessions', JSON.stringify(sessions));
+
+  if (sb) {
+    const { error } = await sb.from('sessions').update({
+      observations: text,
+      updated_at: new Date().toISOString(),
+    }).eq('id', activeSessionId);
+    if (error) { console.error('[Supabase obs]', error); showToast('Save failed — see console'); return; }
+    showToast('Observation saved to Supabase!');
+  } else {
+    showToast('Observation saved locally');
+  }
+}
+
+function renderSessionList() {
+  const el = document.getElementById('session-list');
+  if (!sessions.length) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--text3);text-align:center;padding:8px 0">No saved sessions yet</div>';
+    return;
+  }
+  el.innerHTML = sessions.map(s => `
+    <div class="session-item ${s.id === activeSessionId ? 'active' : ''}" onclick="loadSession('${s.id}')">
+      <div class="si-stage">${s.stage}</div>
+      <div class="si-info">
+        <div class="si-name">${s.name}</div>
+        <div class="si-meta">${s.savedAt}${s.observations ? ' · has notes' : ''}</div>
+      </div>
+      <div class="si-actions" onclick="event.stopPropagation()">
+        <button class="si-act" onclick="deleteSession('${s.id}')">✕</button>
+      </div>
+    </div>`
+  ).join('');
+}
+
+/* ─── AI features (simulated) ─────────────────────────────── */
+function detectStage() {
+  collectConfig();
+  const b = CONFIG.behavior;
+  let detected;
+  let reason;
+
+  if (b.visitedSite && b.contactedDeveloper && b.viewCount >= 10) {
+    detected = 5; reason = 'Site visited + developer contacted + 10+ views → Post-visit';
+  } else if (b.contactedDeveloper && b.viewCount >= 8) {
+    detected = 4; reason = 'Developer contacted + 8+ views → Shortlist/Decision';
+  } else if (b.viewCount >= 5 && CONFIG.location.secondary) {
+    detected = 3; reason = 'Multiple localities + 5+ views → Comparison';
+  } else if (b.viewCount >= 2 && CONFIG.location.primary) {
+    detected = 2; reason = 'Specific locality focus → Locality Awareness';
+  } else {
+    detected = 1; reason = 'Early signals → Discovery';
   }
 
-  window.newSession = newSession;
-  window.saveSession = saveSession;
-  window.loadSession = loadSession;
-  window.duplicateSession = duplicateSession;
-  window.duplicateSessionFrom = duplicateSessionFrom;
-  window.toggleContact = toggleContact;
-  window.toggleOpenNearby = toggleOpenNearby;
-  window.toggleVisited = toggleVisited;
-  window.syncForm = syncForm;
-  window.applyToPreview = applyToPreview;
+  setStage(detected);
+  showToast(`Detected: Stage ${detected} · ${STAGE_NAMES[detected]}`);
 
-  function setPanelView(view) {
-    var layout = document.getElementById('layout');
-    var toggle = document.getElementById('view-toggle');
-    if (!layout || !toggle) return;
-    layout.classList.remove('layout--show-form', 'layout--show-preview');
-    layout.classList.add(view === 'preview' ? 'layout--show-preview' : 'layout--show-form');
-    toggle.querySelectorAll('.view-btn').forEach(function(btn) {
-      btn.classList.toggle('active', btn.dataset.view === view);
-    });
-    try { sessionStorage.setItem('panelView', view); } catch (e) {}
-  }
-  window.setPanelView = setPanelView;
+  const output = document.getElementById('ai-output');
+  const box = document.getElementById('ai-summary-box');
+  output.style.display = 'block';
+  box.className = 'summary-box';
+  box.textContent = `Stage Detection Result\n\nDetected: Stage ${detected} — ${STAGE_NAMES[detected]}\nReason: ${reason}\n\nSignals used:\n• View count: ${b.viewCount}\n• Contacted developer: ${b.contactedDeveloper ? 'Yes' : 'No'}\n• Visited site: ${b.visitedSite ? 'Yes' : 'No'}\n• Primary location: ${CONFIG.location.primary || 'Not set'}`;
+}
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
-  function init() {
-    if (window.matchMedia('(max-width: 900px)').matches) {
-      var saved = null;
-      try { saved = sessionStorage.getItem('panelView'); } catch (e) {}
-      if (saved === 'form' || saved === 'preview') setPanelView(saved);
+function generateSummary() {
+  collectConfig();
+  const output = document.getElementById('ai-output');
+  const box = document.getElementById('ai-summary-box');
+  output.style.display = 'block';
+  box.className = 'summary-box loading';
+  box.textContent = 'Generating session summary…';
+
+  setTimeout(() => {
+    const { user, stage, location, filters, behavior } = CONFIG;
+    box.className = 'summary-box';
+    box.textContent = `Research Session Summary
+━━━━━━━━━━━━━━━━━━━━━━━
+Participant: ${user.name}, ${user.age}, ${user.occupation}
+Journey Stage: ${stage} — ${STAGE_NAMES[stage]}
+
+Locations explored:
+  Primary: ${location.primary || '—'}, ${location.city}
+  Secondary: ${location.secondary || '—'}
+
+Search parameters:
+  Budget: ₹${filters.budgetMin}L – ₹${filters.budgetMax}L
+  BHK: ${filters.bhk.join(', ')}
+
+Engagement signals:
+  Property views: ${behavior.viewCount}
+  Contacted developer: ${behavior.contactedDeveloper ? 'Yes' : 'No'}
+  Visited site: ${behavior.visitedSite ? 'Yes' : 'No'}
+  Price sensitivity: ${behavior.priceSensitivity}
+
+Key findings:
+  ${stage >= 4 ? `• Shortlisting stage — buyer is close to decision` : ''}
+  ${stage <= 2 ? `• Early journey — locality exploration phase` : ''}
+  ${stage === 3 ? `• Actively comparing ${location.primary} vs ${location.secondary}` : ''}
+  ${stage === 5 ? `• Post-visit — processing and evaluating` : ''}
+  ${behavior.contactedDeveloper ? '• Developer contact made — high intent signal' : '• No developer contact yet'}
+  ${behavior.viewCount >= 7 ? `• High property engagement (${behavior.viewCount} views)` : `• Moderate engagement`}
+
+Recommendations:
+  ${stage <= 2 ? '• Show more locality intel and trending data' : ''}
+  ${stage === 3 ? '• Surface comparison tools and social proof' : ''}
+  ${stage >= 4 ? '• Prioritise decision-making tools and EMI info' : ''}
+  ${stage === 5 ? '• Focus on post-visit closure and next steps' : ''}`;
+  }, 900);
+}
+
+/* ─── Snapshot link ───────────────────────────────────────── */
+function copySnapshotLink() {
+  collectConfig();
+  const encoded = encodeURIComponent(JSON.stringify(CONFIG));
+  const link = `${window.location.origin}/apps/homepage/index.html?snapshot=1&config=${encoded}`;
+  navigator.clipboard.writeText(link).then(() => {
+    showToast('Snapshot link copied to clipboard!');
+  }).catch(() => {
+    // fallback: just show it
+    showToast('Snapshot: see console for link');
+    console.log('Snapshot link:', link);
+  });
+}
+
+/* ─── Toast ───────────────────────────────────────────────── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ─── 99acres API integration ─────────────────────────────── */
+const API_BASE = window.CONFIG_ENV?.NINETY_NINE_ACRES_API_BASE || 'http://10.10.17.143:5003';
+
+const FALLBACK_IMGS = [
+  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=220&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=400&h=220&fit=crop&auto=format',
+];
+
+function setApiStatus(state, msg) {
+  const el = document.getElementById('api-status');
+  el.className = `api-status api-${state}`;
+  el.textContent = msg;
+}
+
+async function fetchLiveProperties() {
+  collectConfig();
+  const { location, filters } = CONFIG;
+
+  const btn = document.getElementById('fetch-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Fetching…';
+  setApiStatus('loading', '⏳ Resolving entities…');
+  document.getElementById('api-result').style.display = 'none';
+
+  try {
+    /* ── Step 1: Extract entities ──────────────────────── */
+    const bhkNum = (filters.bhk[0] || '2BHK').replace('BHK', '').replace('+', '');
+    const rtm    = filters.readyToMove === 'yes' ? 'ready to move' : '';
+    const query  = `${bhkNum} BHK ${rtm} flat for sale in ${location.primary} ${location.city}`.trim();
+
+    const entRes = await fetch(
+      `${API_BASE}/debug/entities?query=${encodeURIComponent(query)}`
+    );
+    if (!entRes.ok) throw new Error(`/debug/entities → HTTP ${entRes.status}`);
+    const entities = await entRes.json();
+    console.log('[99acres] entities:', entities);
+
+    // Show entities in panel
+    const ejv = document.getElementById('entities-json-view');
+    if (ejv) ejv.textContent = JSON.stringify(entities, null, 2);
+
+    /* ── Step 2: Get search URLs ───────────────────────── */
+    setApiStatus('loading', '⏳ Building search URLs…');
+    const urlRes = await fetch(
+      `${API_BASE}/debug/search-urls?entities=${encodeURIComponent(JSON.stringify(entities))}`
+    );
+    if (!urlRes.ok) throw new Error(`/debug/search-urls → HTTP ${urlRes.status}`);
+    const searchData = await urlRes.json();
+    console.log('[99acres] search-urls:', searchData);
+
+    // Pull out a usable URL to display
+    const searchUrl =
+      searchData.url || searchData.search_url || searchData.buy_url ||
+      searchData.buy || searchData.rent ||
+      (typeof searchData === 'string' ? searchData : Object.values(searchData)[0] || '');
+
+    /* ── Step 3: Try to get actual listings ────────────── */
+    setApiStatus('loading', '⏳ Loading property listings…');
+    let properties = [];
+
+    const candidateEndpoints = [
+      `/search?entities=${encodeURIComponent(JSON.stringify(entities))}&limit=8`,
+      `/listings?entities=${encodeURIComponent(JSON.stringify(entities))}&limit=8`,
+      `/api/properties?city=${entities.city || ''}&locality=${entities.locality || ''}&bedroom=${entities.bedroom || bhkNum}&limit=8`,
+      `/properties?city_id=${entities.city || ''}&locality_id=${entities.locality || ''}&bedroom=${entities.bedroom || bhkNum}`,
+    ];
+
+    for (const ep of candidateEndpoints) {
+      try {
+        const r = await fetch(`${API_BASE}${ep}`);
+        if (r.ok) {
+          const d = await r.json();
+          const mapped = mapAPIProperties(d);
+          if (mapped.length > 0) {
+            properties = mapped;
+            console.log(`[99acres] listings from ${ep}:`, mapped.length, 'properties');
+            break;
+          }
+        }
+      } catch (_) { /* endpoint not available — try next */ }
     }
-    initSupabase();
-    fillForm(profile);
-    syncForm();
-    var iframe = document.getElementById('preview-iframe');
-    if (iframe) iframe.addEventListener('load', function() { sendConfigToPreview(); });
+
+    /* ── Update CONFIG & push to homepage ─────────────── */
+    if (properties.length > 0) {
+      CONFIG.properties = properties;
+      setApiStatus('success', `✓ ${properties.length} properties loaded`);
+    } else {
+      setApiStatus('success', `✓ Entities resolved — no listings endpoint yet`);
+    }
+
+    // Show result info
+    const resultEl = document.getElementById('api-result');
+    resultEl.style.display = 'block';
+    document.getElementById('api-prop-count').textContent =
+      properties.length > 0
+        ? `${properties.length} real properties in homepage`
+        : `0 listings — using search URL below`;
+
+    if (searchUrl) {
+      document.getElementById('api-search-url').innerHTML =
+        `<a href="${searchUrl}" target="_blank">${searchUrl}</a>`;
+    }
+
+    // Push to homepage iframe
+    pushConfig();
+
+  } catch (err) {
+    setApiStatus('error', `✗ ${err.message}`);
+    console.error('[99acres API error]', err);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔄 Fetch Live Properties';
+  }
+}
+
+/* Map any API response shape → our property schema */
+function mapAPIProperties(data) {
+  let items = [];
+  if (Array.isArray(data))            items = data;
+  else if (data?.results)             items = data.results;
+  else if (data?.properties)          items = data.properties;
+  else if (data?.listings)            items = data.listings;
+  else if (data?.data && Array.isArray(data.data)) items = data.data;
+
+  const { location, filters } = CONFIG;
+
+  return items.slice(0, 8).map((p, i) => {
+    const price = p.price || p.min_price || p.listed_price;
+    const priceStr = typeof price === 'number'
+      ? `₹${(price / 100000).toFixed(1)}L`
+      : (price || `₹${filters.budgetMin + Math.floor(Math.random() * (filters.budgetMax - filters.budgetMin))}L`);
+
+    const sqftNum = p.area || p.carpet_area || p.built_up_area || (900 + Math.floor(Math.random() * 400));
+    const perSqft = price && sqftNum
+      ? Math.round((price * 100) / sqftNum)
+      : (7000 + Math.floor(Math.random() * 2000));
+
+    // Image: prefer API CDN → fallback Unsplash
+    const img =
+      p.image_url || p.photo_url || p.thumbnail || p.cover_photo ||
+      p.image || p.img || (p.images && p.images[0]) ||
+      FALLBACK_IMGS[i % FALLBACK_IMGS.length];
+
+    return {
+      id:     p.id || p.property_id || p.listing_id || i,
+      name:   p.name || p.project_name || p.title || `Project ${i + 1}`,
+      loc:    p.location || p.locality_name || p.address || `${location.primary}, ${location.city}`,
+      rating: parseFloat(p.rating || p.review_score || (3.5 + Math.random()).toFixed(1)),
+      rev:    parseInt(p.review_count || p.num_reviews || (10 + Math.floor(Math.random() * 40))),
+      meta:   p.bhk_types || p.configuration || `${p.bedroom || 2} BHK`,
+      bhk:    `${p.bedroom || 2} BHK`,
+      sqft:   `${sqftNum.toLocaleString()} sq.ft.`,
+      price:  priceStr,
+      per:    `₹${perSqft.toLocaleString()}/sqft`,
+      status: p.status || p.possession_status || (p.ready_to_move ? 'Ready To Move' : 'Under Construction'),
+      isNew:  !!(p.is_new_launch || p.new_launch || p.is_new),
+      isDrop: !!(p.price_drop || p.is_price_drop),
+      isSeen: false,
+      img,
+    };
+  });
+}
+
+/* ─── Listen for ACK from iframe ──────────────────────────── */
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'ACK') {
+    // iframe confirmed config update
+  }
+});
+
+/* ─── Init ────────────────────────────────────────────────── */
+(function init() {
+  // Load localStorage sessions as initial fallback
+  sessions = JSON.parse(localStorage.getItem('99acres_sessions') || '[]');
+  renderSessionList();
+  updateSliderDisplays();
+
+  // Connect to Supabase (replaces localStorage with DB data)
+  initSupabase();
+
+  // Wait for iframe to load, then push initial config
+  const iframe = document.getElementById('homepage-iframe');
+  iframe.addEventListener('load', function() {
+    setTimeout(pushConfig, 300);
+  });
+
+  // Initial info panel update
+  updateInfoPanel();
+  updateModuleVisibility();
+  updateConfigJSON();
+
+  // If URL has ?session=UUID, load that session after DB connects
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionParam = urlParams.get('session');
+  if (sessionParam) {
+    // Wait for DB load then load session
+    const pollForSession = setInterval(() => {
+      const found = sessions.find(s => s.id === sessionParam);
+      if (found) { clearInterval(pollForSession); loadSession(sessionParam); }
+    }, 400);
+    setTimeout(() => clearInterval(pollForSession), 5000);
   }
 })();
 </script>

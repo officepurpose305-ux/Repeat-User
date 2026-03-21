@@ -1,0 +1,32 @@
+{
+  "name": "design-pat",
+  "version": "1.0.0",
+  "description": "Pixel Accuracy Test — compare Figma frames against live page screenshots",
+  "type": "module",
+  "bin": {
+    "pat": "./bin/pat.js"
+  },
+  "scripts": {
+    "pat": "node bin/pat.js",
+    "pat:ci": "node bin/pat.js --ci",
+    "dashboard": "cd dashboard && npm run dev",
+    "dashboard:build": "cd dashboard && npm run build",
+    "dashboard:full": "concurrently \"node dashboard/api/routes.js\" \"cd dashboard && npm run dev\""
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "pixelmatch": "^6.0.0",
+    "playwright": "^1.45.0",
+    "pngjs": "^7.0.0",
+    "sharp": "^0.33.4",
+    "unzipper": "^0.10.14"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -43,27 +43,27 @@ const MOCK_DATA = {
 
   noida: {
     properties: [
-      { name:'ATS Tourmaline – Tower A', dev:'ATS', location:'Sector 109, Noida', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Tech Mahindra · 800m Aqua Line metro' },
-      { name:'Godrej Properties Phase 2', dev:'Godrej', location:'Sector 137, Noida Expressway', price:'₹79.5L', sqft:'975 sq ft', bhk:'2 BHK', status:'Possession Dec 2026', ready_to_move:false, lm:'25 mins from office · 1.2km metro' },
-      { name:'Gaur City 2', dev:'Gaursons', location:'Sector 16C, Greater Noida West', price:'₹62L', sqft:'885 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'30 mins from office · 3km metro' },
-      { name:'Mahagun Mywoods', dev:'Mahagun', location:'Sector 16C, Greater Noida West', price:'₹75L', sqft:'1,150 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'28 mins from office · 2.8km metro' },
-      { name:'Supertech Ecovillage', dev:'Supertech', location:'Sector 137, Noida', price:'₹84.5L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'12 mins from Tech Mahindra · 900m metro' },
-      { name:'ATS Pristine – Tower C', dev:'ATS', location:'Sector 137, Noida', price:'₹1.1 Cr', sqft:'1,340 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Tech Mahindra · 700m metro' },
+      { name:'ATS Tourmaline – Tower A', dev:'ATS', location:'Sector 109, Noida', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins commute · 800m Aqua Line metro', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Godrej Properties Phase 2', dev:'Godrej', location:'Sector 137, Noida Expressway', price:'₹79.5L', sqft:'975 sq ft', bhk:'2 BHK', status:'Possession Dec 2026', ready_to_move:false, lm:'1.2km metro · Good connectivity', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Gaur City 2', dev:'Gaursons', location:'Sector 16C, Greater Noida West', price:'₹62L', sqft:'885 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'3km metro · Budget friendly', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'Mahagun Mywoods', dev:'Mahagun', location:'Sector 16C, Greater Noida West', price:'₹75L', sqft:'1,150 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'2.8km metro · Established society', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Supertech Ecovillage', dev:'Supertech', location:'Sector 137, Noida', price:'₹84.5L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'900m metro · Good appreciation', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'ATS Pristine – Tower C', dev:'ATS', location:'Sector 137, Noida', price:'₹1.1 Cr', sqft:'1,340 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'700m metro · Premium location', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
       // Sector 143
-      { name:'Lodha Meridian Sector 143', dev:'Lodha', location:'Sector 143, Noida', price:'₹92L', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'18 mins from Tech Mahindra · 1.2km Aqua Line metro' },
-      { name:'Shapoorji Pallonji Meridian 143', dev:'Shapoorji Pallonji', location:'Sector 143, Noida', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'16 mins from office · 1.1km metro' },
+      { name:'Lodha Meridian Sector 143', dev:'Lodha', location:'Sector 143, Noida', price:'₹92L', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'18 mins from Tech Mahindra · 1.2km Aqua Line metro', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Shapoorji Pallonji Meridian 143', dev:'Shapoorji Pallonji', location:'Sector 143, Noida', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'16 mins from office · 1.1km metro', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
       // Sector 150
-      { name:'Godrej Palm Retreat Sector 150', dev:'Godrej', location:'Sector 150, Noida', price:'₹1.25 Cr', sqft:'1,480 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from metro · Premium township · 90-10 payment plan' },
-      { name:'Prem Nagar Towers 150', dev:'Prem', location:'Sector 150, Noida', price:'₹1.15 Cr', sqft:'1,400 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins to metro · Sector 150 prime location' },
+      { name:'Godrej Palm Retreat Sector 150', dev:'Godrej', location:'Sector 150, Noida', price:'₹1.25 Cr', sqft:'1,480 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from metro · Premium township · 90-10 payment plan', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'Prem Nagar Towers 150', dev:'Prem', location:'Sector 150, Noida', price:'₹1.15 Cr', sqft:'1,400 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins to metro · Sector 150 prime location', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
       // Sector 128
-      { name:'Assetz Marq Sector 128', dev:'Assetz', location:'Sector 128, Noida', price:'₹84L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'1km from metro · Near expressway · Good appreciation' },
-      { name:'Raheja Pinnacle Sector 128', dev:'Raheja', location:'Sector 128, Noida', price:'₹86L', sqft:'1,120 sq ft', bhk:'2 BHK', status:'Possession Nov 2025', ready_to_move:false, lm:'15 mins from office · High YoY growth area' },
+      { name:'Assetz Marq Sector 128', dev:'Assetz', location:'Sector 128, Noida', price:'₹84L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'1km from metro · Near expressway · Good appreciation', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+      { name:'Raheja Pinnacle Sector 128', dev:'Raheja', location:'Sector 128, Noida', price:'₹86L', sqft:'1,120 sq ft', bhk:'2 BHK', status:'Possession Nov 2025', ready_to_move:false, lm:'15 mins from office · High YoY growth area', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
       // Sector 93A
-      { name:'Bestech Park View Sector 93A', dev:'Bestech', location:'Sector 93A, Noida', price:'₹72L', sqft:'950 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'1.5km from metro · Budget friendly · Established society' },
-      { name:'Tata Value Homes Sector 93A', dev:'Tata', location:'Sector 93A, Noida', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Sec 18 connectivity · Good rental yields' },
+      { name:'Bestech Park View Sector 93A', dev:'Bestech', location:'Sector 93A, Noida', price:'₹72L', sqft:'950 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'1.5km from metro · Budget friendly · Established society', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Tata Value Homes Sector 93A', dev:'Tata', location:'Sector 93A, Noida', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Sec 18 connectivity · Good rental yields', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
       // Sector 75
-      { name:'Pivotal Pinnacle Sector 75', dev:'Pivotal', location:'Sector 75, Noida', price:'₹82L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'12 mins from Cyber City · Good commute · Metro planned' },
-      { name:'3C Lotus Boulevard Sector 75', dev:'3C', location:'Sector 75, Noida', price:'₹80L', sqft:'1,000 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Noida metro connectivity · Near NH-24' },
+      { name:'Pivotal Pinnacle Sector 75', dev:'Pivotal', location:'Sector 75, Noida', price:'₹82L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'12 mins from Cyber City · Good commute · Metro planned', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'3C Lotus Boulevard Sector 75', dev:'3C', location:'Sector 75, Noida', price:'₹80L', sqft:'1,000 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Noida metro connectivity · Near NH-24', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'Sector 137', bhkRange:'₹84L–1.1Cr · 2BHK', avgPsqft:8200, yoy:12, metro:'Aqua Line · 800m', conn:'Noida Expressway', count:'1.3k properties' },
@@ -87,19 +87,19 @@ const MOCK_DATA = {
 
   gurgaon: {
     properties: [
-      { name:'Signature Global City 37D', dev:'Signature Global', location:'Sector 37D, Gurgaon', price:'₹88L', sqft:'1,055 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'28 mins from Cyber City · 3km from NH-48' },
-      { name:'Pareena Micasa', dev:'Pareena', location:'Sector 68, Gurgaon', price:'₹97L', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'22 mins from Golf Course Rd · 2km Sikanderpur metro' },
-      { name:'SS The Leaf', dev:'SS Group', location:'Sector 85, Gurgaon', price:'₹83L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'New Gurgaon corridor · 3.5km from NH-48' },
-      { name:'Bestech Park View', dev:'Bestech', location:'Sector 57, Gurgaon', price:'₹1.24 Cr', sqft:'1,190 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Golf Course Rd · 900m metro' },
-      { name:'Emaar Palm Heights', dev:'Emaar', location:'Sector 77, Gurgaon', price:'₹1.82 Cr', sqft:'1,450 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Cyber City · 1.2km Yellow Line metro' },
-      { name:'Godrej Meridien', dev:'Godrej', location:'Sector 106, Gurgaon', price:'₹1.44 Cr', sqft:'1,275 sq ft', bhk:'3 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'20 mins from Golf Course Road · 2km metro' },
-      { name:'M3M Crown', dev:'M3M', location:'Sector 111, Gurgaon', price:'₹2.1 Cr', sqft:'1,680 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Udyog Vihar · 1.8km metro' },
-      { name:'Sobha City Tower', dev:'Sobha', location:'Sector 108, Gurgaon', price:'₹1.62 Cr', sqft:'1,395 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'18 mins from Cyber Hub · 1.5km metro' },
+      { name:'Signature Global City 37D', dev:'Signature Global', location:'Sector 37D, Gurgaon', price:'₹88L', sqft:'1,055 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'28 mins from Cyber City · 3km from NH-48', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Pareena Micasa', dev:'Pareena', location:'Sector 68, Gurgaon', price:'₹97L', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'22 mins from Golf Course Rd · 2km Sikanderpur metro', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'SS The Leaf', dev:'SS Group', location:'Sector 85, Gurgaon', price:'₹83L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'New Gurgaon corridor · 3.5km from NH-48', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Bestech Park View', dev:'Bestech', location:'Sector 57, Gurgaon', price:'₹1.24 Cr', sqft:'1,190 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Golf Course Rd · 900m metro', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Emaar Palm Heights', dev:'Emaar', location:'Sector 77, Gurgaon', price:'₹1.82 Cr', sqft:'1,450 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Cyber City · 1.2km Yellow Line metro', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'Godrej Meridien', dev:'Godrej', location:'Sector 106, Gurgaon', price:'₹1.44 Cr', sqft:'1,275 sq ft', bhk:'3 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'20 mins from Golf Course Road · 2km metro', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
+      { name:'M3M Crown', dev:'M3M', location:'Sector 111, Gurgaon', price:'₹2.1 Cr', sqft:'1,680 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Udyog Vihar · 1.8km metro', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+      { name:'Sobha City Tower', dev:'Sobha', location:'Sector 108, Gurgaon', price:'₹1.62 Cr', sqft:'1,395 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'18 mins from Cyber Hub · 1.5km metro', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
       // Sector 67/68
-      { name:'Suncity Sector 67', dev:'Suncity', location:'Sector 67, Gurgaon', price:'₹1.35 Cr', sqft:'1,280 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Cyber City · 1.2km Yellow Line metro' },
+      { name:'Suncity Sector 67', dev:'Suncity', location:'Sector 67, Gurgaon', price:'₹1.35 Cr', sqft:'1,280 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Cyber City · 1.2km Yellow Line metro', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
       // Sohna Road
-      { name:'DLF Gardenia Sohna Road', dev:'DLF', location:'Sohna Road, Gurgaon', price:'₹1.28 Cr', sqft:'1,250 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'2.5km from metro · Golf Course Ext connectivity · Grade A locality' },
-      { name:'Ireo Skyon Sohna Road', dev:'Ireo', location:'Sohna Road, Gurgaon', price:'₹1.18 Cr', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Aug 2026', ready_to_move:false, lm:'2.5km metro · Good appreciation · Established area' },
+      { name:'DLF Gardenia Sohna Road', dev:'DLF', location:'Sohna Road, Gurgaon', price:'₹1.28 Cr', sqft:'1,250 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'2.5km from metro · Golf Course Ext connectivity · Grade A locality', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Ireo Skyon Sohna Road', dev:'Ireo', location:'Sohna Road, Gurgaon', price:'₹1.18 Cr', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Aug 2026', ready_to_move:false, lm:'2.5km metro · Good appreciation · Established area', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'Golf Course Road', bhkRange:'₹1.8–3.5Cr · 3BHK', avgPsqft:14500, yoy:18, metro:'Yellow Line · 600m', conn:'NH-48', count:'1.8k properties' },
@@ -122,15 +122,15 @@ const MOCK_DATA = {
 
   mumbai: {
     properties: [
-      { name:'Lodha Azzuro', dev:'Lodha', location:'Thane West, Mumbai', price:'₹1.24 Cr', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'25 mins from BKC · Thane railway station 1.2km' },
-      { name:'Godrej Origins', dev:'Godrej', location:'Thane West, Mumbai', price:'₹1.42 Cr', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'30 mins from Andheri · 1.5km station' },
-      { name:'Rustomjee Seasons', dev:'Rustomjee', location:'Bandra East, Mumbai', price:'₹3.2 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from BKC · Bandra station 800m' },
-      { name:'L&T Seawoods Residences', dev:'L&T', location:'Navi Mumbai', price:'₹1.12 Cr', sqft:'980 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Seawoods station · 15 mins from CBD Belapur' },
-      { name:'Kalpataru Magnus', dev:'Kalpataru', location:'Borivali West, Mumbai', price:'₹1.58 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'Borivali station 700m · NH-8 nearby' },
-      { name:'Runwal Forests', dev:'Runwal', location:'Kanjurmarg East, Mumbai', price:'₹1.32 Cr', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Kanjurmarg station 400m · 20 mins from BKC' },
+      { name:'Lodha Azzuro', dev:'Lodha', location:'Thane West, Mumbai', price:'₹1.24 Cr', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'25 mins from BKC · Thane railway station 1.2km', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Godrej Origins', dev:'Godrej', location:'Thane West, Mumbai', price:'₹1.42 Cr', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'30 mins from Andheri · 1.5km station', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Rustomjee Seasons', dev:'Rustomjee', location:'Bandra East, Mumbai', price:'₹3.2 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from BKC · Bandra station 800m', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'L&T Seawoods Residences', dev:'L&T', location:'Navi Mumbai', price:'₹1.12 Cr', sqft:'980 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Seawoods station · 15 mins from CBD Belapur', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Kalpataru Magnus', dev:'Kalpataru', location:'Borivali West, Mumbai', price:'₹1.58 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'Borivali station 700m · NH-8 nearby', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Runwal Forests', dev:'Runwal', location:'Kanjurmarg East, Mumbai', price:'₹1.32 Cr', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Kanjurmarg station 400m · 20 mins from BKC', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
       // Powai
-      { name:'Lodha Belmore', dev:'Lodha', location:'Powai, Mumbai', price:'₹2.15 Cr', sqft:'1,380 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'1km metro · Powai Lake · Premium lifestyle' },
-      { name:'Hiranandani Atlantis', dev:'Hiranandani', location:'Powai, Mumbai', price:'₹1.95 Cr', sqft:'1,320 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'800m from metro · International school · Business district' },
+      { name:'Lodha Belmore', dev:'Lodha', location:'Powai, Mumbai', price:'₹2.15 Cr', sqft:'1,380 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'1km metro · Powai Lake · Premium lifestyle', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Hiranandani Atlantis', dev:'Hiranandani', location:'Powai, Mumbai', price:'₹1.95 Cr', sqft:'1,320 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'800m from metro · International school · Business district', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'Thane West', bhkRange:'₹1.1–2Cr · 2BHK', avgPsqft:11500, yoy:14, metro:'Metro Line 4 nearby', conn:'Eastern Express Hwy', count:'4.2k properties' },
@@ -153,14 +153,14 @@ const MOCK_DATA = {
 
   bangalore: {
     properties: [
-      { name:'Prestige Falcon City', dev:'Prestige', location:'Konanakunte, Bangalore', price:'₹1.08 Cr', sqft:'1,250 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Electronic City · 2km Banashankari metro' },
-      { name:'Brigade Utopia', dev:'Brigade', location:'Whitefield, Bangalore', price:'₹96L', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Aug 2026', ready_to_move:false, lm:'15 mins from Manyata Tech Park · 1.5km metro' },
-      { name:'Sobha Dream Acres', dev:'Sobha', location:'Panathur, Whitefield', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from EPIP Zone · Whitefield metro 1.2km' },
-      { name:'Purva Atmosphere', dev:'Puravankara', location:'Hebbal, Bangalore', price:'₹1.32 Cr', sqft:'1,380 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Manyata Tech · Hebbal flyover' },
-      { name:'Assetz 63° East', dev:'Assetz', location:'Whitefield, Bangalore', price:'₹85L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'10 mins from ITPL · 1km metro' },
-      { name:'Godrej Splendour', dev:'Godrej', location:'Whitefield, Bangalore', price:'₹82L', sqft:'990 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'18 mins from Marathahalli · Kadugodi metro 900m' },
+      { name:'Prestige Falcon City', dev:'Prestige', location:'Konanakunte, Bangalore', price:'₹1.08 Cr', sqft:'1,250 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Electronic City · 2km Banashankari metro', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'Brigade Utopia', dev:'Brigade', location:'Whitefield, Bangalore', price:'₹96L', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Aug 2026', ready_to_move:false, lm:'15 mins from Manyata Tech Park · 1.5km metro', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
+      { name:'Sobha Dream Acres', dev:'Sobha', location:'Panathur, Whitefield', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from EPIP Zone · Whitefield metro 1.2km', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+      { name:'Purva Atmosphere', dev:'Puravankara', location:'Hebbal, Bangalore', price:'₹1.32 Cr', sqft:'1,380 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Manyata Tech · Hebbal flyover', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
+      { name:'Assetz 63° East', dev:'Assetz', location:'Whitefield, Bangalore', price:'₹85L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'10 mins from ITPL · 1km metro', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Godrej Splendour', dev:'Godrej', location:'Whitefield, Bangalore', price:'₹82L', sqft:'990 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'18 mins from Marathahalli · Kadugodi metro 900m', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
       // Sarjapur Road
-      { name:'Sattva Hermitage', dev:'Sattva', location:'Sarjapur Road, Bangalore', price:'₹78L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Metro Phase 3 · ORR connectivity · Central Bangalore location' },
+      { name:'Sattva Hermitage', dev:'Sattva', location:'Sarjapur Road, Bangalore', price:'₹78L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Metro Phase 3 · ORR connectivity · Central Bangalore location', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'Whitefield', bhkRange:'₹80L–1.5Cr · 2BHK', avgPsqft:7800, yoy:18, metro:'Purple Line · 1km', conn:'Old Madras Road', count:'4.8k properties' },
@@ -183,14 +183,14 @@ const MOCK_DATA = {
 
   pune: {
     properties: [
-      { name:'Godrej Woodsville', dev:'Godrej', location:'Hinjewadi Phase 2, Pune', price:'₹78L', sqft:'925 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'5 mins from Infosys Campus · Metro Phase 1 nearby' },
-      { name:'Kolte-Patil Life Republic', dev:'Kolte-Patil', location:'Hinjewadi, Pune', price:'₹72L', sqft:'875 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from IT Park · 20 mins from Baner' },
-      { name:'Paranjape Trident', dev:'Paranjape', location:'Baner, Pune', price:'₹1.12 Cr', sqft:'1,200 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Balewadi · Baner-Pashan Link Rd' },
-      { name:'Rohan Harita', dev:'Rohan', location:'Wakad, Pune', price:'₹85L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Hinjewadi IT Park · Wakad Chowk' },
-      { name:'Kohinoor Grandeur', dev:'Kohinoor', location:'Wakad, Pune', price:'₹92L', sqft:'1,075 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'15 mins from Infosys · 1km from Wakad Chowk' },
-      { name:'Gera Song of Joy', dev:'Gera', location:'Kharadi, Pune', price:'₹88L', sqft:'1,045 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from EON IT Park · NH-60 access' },
+      { name:'Godrej Woodsville', dev:'Godrej', location:'Hinjewadi Phase 2, Pune', price:'₹78L', sqft:'925 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'5 mins from Infosys Campus · Metro Phase 1 nearby', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Kolte-Patil Life Republic', dev:'Kolte-Patil', location:'Hinjewadi, Pune', price:'₹72L', sqft:'875 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from IT Park · 20 mins from Baner', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Paranjape Trident', dev:'Paranjape', location:'Baner, Pune', price:'₹1.12 Cr', sqft:'1,200 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Balewadi · Baner-Pashan Link Rd', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'Rohan Harita', dev:'Rohan', location:'Wakad, Pune', price:'₹85L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Hinjewadi IT Park · Wakad Chowk', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Kohinoor Grandeur', dev:'Kohinoor', location:'Wakad, Pune', price:'₹92L', sqft:'1,075 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'15 mins from Infosys · 1km from Wakad Chowk', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Gera Song of Joy', dev:'Gera', location:'Kharadi, Pune', price:'₹88L', sqft:'1,045 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from EON IT Park · NH-60 access', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
       // Baner / Balewadi
-      { name:'Lodha Codename Next', dev:'Lodha', location:'Balewadi, Pune', price:'₹1.08 Cr', sqft:'1,150 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Balewadi · Baner Road connectivity · Grade A society' },
+      { name:'Lodha Codename Next', dev:'Lodha', location:'Balewadi, Pune', price:'₹1.08 Cr', sqft:'1,150 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Balewadi · Baner Road connectivity · Grade A society', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'Hinjewadi', bhkRange:'₹65–1.2Cr · 2BHK', avgPsqft:7200, yoy:18, metro:'Metro Phase 1 · 1km', conn:'Mumbai-Pune Hwy', count:'3.4k properties' },
@@ -213,12 +213,12 @@ const MOCK_DATA = {
 
   hyderabad: {
     properties: [
-      { name:'My Home Vihanga', dev:'My Home', location:'Bachupally, Hyderabad', price:'₹1.1 Cr', sqft:'1,320 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from HITEC City · Miyapur metro 2km' },
-      { name:'Incor Carmel Heights', dev:'Incor', location:'Miyapur, Hyderabad', price:'₹82L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Miyapur metro · 15 mins from HITEC' },
-      { name:'Aparna HillPark', dev:'Aparna', location:'Miyapur, Hyderabad', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'10 mins from Miyapur · TSRTC bus depot nearby' },
-      { name:'Prestige High Fields', dev:'Prestige', location:'Gachibowli, Hyderabad', price:'₹1.42 Cr', sqft:'1,480 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Amazon HQ · 1.2km metro' },
-      { name:'Sumadhura Folium', dev:'Sumadhura', location:'Kondapur, Hyderabad', price:'₹95L', sqft:'1,185 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'12 mins from HITEC City · Kothaguda metro 1km' },
-      { name:'Sattva Magnus', dev:'Sattva', location:'Gachibowli, Hyderabad', price:'₹1.22 Cr', sqft:'1,350 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Microsoft · Gachibowli junction' },
+      { name:'My Home Vihanga', dev:'My Home', location:'Bachupally, Hyderabad', price:'₹1.1 Cr', sqft:'1,320 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from HITEC City · Miyapur metro 2km', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+      { name:'Incor Carmel Heights', dev:'Incor', location:'Miyapur, Hyderabad', price:'₹82L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Miyapur metro · 15 mins from HITEC', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
+      { name:'Aparna HillPark', dev:'Aparna', location:'Miyapur, Hyderabad', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'10 mins from Miyapur · TSRTC bus depot nearby', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Prestige High Fields', dev:'Prestige', location:'Gachibowli, Hyderabad', price:'₹1.42 Cr', sqft:'1,480 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Amazon HQ · 1.2km metro', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Sumadhura Folium', dev:'Sumadhura', location:'Kondapur, Hyderabad', price:'₹95L', sqft:'1,185 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'12 mins from HITEC City · Kothaguda metro 1km', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'Sattva Magnus', dev:'Sattva', location:'Gachibowli, Hyderabad', price:'₹1.22 Cr', sqft:'1,350 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Microsoft · Gachibowli junction', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'Gachibowli', bhkRange:'₹1.1–2.5Cr · 3BHK', avgPsqft:9200, yoy:16, metro:'Metro Green Line · 1km', conn:'ORR', count:'2.4k properties' },
@@ -241,14 +241,14 @@ const MOCK_DATA = {
 
   chennai: {
     properties: [
-      { name:'Casagrand Primrose', dev:'Casagrand', location:'OMR, Chennai', price:'₹75L', sqft:'980 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Sholinganallur IT Park · MRTS nearby' },
-      { name:'Appaswamy Platina', dev:'Appaswamy', location:'Porur, Chennai', price:'₹82L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from DLF IT Park · Porur junction' },
-      { name:'TVH Lumbini Square', dev:'TVH', location:'Sholinganallur, Chennai', price:'₹88L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'5 mins from TCS · OMR 500m' },
-      { name:'Radiance Mercury', dev:'Radiance', location:'Perumbakkam, Chennai', price:'₹72L', sqft:'935 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Velachery · Outer Ring Road' },
-      { name:'Mahindra Eden', dev:'Mahindra', location:'Perungudi, Chennai', price:'₹95L', sqft:'1,145 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from RMZ Millenia · Perungudi 700m' },
-      { name:'VBHC Serene Town', dev:'VBHC', location:'Oragadam, Chennai', price:'₹62L', sqft:'880 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Mahindra City · NH-32' },
+      { name:'Casagrand Primrose', dev:'Casagrand', location:'OMR, Chennai', price:'₹75L', sqft:'980 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Sholinganallur IT Park · MRTS nearby', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Appaswamy Platina', dev:'Appaswamy', location:'Porur, Chennai', price:'₹82L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from DLF IT Park · Porur junction', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'TVH Lumbini Square', dev:'TVH', location:'Sholinganallur, Chennai', price:'₹88L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'5 mins from TCS · OMR 500m', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Radiance Mercury', dev:'Radiance', location:'Perumbakkam, Chennai', price:'₹72L', sqft:'935 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Velachery · Outer Ring Road', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Mahindra Eden', dev:'Mahindra', location:'Perungudi, Chennai', price:'₹95L', sqft:'1,145 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from RMZ Millenia · Perungudi 700m', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'VBHC Serene Town', dev:'VBHC', location:'Oragadam, Chennai', price:'₹62L', sqft:'880 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Mahindra City · NH-32', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
       // Porur
-      { name:'RMZ Ecocity', dev:'RMZ', location:'Porur, Chennai', price:'₹85L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Porur junction · Chennai Bypass connectivity' },
+      { name:'RMZ Ecocity', dev:'RMZ', location:'Porur, Chennai', price:'₹85L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Porur junction · Chennai Bypass connectivity', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'Sholinganallur (OMR)', bhkRange:'₹75–1.4Cr · 2BHK', avgPsqft:7800, yoy:14, metro:'Metro Phase 2 · 1.5km', conn:'Old Mahabalipuram Road', count:'3.1k properties' },
@@ -271,12 +271,12 @@ const MOCK_DATA = {
 
   delhi: {
     properties: [
-      { name:'DDA LIG Flats', dev:'DDA', location:'Dwarka Sector 12, Delhi', price:'₹1.18 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Dwarka Sector 12 metro · NH-48 nearby' },
-      { name:'Ansal Elegance', dev:'Ansal API', location:'Rohini Sector 24, Delhi', price:'₹1.12 Cr', sqft:'1,080 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Rohini West metro · 20 mins from Connaught Place' },
-      { name:'Omaxe Heights', dev:'Omaxe', location:'Rohini Sector 10, Delhi', price:'₹92L', sqft:'950 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from metro · DSP cricket ground nearby' },
-      { name:'Tata Housing Primanti', dev:'Tata Housing', location:'Dwarka Sector 23, Delhi', price:'₹1.52 Cr', sqft:'1,280 sq ft', bhk:'3 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'Dwarka Sec 23 metro · 15 mins from airport' },
-      { name:'NBCC Green View', dev:'NBCC', location:'Okhla Phase 1, Delhi', price:'₹1.42 Cr', sqft:'1,240 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'Jasola Apollo metro 1km · 12 mins from Saket' },
-      { name:'Eldeco Aamantran', dev:'Eldeco', location:'Sector 119, Delhi NCR', price:'₹1.28 Cr', sqft:'1,195 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from South Delhi · Noida Border' },
+      { name:'DDA LIG Flats', dev:'DDA', location:'Dwarka Sector 12, Delhi', price:'₹1.18 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Dwarka Sector 12 metro · NH-48 nearby', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
+      { name:'Ansal Elegance', dev:'Ansal API', location:'Rohini Sector 24, Delhi', price:'₹1.12 Cr', sqft:'1,080 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Rohini West metro · 20 mins from Connaught Place', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Omaxe Heights', dev:'Omaxe', location:'Rohini Sector 10, Delhi', price:'₹92L', sqft:'950 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from metro · DSP cricket ground nearby', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Tata Housing Primanti', dev:'Tata Housing', location:'Dwarka Sector 23, Delhi', price:'₹1.52 Cr', sqft:'1,280 sq ft', bhk:'3 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'Dwarka Sec 23 metro · 15 mins from airport', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'NBCC Green View', dev:'NBCC', location:'Okhla Phase 1, Delhi', price:'₹1.42 Cr', sqft:'1,240 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'Jasola Apollo metro 1km · 12 mins from Saket', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Eldeco Aamantran', dev:'Eldeco', location:'Sector 119, Delhi NCR', price:'₹1.28 Cr', sqft:'1,195 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from South Delhi · Noida Border', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'Dwarka', bhkRange:'₹1–2Cr · 3BHK', avgPsqft:9800, yoy:12, metro:'Blue Line · 500m', conn:'NH-48 / Dwarka Exp', count:'2.8k properties' },
@@ -299,12 +299,12 @@ const MOCK_DATA = {
 
   kolkata: {
     properties: [
-      { name:'Merlin Maxima', dev:'Merlin Group', location:'New Town Action Area II, Kolkata', price:'₹82L', sqft:'1,095 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Salt Lake Sec V · New Town metro 1km' },
-      { name:'PS Equinox', dev:'PS Group', location:'New Town AA-I, Kolkata', price:'₹75L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from IT Hub · Action Area I Rd' },
-      { name:'Hiland Park Condoville', dev:'Hiland', location:'New Town, Kolkata', price:'₹88L', sqft:'1,140 sq ft', bhk:'3 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'10 mins from Wipro · Biswa Bangla Gate 2km' },
-      { name:'Ambuja Utalika', dev:'Ambuja Realty', location:'Mukundapur, EM Bypass', price:'₹92L', sqft:'1,180 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Ruby Hospital · EM Bypass' },
-      { name:'Siddha Pines', dev:'Siddha', location:'Rajarhat, Kolkata', price:'₹65L', sqft:'940 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'25 mins from Salt Lake · Eco Park 2km' },
-      { name:'Diamond City West', dev:'Shapoorji Pallonji', location:'Tollygunge, Kolkata', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Mahanayak Uttam Kumar metro 800m · EM Bypass' },
+      { name:'Merlin Maxima', dev:'Merlin Group', location:'New Town Action Area II, Kolkata', price:'₹82L', sqft:'1,095 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Salt Lake Sec V · New Town metro 1km', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'PS Equinox', dev:'PS Group', location:'New Town AA-I, Kolkata', price:'₹75L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from IT Hub · Action Area I Rd', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Hiland Park Condoville', dev:'Hiland', location:'New Town, Kolkata', price:'₹88L', sqft:'1,140 sq ft', bhk:'3 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'10 mins from Wipro · Biswa Bangla Gate 2km', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Ambuja Utalika', dev:'Ambuja Realty', location:'Mukundapur, EM Bypass', price:'₹92L', sqft:'1,180 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Ruby Hospital · EM Bypass', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'Siddha Pines', dev:'Siddha', location:'Rajarhat, Kolkata', price:'₹65L', sqft:'940 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'25 mins from Salt Lake · Eco Park 2km', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
+      { name:'Diamond City West', dev:'Shapoorji Pallonji', location:'Tollygunge, Kolkata', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Mahanayak Uttam Kumar metro 800m · EM Bypass', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'New Town', bhkRange:'₹65L–1.2Cr · 2BHK', avgPsqft:6200, yoy:16, metro:'Orange Line · 1km', conn:'New Town Expressway', count:'3.8k properties' },
@@ -327,12 +327,12 @@ const MOCK_DATA = {
 
   ahmedabad: {
     properties: [
-      { name:'Adani Shantigram – Alto', dev:'Adani Realty', location:'SG Highway, Ahmedabad', price:'₹85L', sqft:'1,150 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from GIFT City · SG Highway' },
-      { name:'Safal Prelude', dev:'Safal', location:'Satellite, Ahmedabad', price:'₹72L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Prahlad Nagar · 20 mins from Iscon' },
-      { name:'Shivalik Sharda', dev:'Shivalik', location:'Bopal, Ahmedabad', price:'₹68L', sqft:'975 sq ft', bhk:'2 BHK', status:'Possession Sep 2025', ready_to_move:false, lm:'20 mins from GIFT City · SH-17 access' },
-      { name:'Goyal My Home', dev:'Goyal & Co', location:'Thaltej, Ahmedabad', price:'₹78L', sqft:'1,060 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Prahlad Nagar · Thaltej Char Rasta' },
-      { name:'Patel Shivalik Residency', dev:'Patel Group', location:'Prahlad Nagar, Ahmedabad', price:'₹92L', sqft:'1,180 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Corporate Road · Ahmedabad BRT' },
-      { name:'Iscon Platinum', dev:'Iscon', location:'Bopal, Ahmedabad', price:'₹75L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'18 mins from SG Highway · NH-947' },
+      { name:'Adani Shantigram – Alto', dev:'Adani Realty', location:'SG Highway, Ahmedabad', price:'₹85L', sqft:'1,150 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from GIFT City · SG Highway', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Safal Prelude', dev:'Safal', location:'Satellite, Ahmedabad', price:'₹72L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Prahlad Nagar · 20 mins from Iscon', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Shivalik Sharda', dev:'Shivalik', location:'Bopal, Ahmedabad', price:'₹68L', sqft:'975 sq ft', bhk:'2 BHK', status:'Possession Sep 2025', ready_to_move:false, lm:'20 mins from GIFT City · SH-17 access', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'Goyal My Home', dev:'Goyal & Co', location:'Thaltej, Ahmedabad', price:'₹78L', sqft:'1,060 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Prahlad Nagar · Thaltej Char Rasta', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Patel Shivalik Residency', dev:'Patel Group', location:'Prahlad Nagar, Ahmedabad', price:'₹92L', sqft:'1,180 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Corporate Road · Ahmedabad BRT', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Iscon Platinum', dev:'Iscon', location:'Bopal, Ahmedabad', price:'₹75L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'18 mins from SG Highway · NH-947', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
     ],
     localities: [
       { name:'SG Highway', bhkRange:'₹75L–1.5Cr · 2BHK', avgPsqft:6800, yoy:16, metro:'BRTS · 500m', conn:'SG Highway / GIFT City', count:'3.2k properties' },
@@ -476,32 +476,43 @@ function generateIntelligentMockData(city, searchedLocality) {
 }
 
 // ── Property image pool (Unsplash — residential buildings) ────────────────────
+// 12 diverse real residential property images for Indian apartment listings
 const PROP_IMAGES = [
-  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1599427303058-f04cbcf4756f?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop',  // Modern balcony
+  'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop',  // Building exterior
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',  // Residential tower
+  'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop',  // Apartment complex
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',  // Modern residential
+  'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop',  // Luxury apartment
+  'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop',  // Building facade
+  'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop',  // Residential building
+  'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop',  // Modern architecture
+  'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop',  // Apartment tower
+  'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop',  // Residential complex
+  'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop',  // Building exterior
 ];
 
-// Deterministic image from pool based on property name hash
+// Get property image - prefer 99acres API, fallback to Unsplash
 function getPropertyImage(p) {
-  if (p.image_url) return p.image_url;
+  // ✅ PRIORITY 1: Use 99acres API image if available (real property photo)
+  if (p.image_url && p.image_url.length > 0) {
+    return p.image_url;
+  }
+
+  // FALLBACK: Use Unsplash (deterministic based on property name hash)
   const hash = (p.name||'x').split('').reduce(function(a,c){ return a + c.charCodeAt(0); }, 0);
   return PROP_IMAGES[hash % PROP_IMAGES.length];
 }
 
-// Renders property image; parent element's CSS gradient shows through on failure
+// Renders property image (99acres API > Unsplash fallback)
 function propImg(p) {
   const url = getPropertyImage(p);
-  return `<img src="${esc(url)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'" />`;
+  const uniqueId = 'img-' + Math.random().toString(36).substr(2, 9);
+  // Display property image with CORS support; fallback emoji if image fails to load
+  return `<div style="width:100%;height:100%;background:#e5e7eb;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+    <img id="${uniqueId}" src="${esc(url)}" alt="Property image" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s ease-in;" onload="this.style.opacity='1'; console.log('[img-load] ✓ Image loaded:', this.src.substring(0,60));" onerror="console.log('[img-error] ✗ Failed to load:', this.src.substring(0,80)); this.parentElement.style.background='#dbeafe'; this.style.display='none';" />
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;pointer-events:none;color:#6b7280;opacity:0.4;">🏢</div>
+  </div>`;
 }
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -524,17 +535,20 @@ function defaultConfig() {
   };
 }
 
-// ── Message listener ──────────────────────────────────────────────────────────
+// ── Message listener (SET UP FIRST - attach before any code runs) ──────────────
 var _panelConnected = false;
 window.addEventListener('message', function(e) {
-  if (!e.data) return;
+  console.log('[homepage-listener] Message received, type:', e.data?.type || '(none)');
+  if (!e.data || typeof e.data !== 'object') return;
+
   if (e.data.type === 'CONFIG_UPDATE') {
+    console.log('[homepage-listener] ✓✓✓ CONFIG_UPDATE from panel!');
     _panelConnected = true;
-    config = Object.assign(defaultConfig(), e.data.config);
-    console.log('[CONFIG_UPDATE] Received config:', {
-      location: config.location,
-      apiBase: config.apiBase,
-      filters: config.filters
+    config = Object.assign(defaultConfig(), e.data.config || {});
+    console.log('[homepage-listener] ✓ Config applied:', {
+      stage: config.stage,
+      location: config.location.primary,
+      hasApiBase: !!config.apiBase
     });
     fetchAndRender();
   }
@@ -668,12 +682,22 @@ function applyFilters(result, cfg) {
 
   // Budget filter — only apply when both min and max are set
   if (f.budgetMin && f.budgetMax) {
-    var budgFiltered = props.filter(function(p) {
+    props = props.filter(function(p) {
       var val = parsePriceLakhs(p.price);
       if (val === null) return true; // keep if unparseable
       return val >= f.budgetMin && val <= f.budgetMax;
     });
-    if (budgFiltered.length > 0) props = budgFiltered;
+  }
+
+  // Enrich lm field with dynamic commute calculation if worksNear is set
+  var worksNear = cfg.user && cfg.user.worksNear;
+  if (worksNear) {
+    props = props.map(function(p) {
+      var commute = estimateCommute(p.location, worksNear);
+      var commuteStr = commute ? commute + ' mins to ' + worksNear : null;
+      var newLm = commuteStr ? commuteStr : p.lm;
+      return Object.assign({}, p, { lm: newLm });
+    });
   }
 
   return Object.assign({}, result, { properties: props });
@@ -979,13 +1003,27 @@ async function fetchData(cfg) {
       config.dataSource = 'openai';
       return oaiResult;
     } catch(err) {
-      // OpenAI failed — fall through to mock data
+      // OpenAI failed — fall through to real data
       console.log('[OpenAI] Error:', err.message);
     }
   }
 
-  // ── 5. FALLBACK: Intelligent Mock Data (smart, not random) ─────────────────
-  console.log('[fetchData] 5. Falling back to intelligent mock data');
+  // ── 5. TRY: Real Data from Supabase (actual 99acres listings) ────────────────
+  console.log('[fetchData] 5. Attempting to fetch real data from Supabase...');
+  if (primary) {
+    try {
+      var realResult = await fetchRealDataFromSupabase(cfg);
+      if (realResult && realResult.properties && realResult.properties.length >= 2) {
+        console.log('[fetchData] ✓ Using real Supabase data:', realResult.properties.length, 'properties');
+        return realResult;
+      }
+    } catch(err) {
+      console.log('[fetchData] Real data fetch error:', err.message);
+    }
+  }
+
+  // ── 6. FALLBACK: Intelligent Mock Data (smart, not random) ─────────────────
+  console.log('[fetchData] 6. Falling back to intelligent mock data');
   if (primary) {
     var mockResult = generateIntelligentMockData(loc.city, primary);
     console.log('[fetchData] ✓ Using intelligent mock:', mockResult.properties.length, 'properties');
@@ -1048,6 +1086,101 @@ Return 5 localities, 6 properties, 4 adjacent. Realistic for ${city}, India.`;
   const r = await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.openAIKey},body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:1800})});
   const j = await r.json();
   return JSON.parse(j.choices[0].message.content.trim().replace(/^```json?\n?/,'').replace(/\n?```$/,''));
+}
+
+// ── Fetch Real Data from Supabase ──────────────────────────────────────────────
+// Tries to fetch actual property data and locality metadata from real_properties / real_localities tables
+async function fetchRealDataFromSupabase(cfg) {
+  const loc = cfg.location||{};
+  const primary = loc.primary || '';
+  const city = (loc.city || '').toLowerCase();
+
+  if (!primary || !city) {
+    console.log('[real-data] Missing primary location or city, skipping');
+    return null;
+  }
+
+  try {
+    // Check if Supabase is available
+    if (!window.supabase_client && typeof supabase === 'undefined') {
+      console.log('[real-data] Supabase not initialized');
+      return null;
+    }
+
+    const sb = window.supabase_client || supabase;
+
+    // Fetch properties matching city and locality
+    console.log('[real-data] Fetching properties for', city, '/', primary);
+    const { data: propData, error: propError } = await sb
+      .from('real_properties')
+      .select('*')
+      .eq('city', city)
+      .eq('locality', primary)
+      .limit(20);
+
+    if (propError) {
+      console.log('[real-data] Properties fetch error:', propError);
+      return null;
+    }
+
+    if (!propData || propData.length === 0) {
+      console.log('[real-data] No properties found for', city, '/', primary);
+      return null;
+    }
+
+    console.log('[real-data] Found', propData.length, 'properties');
+
+    // Fetch localities metadata for this city
+    console.log('[real-data] Fetching localities for', city);
+    const { data: locData, error: locError } = await sb
+      .from('real_localities')
+      .select('*')
+      .eq('city', city)
+      .limit(20);
+
+    if (locError) {
+      console.log('[real-data] Localities fetch error:', locError);
+      return null;
+    }
+
+    // Transform Supabase data to match our expected format
+    const properties = propData.map(p => ({
+      name: p.name || 'Property',
+      dev: p.developer || '',
+      location: [primary, city].join(', '),
+      price: p.price_avg_sqft ? '₹' + (p.price_min || 'varying') + 'L' : '₹—',
+      sqft: p.area_sqft ? p.area_sqft + ' sq ft' : '',
+      bhk: (p.bhk && p.bhk.length) ? p.bhk.join(', ') : '2 BHK',
+      status: p.status || 'Under Construction',
+      ready_to_move: p.ready_to_move || false,
+      lm: p.landmarks?.metro ? (p.landmarks.metro + ' (metro)') : '',
+      image_url: p.image_url || ''
+    }));
+
+    const localities = (locData || []).map(l => ({
+      name: l.name,
+      bhkRange: 'Varies',
+      avgPsqft: l.avg_price_sqft || 0,
+      yoy: l.yoy_growth || 0,
+      metro: l.metro_distance_min ? l.metro_distance_min + ' km' : '',
+      conn: 'Good connectivity',
+      count: 'Various',
+      featured: l.rank && l.rank <= 3
+    }));
+
+    console.log('[real-data] ✓ Returning real data:', properties.length, 'properties,', localities.length, 'localities');
+    config.dataSource = 'real-data';
+
+    return {
+      properties: properties,
+      localities: localities,
+      adjacentLocalities: localities.slice(1, 5),
+      landmarks: {}
+    };
+  } catch(err) {
+    console.log('[real-data] Error fetching real data:', err.message);
+    return null;
+  }
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
@@ -1127,43 +1260,47 @@ function renderPage() {
   }
 
   // ── S2: LOCALITY AWARENESS FLOW ──────────────────────────────────────────────────
-  // Continue → Locations Radar → Consideration Set → Nearby Localities →
+  // Continue → Localities Radar → Consideration Set → Fresh Listings → Nearby Localities →
   // Budget Check → Similar BHK → Preference Confirmation
   else if (stage === 2) {
     mods.push(modContinue(stage, primary, secondary));         // Continue (multi-sector view)
-    mods.push(modLocalitiesRadar(stage, city, primary));       // Locations on your radar
+    mods.push(modLocalitiesRadar(stage, city, primary));       // Localities on radar + nearby suggestions
     mods.push(modConsiderationSet(stage));                     // Which matters to daily routine?
-    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities
+    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
+    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to explore
+    mods.push(modUpcomingProjects(stage, primary));            // Upcoming projects (if specific locality)
     mods.push(modBudgetCheck(stage, f));                       // Open to view properties in ₹80-1 Cr?
     mods.push(modSimilarBHK(stage, bhk, primary));             // Similar BHK
     mods.push(modPreferenceConfirmation(stage, bhk));          // Do you want to continue with 2BHK?
   }
 
   // ── S3: COMPARISON FLOW ──────────────────────────────────────────────────────────
-  // Continue → Fresh Listings → Consideration Set → Properties Secondary →
-  // Head to Head → Landmarks → Expert Sellers → Upcoming → Price Trend → Nearby → Articles → Tools
+  // Continue → Localities Radar → Consideration Set → Fresh Listings → Nearby Localities →
+  // Head to Head → Landmarks → Expert Sellers → Upcoming → Price Trend
   else if (stage === 3) {
     mods.push(modContinue(stage, primary, secondary));         // Continue
-    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
+    mods.push(modLocalitiesRadar(stage, city, primary));       // Localities on radar
     mods.push(modConsiderationSet(stage));                     // What is your consideration set?
-    mods.push(modPropertiesInSecondary(stage, secondary));     // Properties in secondary
+    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
+    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to consider
+    mods.push(modPropertiesInSecondary(stage, secondary));     // Properties in secondary locality
     mods.push(modHeadToHead(stage, primary, secondary, worksNear)); // H2H with commute times
     mods.push(modNearestLandmarks(stage, primary, secondary)); // Landmarks/amenities
     mods.push(modExpertAgents(stage, primary, secondary));     // Expert sellers
     mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments
     mods.push(modPriceTrend(stage, primary));                  // Price trend
-    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to consider
   }
 
   // ── S4: SHORTLIST/DECISION FLOW ──────────────────────────────────────────────────
-  // Decision Spotlight → Social Proof → Still Considering → Decision CTA →
-  // Visit with Shortlist → Upcoming → Price Trend → Articles → Tools
+  // Continue → Decision Spotlight → Social Proof → Still Considering →
+  // Visit Planning → Upcoming Developments → Price Trend
   else if (stage === 4) {
+    mods.push(modContinue(stage, primary, secondary));         // Continue (rich cards)
     mods.push(modDecisionSpotlight(stage, primary, worksNear)); // Decision spotlight (commute context)
     mods.push(modSocialProof(stage, primary));                 // Social proof (X people contacted)
     mods.push(modStillConsidering(stage, primary));            // Still considering
-    mods.push(modDecisionCtaSection(stage));                   // Find home that feels right + CTAs (NEW)
-    mods.push(modVisitWithShortlist(stage, primary));          // Visit these places with shortlist (NEW)
+    mods.push(modVisitPlanner(stage));                         // Visit planning / site visit scheduler
+    mods.push(modUpcomingProjects(stage, primary));            // Upcoming projects (if specific locality)
     mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments
     mods.push(modPriceTrend(stage, primary));                  // Price trend
   }
@@ -1240,11 +1377,29 @@ function reactionHtml(key, notePlaceholder) {
 
 // WIREFRAME-ALIGNED: modContinue now shows for all stages (S1-S5)
 function modContinue(stage, primary, secondary) {
-  if (stage < 1 || stage > 5) return null;  // Show for all stages
+  if (stage < 2) return null;  // S2, S3, S4, S5 only
   if (!primary && stage !== 1) return null; // S1 is okay with no primary
 
-  const props = data.properties.slice(0, 2);
-  if (!props.length) return null; // No data, skip
+  // PRIORITY: rawData → data → getMockData
+  let props = [];
+
+  // Try primary source (rawData from latest fetch)
+  if (rawData && rawData.properties && rawData.properties.length > 0) {
+    props = rawData.properties.slice(0, 2);
+  }
+  // Try secondary source (currently filtered data)
+  else if (data && data.properties && data.properties.length > 0) {
+    props = data.properties.slice(0, 2);
+  }
+  // Fallback to mock data - this ALWAYS works
+  else {
+    const mockData = getMockData(config);
+    if (mockData && mockData.properties) {
+      props = mockData.properties.slice(0, 2);
+    }
+  }
+
+  if (!props || props.length === 0) return null; // No data, skip
 
   const lastDays = config.lastVisitDaysAgo;
   const timeBadge = !lastDays || lastDays === 0 ? 'Today'
@@ -1407,6 +1562,8 @@ function modNewInSectors(stage, primary, worksNear) {
         <div class="ds-prop-card-price">${esc(p.price)}</div>
         <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
         <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
+        <div class="text-xs text-tertiary mt-2">${esc(p.sqft||'')}${p.sqft?' · ':''}<span style="color:${p.ready_to_move?'var(--green)':'var(--text-tertiary)'}">${p.ready_to_move?'Ready to move':'UC'}</span></div>
+        ${p.lm ? `<div class="text-xs text-tertiary mt-1" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(p.lm.split('·')[0].trim())}</div>` : ''}
       </div>
       ${featureTag}
     </div>`;
@@ -1515,66 +1672,87 @@ function modLocalitySuggestions(stage, primary, secondary) {
 }
 
 function modLocalitiesRadar(stage, city, primary) {
-  if (stage >= 3) return null;
-  // Show localities the user has considered (primary + secondary + alternatives)
-  const loc = config.location || {};
-  const considered = [];
+  if (stage < 2 || stage > 3) return null;  // S2-S3
 
-  // Add primary locality
-  if (primary) {
-    considered.push({
-      name: primary,
-      label: 'Primary Choice',
-      bhkRange: '2-3 BHK',
-      avgPsqft: 8500,
-      yoy: 12,
-      metro: '~2km',
-      count: '24',
-      badge: '⭐ Primary'
-    });
-  }
+  // For S2: Show recently viewed + nearby suggestions in one consolidated view
+  const props = data.properties || [];
+  if (!props.length) return null;
 
-  // Add secondary locality (if set)
-  if (loc.secondary && loc.secondary !== primary) {
-    considered.push({
-      name: loc.secondary,
-      label: 'Secondary Choice',
-      bhkRange: '2-3 BHK',
-      avgPsqft: 7800,
-      yoy: 15,
-      metro: '~3km',
-      count: '18',
-      badge: '🔄 Secondary'
-    });
-  }
+  // Extract unique localities from recently viewed properties
+  const localityMap = {};
+  props.forEach(p => {
+    if (p.location) {
+      // Extract just the locality name (first part before comma)
+      const fullLoc = p.location;
+      const cleanLoc = fullLoc.split(',')[0].trim();
+      if (!localityMap[cleanLoc] && (cleanLoc.includes('Sector') || cleanLoc.includes('Road') || cleanLoc.includes('West') || cleanLoc.includes('East') || cleanLoc.includes('North') || cleanLoc.includes('South'))) {
+        localityMap[cleanLoc] = true;
+      }
+    }
+  });
 
-  // Add 1-2 popular alternatives if available
+  const uniqueLocalities = Object.keys(localityMap);
   const fallback = getMockData(config);
   const allLocs = data.localities && data.localities.length ? data.localities : fallback.localities;
-  const alts = allLocs
-    .filter(l => l.name !== primary && l.name !== loc.secondary)
-    .slice(0, 2)
-    .map(l => ({
-      ...l,
-      badge: '💡 Alternative'
-    }));
-  considered.push(...alts);
+  const adjs = data.adjacentLocalities && data.adjacentLocalities.length ? data.adjacentLocalities : fallback.adjacentLocalities;
 
-  if (considered.length <= 1) return null;
+  // Combine: recently viewed (with stars) + suggested alternatives (lighter styling)
+  const allCards = [];
 
-  const cards = considered.map(l => `<div style="flex-shrink:0;width:220px;background:white;border:1px solid rgba(0,0,0,0.16);border-radius:8px;padding:12px;">
-    <div style="font-size:11px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:3px 6px;border-radius:4px;display:inline-block;margin-bottom:6px;">${l.badge}</div>
-    <div style="font-size:13px;font-weight:800;color:var(--text-primary);margin-bottom:2px;">${esc(l.name)}</div>
-    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">${esc(l.bhkRange||'')}</div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:var(--text-tertiary);">₹/sqft</span><span style="color:var(--text-primary);font-weight:700;">₹${l.avgPsqft||'—'}</span></div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:var(--text-tertiary);">Price growth</span><span style="color:var(--green);font-weight:700;">+${l.yoy||'—'}% YoY</span></div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:11px;"><span style="color:var(--text-tertiary);">Metro</span><span style="color:var(--text-primary);font-weight:700;">${esc(l.metro||'—')}</span></div>
-  </div>`).join('');
+  // Add recently viewed (max 3)
+  uniqueLocalities.slice(0, 3).forEach((locName, idx) => {
+    const locMeta = allLocs.find(l => l.name && l.name.trim() === locName);
+    const isBold = idx === 0;
+    allCards.push({
+      name: locName,
+      meta: locMeta,
+      isSuggested: false,
+      isPrimary: isBold,
+      distance: null
+    });
+  });
+
+  // Add suggested alternatives (max 2)
+  adjs.slice(0, 2).forEach(adj => {
+    if (!uniqueLocalities.includes(adj.name)) {
+      const locMeta = allLocs.find(l => l.name === adj.name);
+      allCards.push({
+        name: adj.name,
+        meta: locMeta || adj,
+        isSuggested: true,
+        isPrimary: false,
+        distance: adj.delta
+      });
+    }
+  });
+
+  const cards = allCards.map(card => {
+    const opacity = card.isSuggested ? 0.85 : 1;
+    const borderColor = card.isSuggested ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.16)';
+    const badgeHtml = card.isPrimary
+      ? '<div style="display:inline-block;background:rgba(255,193,7,0.2);color:#f59e0b;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;margin-bottom:6px;">⭐ PRIMARY</div>'
+      : card.isSuggested
+      ? `<div style="display:inline-block;background:rgba(59,130,246,0.15);color:#2563eb;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;margin-bottom:6px;">💡 SUGGESTED</div>`
+      : '';
+
+    return `<div style="flex-shrink:0;width:220px;background:white;border:1px solid ${borderColor};border-radius:8px;padding:12px;opacity:${opacity};">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
+        <div style="flex:1;"><div style="font-size:13px;font-weight:800;color:var(--text);">${esc(card.name)}</div></div>
+      </div>
+      ${badgeHtml}
+      ${card.isSuggested ? `<div style="font-size:10px;color:var(--text2);margin-bottom:8px;">≈ ${Math.abs(card.distance).toFixed(1)}km from ${esc(primary)}</div>` : ''}
+      <div style="font-size:12px;color:#555555;margin-bottom:8px;">${esc(card.meta?.bhkRange||'2-3 BHK')}</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:#999999;">₹/sqft</span><span style="color:#111111;font-weight:700;">₹${card.meta?.avgPsqft||'—'}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:#999999;">Price growth</span><span style="color:#16a34a;font-weight:700;">+${card.meta?.yoy||'—'}% YoY</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:11px;"><span style="color:#999999;">Metro</span><span style="color:#111111;font-weight:700;">${esc(card.meta?.metro||'—')}</span></div>
+      <button class="ds-btn ds-btn-tertiary ds-btn-xs" style="width:100%;">View properties →</button>
+    </div>`;
+  }).join('');
 
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div class="ds-section-heading">Your Journey So Far</div>
-      <div class="ds-heading-sub">Localities you've considered</div>
+      <div class="ds-section-heading">Localities on your radar</div>
+      <div class="ds-heading-sub">Your top views + nearby alternatives</div>
     </div>
     <div class="hscroll">${cards}</div>
     <div class="divider" style="margin:4px 0 0;"></div>
@@ -1583,56 +1761,44 @@ function modLocalitiesRadar(stage, city, primary) {
 
 function modConsiderationSet(stage) {
   if (stage === 2) {
-    // S2: "Which of these matters most to your daily routine?" (factors like Metro, Hospital, School, Marketplace)
+    // S2: "Which of these matters most to your daily routine?" (landmark preferences)
     const factors = [
-      { icon:'train', label:'Metro Proximity', sub:'Within 1-2 km of metro station' },
-      { icon:'local_hospital', label:'Hospitals', sub:'Quick access to healthcare' },
-      { icon:'school', label:'Schools', sub:'Quality schools nearby' },
-      { icon:'shopping_center', label:'Markets', sub:'Shopping & markets close by' },
+      { icon:'train', label:'Metro' },
+      { icon:'local_hospital', label:'Hospital' },
+      { icon:'school', label:'School' },
+      { icon:'shopping_center', label:'Market/shops' },
     ];
     return `<div class="sec">
-      <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="sec-pad">
         <div class="ds-section-heading">Which of these matters most to your daily routine?</div>
-        <div class="ds-heading-sub">Select what's important for you</div>
+        <div class="ds-heading-sub">Accordingly let's help in figuring out a locality for you</div>
       </div>
-      <div style="padding:0 14px;display:flex;flex-wrap:wrap;gap:10px;">
-        ${factors.map(f=>`<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:white;border:1px solid var(--border);border-radius:6px;cursor:pointer;flex:0 0 calc(50% - 6px);">
-          <input type="checkbox" style="width:18px;height:18px;cursor:pointer;" />
-          <div style="flex:1;">
-            <div style="font-weight:700;font-size:12px;color:var(--text);display:flex;align-items:center;gap:6px;">
-              <span class="material-icons" aria-hidden="true" style="font-size:16px;">${f.icon}</span>
-              ${f.label}
-            </div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">${f.sub}</div>
-          </div>
-        </label>`).join('')}
+      <div style="padding:0 14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        ${factors.map(f=>`<button class="ds-chip" style="padding:10px 14px;cursor:pointer;border:1px solid var(--border);background:white;border-radius:6px;font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px;transition:all 0.2s;">
+          <span class="material-icons" aria-hidden="true" style="font-size:16px;">${f.icon}</span> ${f.label}
+        </button>`).join('')}
+      </div>
+      <div style="padding:0 14px;">
+        <button style="padding:10px 14px;cursor:pointer;border:1px solid var(--border);background:white;border-radius:6px;font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px;transition:all 0.2s;" title="Add custom landmark">
+          <span class="material-icons" aria-hidden="true" style="font-size:16px;">add</span> Add a landmark
+        </button>
       </div>
     </div>`;
   }
   else if (stage === 3) {
-    // S3: "What is your consideration set?" (priority factors for comparison)
-    const priorities = [
-      { icon:'trending_up', label:'Investment Potential', sub:'Appreciation focus', sel:false },
-      { icon:'location_on', label:'Proximity', sub:'Distance & connectivity', sel:false },
-      { icon:'price_change', label:'Value for Money', sub:'Cost efficiency', sel:true },
-      { icon:'home', label:'Lifestyle', sub:'Amenities & environment', sel:false },
+    // S3: "What is your consideration set?" (property status filtering for comparison)
+    const statuses = [
+      { label:'Ready to move properties only', sel:false },
+      { label:'Open to Under Construction properties', sel:false },
+      { label:'Interested in New Launches', sel:false },
     ];
     return `<div class="sec">
       <div class="sec-pad" style="padding-bottom:8px;">
         <div class="ds-section-heading">What is your consideration set?</div>
-        <div class="ds-heading-sub">What matters most in your decision?</div>
+        <div class="ds-heading-sub">Choose which properties to view</div>
       </div>
-      <div style="padding:0 14px;" role="radiogroup" aria-label="Priority options">
-        ${priorities.map(p=>`<div style="display:grid;grid-template-columns:40px 1fr 20px;gap:10px;align-items:center;padding:12px;margin-bottom:8px;background:${p.sel?'var(--blue-light)':'white'};border:1px solid ${p.sel?'var(--blue)':'var(--border)'};border-radius:6px;cursor:pointer;" role="radio" aria-checked="${p.sel?'true':'false'}" tabindex="${p.sel?'0':'-1'}">
-          <div style="width:40px;height:40px;border-radius:50%;background:${p.sel?'var(--blue)':'rgba(37,99,235,0.1)'};display:flex;align-items:center;justify-content:center;color:${p.sel?'white':'var(--blue)'};flex-shrink:0;font-size:18px;">
-            <span class="material-icons" aria-hidden="true">${p.icon}</span>
-          </div>
-          <div>
-            <div style="font-weight:700;font-size:13px;color:var(--text-primary);margin-bottom:2px;">${p.label}</div>
-            <div style="font-size:12px;color:var(--text-secondary);">${p.sub}</div>
-          </div>
-          ${p.sel?'<span class="material-icons" aria-hidden="true" style="color:var(--blue);flex-shrink:0;font-size:18px;">check_circle</span>':''}
-        </div>`).join('')}
+      <div style="padding:0 14px;display:flex;flex-direction:column;gap:10px;">
+        ${statuses.map(s=>`<button style="padding:14px;background:white;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:14px;color:var(--text);text-align:left;font-weight:500;transition:all 0.2s;">${s.label}</button>`).join('')}
       </div>
     </div>`;
   }
@@ -1873,7 +2039,7 @@ function modPropertiesPrimary(stage, primary, secondary, worksNear) {
 }
 
 function modNearbyLocalities(stage, primary) {
-  if (stage < 2 || stage > 3) return null;  // Show S2, S3
+  if (stage < 2 || stage > 3) return null;  // Show S2-S3 only
   const adjs = data.adjacentLocalities.length ? data.adjacentLocalities : getMockData(config).adjacentLocalities;
   const propPool = data.properties.length > 5 ? data.properties : getMockData(config).properties;
 
@@ -1898,6 +2064,7 @@ function modNearbyLocalities(stage, primary) {
           <div class="prop-sm-img">${propImg(p)}</div>
           <div class="prop-sm-body">
             <div class="prop-sm-price">${esc(p.price)}</div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:2px;">${esc(p.bhk||'')}</div>
             <div class="prop-sm-name">${esc(p.name||'')}</div>
             <div class="prop-sm-loc">${esc(a.name)}</div>
             <div class="prop-sm-landmark">${esc(a.metro||'')}</div>
@@ -1910,7 +2077,7 @@ function modNearbyLocalities(stage, primary) {
   const saving = adjs[0] ? adjs[0].delta : 6;
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:4px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="ds-section-heading">Nearby Localities · ₹${Math.abs(saving)}–${Math.abs(saving)+6}L below ${esc(primary)}</div><button class="ds-btn ds-btn-tertiary ds-btn-xs">See all 3 →</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="ds-section-heading">Nearby Localities</div><button class="ds-btn ds-btn-tertiary ds-btn-xs">See all 3 →</button></div>
     </div>
     ${cards}
   </div>`;
@@ -2140,6 +2307,8 @@ function modVisitPlanner(stage) {
       <div class="ds-prop-card-price">${esc(p.price)}</div>
       <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
       <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||'')}</div>
+      <div class="text-xs text-tertiary mt-2">${esc(p.sqft||'')}${p.sqft?' · ':''}<span style="color:${p.ready_to_move?'var(--green)':'var(--text-tertiary)'}">${p.ready_to_move?'Ready to move':'UC'}</span></div>
+      ${p.lm ? `<div class="text-xs text-tertiary mt-1" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📍 ${esc(p.lm.split('·')[0].trim())}</div>` : ''}
     </div>
   </div>`).join('');
   return `<div class="sec">
@@ -2169,6 +2338,8 @@ function modSimilarBHK(stage, bhk, primary) {
       <div class="ds-prop-card-price">${esc(p.price)}</div>
       <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
       <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
+      <div class="text-xs text-tertiary mt-2">${esc(p.sqft||'')}${p.sqft?' · ':''}<span style="color:${p.ready_to_move?'var(--green)':'var(--text-tertiary)'}">${p.ready_to_move?'Ready to move':'UC'}</span></div>
+      ${p.lm ? `<div class="text-xs text-tertiary mt-1" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📍 ${esc(p.lm.split('·')[0].trim())}</div>` : ''}
     </div>
   </div>`).join('');
   return `<div class="sec">
@@ -2196,7 +2367,7 @@ function modExpertAgents(stage, primary, secondary) {
 }
 
 function modUpcomingDevelopments(stage, primary) {
-  if (stage !== 3) return null;
+  if (stage < 3 || stage > 4) return null;  // Show S3-S4
   const cityName = (config.location && config.location.city) || primary;
   const devs = [
     { title:'Property prices are rising rapidly in '+cityName, date:'Feb 28, 2026' },
@@ -2216,6 +2387,58 @@ function modUpcomingDevelopments(stage, primary) {
     <div class="sec-pad" style="padding-bottom:8px;"><div class="ds-section-heading">Upcoming developments in these zones</div></div>
     <div class="hscroll">${cards}</div>
     <div style="padding:10px 14px 4px;"></div>
+  </div>`;
+}
+
+function modUpcomingProjects(stage, primary) {
+  if (!primary || (stage !== 2 && stage !== 4)) return null;
+
+  // Only show for specific localities, not city-level browsing
+  // If primary equals city (e.g. "Noida"), user is browsing at city-level → don't show
+  const cityLevel = (config.location && config.location.city) ? primary === config.location.city : false;
+  if (cityLevel) return null;
+
+  // Show new/upcoming properties in the primary location
+  const props = (data.properties || [])
+    .filter(p => p.location && p.location.includes(primary) && !p.ready_to_move)
+    .slice(0, 2);
+
+  if (!props.length) return null;
+
+  const cards = props.map(p => `<div class="ds-prop-card" style="flex:0 0 calc(50% - 6px);">
+    <div class="ds-prop-card-img" style="height:120px;position:relative;">
+      ${propImg(p)}
+      <div style="position:absolute;top:6px;left:6px;">
+        <div style="background:black;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;display:inline-block;">NEW</div>
+      </div>
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Save to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+      <div class="ds-prop-card-subtitle" style="font-size:11px;margin-bottom:6px;">${esc(p.bhk||'')} · ${esc(p.sqft||'')} sqft</div>
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">${esc(p.name||'')}</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">${esc(p.dev||'')} · ${esc(p.location||'')}</div>
+      <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;">
+        ${p.ready_to_move ? '<div style="background:rgba(22,163,74,0.15);color:var(--green);font-size:10px;padding:3px 6px;border-radius:4px;">RTM ✓</div>' : ''}
+        ${p.rera ? '<div style="background:rgba(37,99,235,0.15);color:var(--blue);font-size:10px;padding:3px 6px;border-radius:4px;">RERA ✓</div>' : ''}
+        <div style="background:rgba(0,0,0,0.1);color:var(--text);font-size:10px;padding:3px 6px;border-radius:4px;">NEW</div>
+      </div>
+      ${p.lm ? `<div style="font-size:11px;color:var(--text2);margin-bottom:8px;">⭐ ${esc(p.lm)}</div>` : ''}
+      <button class="ds-btn ds-btn-tertiary ds-btn-sm" style="width:100%;">View →</button>
+    </div>
+  </div>`).join('');
+
+  const newCount = props.length;
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <div class="ds-section-heading">Upcoming Projects in ${esc(primary)}</div>
+        <div style="background:black;color:white;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;">See all →</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;padding:0 14px 14px;justify-content:space-between;">
+      ${cards}
+    </div>
   </div>`;
 }
 
@@ -2547,6 +2770,7 @@ function modVisitWithShortlist(stage, primary) {
     <div class="ds-prop-card-body">
       <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
       <div class="ds-prop-card-subtitle" style="font-size:11px;">${esc(p.bhk||'')} · ${esc(p.location||primary)}</div>
+      ${p.lm ? `<div class="ds-prop-card-highlights" style="margin-top:6px;font-size:11px;color:var(--text2);">${esc(p.lm)}</div>` : ''}
     </div>
   </div>`).join('');
 
@@ -2715,88 +2939,74 @@ document.getElementById('page').addEventListener('click', function(e) {
 // ── Init ──────────────────────────────────────────────────────────────────────
 var _supaUrl = (typeof window !== 'undefined' && window.SUPABASE_URL)  || '';
 var _supaKey = (typeof window !== 'undefined' && window.SUPABASE_ANON_KEY) || '';
-var _inIframe = window.parent && window.parent !== window;
 
-if (!_inIframe && _supaUrl && _supaKey && window.supabase) {
-  // ── Standalone mode: try Supabase, fall back to demo ────────────────────────
-  var _lsb = window.supabase.createClient(_supaUrl, _supaKey);
-  var _supabaseConnectTimer = null;
+console.log('[init] page URL:', window.location.href);
+console.log('[init] Supabase configured:', !!_supaUrl, 'window.supabase:', !!window.supabase);
 
-  renderPage(); // show empty/loading state while waiting
+// ────────────────────────────────────────────────────────────────────────────
+// PRIORITY: Panel (postMessage) > Supabase > Demo fallback
+// NOTE: Always try panel mode first - don't rely on iframe detection
+// ────────────────────────────────────────────────────────────────────────────
 
-  // 1. Fetch the latest config immediately on load
-  _lsb.from('live_config').select('config').eq('id', 'default').single()
-    .then(function(res) {
-      if (res.data && res.data.config) {
-        _panelConnected = true;
-        clearTimeout(_supabaseConnectTimer);
-        config = Object.assign(defaultConfig(), res.data.config);
-        fetchAndRender();
-      }
-    })
-    .catch(function(err) {
-      console.warn('Supabase fetch failed, will try demo fallback:', err.message);
-    });
-
-  // 2. Subscribe — every panel change arrives here in ~1 second
-  _lsb.channel('live:default')
-    .on('postgres_changes', {
-      event: '*', schema: 'public', table: 'live_config',
-      filter: 'id=eq.default'
-    }, function(payload) {
-      if (payload.new && payload.new.config) {
-        _panelConnected = true;
-        clearTimeout(_supabaseConnectTimer);
-        config = Object.assign(defaultConfig(), payload.new.config);
-        fetchAndRender();
-      }
-    })
-    .subscribe();
-
-  // 3. Fallback to demo if Supabase takes too long (1 second)
-  _supabaseConnectTimer = setTimeout(function() {
-    if (_panelConnected) return;
-    console.log('Supabase timeout, loading demo persona...');
-    config = Object.assign(defaultConfig(), {
-      stage: 2,
-      location: { primary: 'Sector 75', secondary: null, city: 'Noida', openToNearby: true },
-      filters: { bhk: ['2BHK'], budgetMin: 70, budgetMax: 95, readyToMove: 'either', buyTimeline: '3m' },
-      lastVisitDaysAgo: 3,
-      user: { name: 'Priya', age: 32, occupation: 'IT Professional', worksNear: 'Noida Sector 18' }
-    });
-    fetchAndRender();
-  }, 1000);
-
-} else {
-  // ── Iframe mode: connected to panel via postMessage ──────────────────────────
-  renderPage();
-  if (_inIframe) {
-    function _signalReady() {
-      if (_panelConnected) return;
-      window.parent.postMessage({ type: 'HOMEPAGE_READY' }, '*');
-    }
-    _signalReady();
-    var _readyTimer = setInterval(function() {
-      if (_panelConnected) { clearInterval(_readyTimer); return; }
-      _signalReady();
-    }, 300);
-    setTimeout(function() { clearInterval(_readyTimer); }, 8000);
-  } else {
-    // ── Standalone, no Supabase — load default demo persona after brief delay ───
-    // This makes the standalone homepage show the same populated state as the
-    // panel preview, so both look identical without any setup required.
-    setTimeout(function() {
-      if (_panelConnected) return;
-      config = Object.assign(defaultConfig(), {
-        stage: 2,
-        location: { primary: 'Sector 75', secondary: null, city: 'Noida', openToNearby: true },
-        filters: { bhk: ['2BHK'], budgetMin: 70, budgetMax: 95, readyToMove: 'either', buyTimeline: '3m' },
-        lastVisitDaysAgo: 3,
-        user: { name: 'Priya', age: 32, occupation: 'IT Professional', worksNear: 'Noida Sector 18' }
-      });
-      fetchAndRender();
-    }, 800);
+// Signal to parent that homepage is ready (works in iframe)
+function _signalReady() {
+  if (_panelConnected) return;
+  try {
+    window.parent.postMessage({ type: 'HOMEPAGE_READY' }, '*');
+  } catch(e) {
+    // Silently fail if not in iframe
   }
+}
+
+// Send signal immediately and keep retrying every 300ms indefinitely
+console.log('[init] → Waiting for panel to send config...');
+_signalReady();
+var _readyTimer = setInterval(function() {
+  if (_panelConnected) {
+    console.log('[init] ✓ Panel connected! Stopping ready signals.');
+    clearInterval(_readyTimer);
+    return;
+  }
+  _signalReady();
+}, 300);
+
+// Load demo config immediately (for standalone usage)
+// When panel connects via postMessage, it will override this with real config
+console.log('[init] Loading demo config for standalone/fallback...');
+console.log('%c📋 HOW TO USE THIS SYSTEM:', 'color: #2563eb; font-size: 14px; font-weight: bold;');
+console.log('%c1. RECOMMENDED: Open /panel/index.html', 'color: #16a34a; font-weight: bold;');
+console.log('   → The researcher panel with embedded homepage preview');
+console.log('   → Select personas from the dropdown to test different stages');
+console.log('%c2. ALTERNATIVE: Open /homepage/index.html directly', 'color: #16a34a; font-weight: bold;');
+console.log('   → Standalone demo showing Priya Mehta (S3) persona');
+console.log('%c3. IMAGES: For images to load, serve files over HTTP:', 'color: #dc2626; font-weight: bold;');
+console.log('   → Run: python3 -m http.server 8000');
+console.log('   → Or: npx http-server');
+console.log('   → Then open: http://localhost:8000/panel/index.html');
+console.log('%cCONSOLE TIPS:', 'font-weight: bold;');
+console.log('   • Watch for [img-load] messages when images load');
+console.log('   • Watch for [img-error] if images fail (file:// protocol limitation)');
+console.log('   • Watch for [homepage-listener] messages for panel-homepage sync');
+loadDemoConfig();
+
+// After 30 seconds of waiting, log a warning but keep trying
+setTimeout(function() {
+  if (!_panelConnected) {
+    console.warn('[init] ⚠ Panel connection taking longer than 30s. Make sure panel is open and iframe is loaded.');
+  }
+}, 30000);
+
+// Helper function to load demo config
+// Uses s2_locality_explorer (Priya Mehta) persona as default
+function loadDemoConfig() {
+  config = Object.assign(defaultConfig(), {
+    stage: 2,
+    location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: true },
+    filters: { bhk: ['2BHK'], budgetMin: 70, budgetMax: 95, readyToMove: 'either', buyTimeline: 'exploring' },
+    lastVisitDaysAgo: 3,
+    user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager', worksNear: 'Sector 62' }
+  });
+  fetchAndRender();
 }
 </script>
 </body>

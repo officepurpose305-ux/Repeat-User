@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-03-20T03:07:19.172Z",
+  "totalScreens": 1,
+  "passed": 1,
+  "failed": 0,
+  "overallAccuracy": 100,
+  "screens": [
+    {
+      "id": "screenshot-0.776033757056641",
+      "name": "Last searched",
+      "accuracy": 100,
+      "passed": true,
+      "issueCount": 0
+    }
+  ]
+}

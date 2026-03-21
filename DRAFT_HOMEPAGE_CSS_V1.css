@@ -1,0 +1,14 @@
+/**
+ * DRAFT V1 — HOMEPAGE CSS WITH CUSTOM CLASSES
+ * Saved as backup before refactoring to use ONLY design-system.css classes
+ * Date: 2026-03-18
+ *
+ * Changes made:
+ * - Added custom topnav CSS (.topnav-row1, .topnav-row2, .nav-post-btn, .nav-bell)
+ * - Added custom location jump cards (.loc-jump-row, .loc-jump-card, etc.)
+ * - Added custom fresh listings grid (.fresh-grid, .fresh-card, .fresh-feature-tag)
+ *
+ * TO DO: Refactor these to use ONLY design-system.css classes
+ */
+
+/* See homepage.css in v2/homepage/ for current state */

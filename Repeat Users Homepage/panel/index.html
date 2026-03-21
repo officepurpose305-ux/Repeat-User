@@ -514,7 +514,7 @@
     }
     .btn-note:hover { border-color: var(--blue); color: var(--blue); }
     .obs-count { display: inline-block; background: var(--blue); color: #fff; border-radius: 10px; padding: 1px 6px; font-size: 9px; margin-left: 4px; }
-
+    .obs-actions { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
 
     @media (max-width: 900px) {
       .view-tabs { display: flex; }
@@ -585,40 +585,17 @@
         <select id="persona-selector" onchange="window.loadPersona(this.value, true)" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;cursor:pointer;">
           <option value="">— Select a persona —</option>
           <optgroup label="── STAGE 2: LOCALITY AWARENESS ────">
-            <option value="s2_locality_explorer">s2_locality_explorer | Budget: ₹70–95L | Sector 137</option>
-            <option value="s2_locality_focused">s2_locality_focused | Budget: ₹75–90L | Sector 137</option>
+            <option value="priya">Priya Mehta | Budget: ₹70–95L | Sector 137</option>
+            <option value="rahul">Rahul Sharma | Budget: ₹75–90L | Sector 137</option>
           </optgroup>
           <optgroup label="── STAGE 3: COMPARISON ────────────">
-            <option value="s3_budget_comparison">s3_budget_comparison | Budget: ₹50–60L | Noida</option>
-            <option value="s3_investment_focus">s3_investment_focus | Budget: ₹100–150L | Noida</option>
+            <option value="meera">Meera Iyer | Budget: ₹50–60L | Noida</option>
+            <option value="vikram">Vikram Nair | Budget: ₹100–150L | Noida</option>
           </optgroup>
           <optgroup label="── STAGE 4: DECISION ──────────────">
-            <option value="s4_property_upgrader">s4_property_upgrader | Budget: ₹120–150L | Sector 137</option>
+            <option value="upgrader">Ankit Verma | Budget: ₹120–150L | Sector 137</option>
           </optgroup>
         </select>
-      </div>
-
-      <!-- Personas (DB-backed) -->
-      <div class="section" id="personas-section">
-        <div id="personas-header" class="section-title" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;user-select:none;">
-          <span>Saved Personas</span>
-          <span id="personas-chevron" class="material-icons" style="font-size:18px;">expand_more</span>
-        </div>
-        <div id="personas-body" style="display:none;">
-          <div id="persona-status" style="font-size:11px;color:#666;padding:6px 0;margin-bottom:6px;"></div>
-          <div id="persona-list" style="max-height:200px;overflow-y:auto;margin-bottom:8px;"></div>
-          <div id="save-persona-form" style="display:none;padding:6px 0;display:flex;gap:6px;margin-bottom:8px;">
-            <input id="persona-name-input" type="text" placeholder="Name this persona..." style="flex:1;padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;" />
-            <button onclick="confirmSavePersona()" style="font-size:12px;padding:6px 12px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;">Save</button>
-            <button onclick="cancelSavePersona()" style="font-size:12px;padding:6px 12px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;cursor:pointer;">Cancel</button>
-          </div>
-          <button class="panel-btn" onclick="promptSavePersona()" style="width:100%;font-size:12px;padding:8px;margin-bottom:6px;">
-            + Save current as Persona
-          </button>
-          <button onclick="window.debugPersonas()" style="width:100%;font-size:11px;padding:6px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;cursor:pointer;color:#666;">
-            🔧 Debug / Force Reload
-          </button>
-        </div>
       </div>
 
       <!-- User Identity -->
@@ -770,7 +747,7 @@
           Observations
           <span class="obs-count" id="obs-count-badge" style="display:none"></span>
         </div>
-        <div class="session-actions">
+        <div class="obs-actions">
           <button class="btn btn-secondary" onclick="exportObservationsCSV()">Export CSV</button>
         </div>
         <div id="obs-list">
@@ -874,47 +851,47 @@
 
   /* ─── Preset personas ─── */
   const PERSONAS = {
-    s2_locality_explorer: {
+    priya: {
       // S2: Broad city entry, locality aware, exploring options
       user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 3,
-      location: { primary: 'Sector 137', secondary: null, openToNearby: true },
+      location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: true },
       filters: { budgetMin: 70, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
       behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'medium' },
       stageOverride: 2
     },
-    s2_locality_focused: {
+    rahul: {
       // S2: Narrow locality entry, single sector focus — NOT over-bumped despite callback
       user: { name: 'Rahul Sharma', age: 34, occupation: 'Software Engineer', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 5,
-      location: { primary: 'Sector 137', secondary: null, openToNearby: false },
+      location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: false },
       filters: { budgetMin: 75, budgetMax: 90, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: '6m' },
       behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'medium' },
       stageOverride: 2
     },
-    s3_budget_comparison: {
-      // S3: Budget-constrained, comparing affordable zones
+    meera: {
+      // S3: Budget-constrained, comparing affordable zones (Noida-only)
       user: { name: 'Meera Iyer', age: 29, occupation: 'Teacher', worksNear: null },
       lastVisitDaysAgo: 7,
-      location: { primary: 'Noida', secondary: null, openToNearby: true },
+      location: { primary: 'Sector 135', secondary: 'Sector 143', city: 'Noida', openToNearby: true },
       filters: { budgetMin: 50, budgetMax: 60, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: '6m+' },
       behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'high' },
       stageOverride: 3
     },
-    s3_investment_focus: {
-      // S3: Investor mindset, appreciation-focused comparison
+    vikram: {
+      // S3: Investor mindset, appreciation-focused comparison (Noida-only)
       user: { name: 'Vikram Nair', age: 45, occupation: 'Business Owner', worksNear: null },
       lastVisitDaysAgo: 2,
-      location: { primary: 'Noida', secondary: null, openToNearby: true },
+      location: { primary: 'Sector 75', secondary: 'Sector 107', city: 'Noida', openToNearby: true },
       filters: { budgetMin: 100, budgetMax: 150, bhk: ['2BHK', '3BHK'], readyToMove: 'either', buyTimeline: '3m' },
       behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'low' },
       stageOverride: 3
     },
-    s4_property_upgrader: {
+    upgrader: {
       // S4: Shortlist/decision mode — owns 2BHK Sec 62, upgrading to 3BHK
       user: { name: 'Ankit Verma', age: 38, occupation: 'Senior Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 1,
-      location: { primary: 'Sector 137', secondary: null, openToNearby: false },
+      location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: false },
       filters: { budgetMin: 120, budgetMax: 150, bhk: ['3BHK'], readyToMove: 'either', buyTimeline: '3m' },
       behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'medium' },
       stageOverride: 4
@@ -1339,8 +1316,6 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
   });
 
   /* ─── Persona shortcuts ─── */
-  let personas = [];
-
   function loadPersona(key, silent) {
     const p = PERSONAS[key];
     if (!p) return;
@@ -1352,292 +1327,44 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     renderSessionList();
   }
 
-  async function loadPersonas() {
-    if (!sb) {
-      console.warn('loadPersonas: Supabase not initialized');
-      return;
-    }
-    try {
-      const { data, error } = await sb.from('personas').select('*').order('created_at');
-      if (error) {
-        console.error('loadPersonas error:', error.message, error.code);
-        return;
-      }
-      if (!data) {
-        console.warn('loadPersonas: no data returned');
-        return;
-      }
-      // Check if personas match expected 5 from evolution framework
-      const expectedNames = ['Priya Mehta', 'Rahul Sharma', 'Meera Iyer', 'Vikram Nair', 'Ankit Verma'];
-      const namesInDb = (data || []).map(d => d.profile?.user?.name);
-      const needsReseed = expectedNames.some(k => !namesInDb.includes(k)) || data.length !== 5;
-
-      if (needsReseed) {
-        console.log('loadPersonas: persona list mismatch, reseeding...');
-        await seedPersonas();
-        return;
-      }
-      personas = data;
-      console.log('loadPersonas: loaded', personas.length, 'personas');
-      renderPersonaList();
-    } catch (e) {
-      console.error('loadPersonas exception:', e.message);
-    }
-  }
-
-  async function seedPersonas() {
-    if (!sb) {
-      console.error('seedPersonas: Supabase not initialized');
-      return;
-    }
-    try {
-      console.log('seedPersonas: starting, PERSONAS keys:', Object.keys(PERSONAS));
-      const descMap = {
-        s2_locality_explorer: 'First-time buyer · Exploring localities · S2',
-        s2_locality_focused: 'Returning buyer · Single locality · S2',
-        s3_budget_comparison: 'Budget-constrained · Multi-locality compare · S3',
-        s3_investment_focus: 'Investor mindset · Appreciation focus · S3',
-        s4_property_upgrader: 'Upgrading 2→3BHK · Decision mode · S4'
-      };
-      const seeds = Object.keys(PERSONAS).map(key => {
-        const p = PERSONAS[key];
-        return {
-          name: (p.user && p.user.name ? p.user.name : 'Unknown') + (p.stageOverride ? ' · S' + p.stageOverride : ' · S2'),
-          description: descMap[key] || '',
-          profile: p
-        };
-      });
-      console.log('seedPersonas: created seed objects:', seeds.length, seeds.map(s => s.name));
-      // Delete all existing personas before inserting new ones (replace mode)
-      const deleteResult = await sb.from('personas').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      console.log('seedPersonas: deleted old personas');
-      const { data, error } = await sb.from('personas').insert(seeds).select();
-      if (error) {
-        console.error('seedPersonas insert error:', error.message, error.code, error.details);
-        return;
-      }
-      personas = data || [];
-      console.log('seedPersonas: inserted successfully, now have', personas.length, 'personas');
-      renderPersonaList();
-    } catch (e) {
-      console.error('seedPersonas exception:', e.message, e.stack);
-    }
-  }
-
-  function renderPersonaList() {
-    const el = document.getElementById('persona-list');
-    if (!el) {
-      console.error('renderPersonaList: persona-list element not found');
-      return;
-    }
-    if (!sb) {
-      el.innerHTML = '<div style="font-size:12px;color:#dc2626;padding:6px 0;">⚠️ Database not connected. Check config.js has SUPABASE_URL and SUPABASE_ANON_KEY.</div>';
-      return;
-    }
-    if (!personas || personas.length === 0) {
-      el.innerHTML = '<div style="font-size:12px;color:#999;padding:6px 0;">No personas saved yet.<br>Click <strong>🔧 Debug / Force Reload</strong> to seed defaults.</div>';
-      return;
-    }
-    el.innerHTML = personas.map((p, idx) => `
-      <div data-persona-idx="${idx}" style="display:flex;align-items:center;justify-content:space-between;padding:6px 4px;cursor:pointer;border-radius:6px;" onmouseenter="this.style.background='#f5f5f5'" onmouseleave="this.style.background=''">
-        <div style="flex:1;" onclick="window._loadPersonaByIdx(${idx})">
-          <div class="p-name" style="font-size:13px;font-weight:600;color:var(--text);">${esc(p.name)}</div>
-          <div class="p-meta" style="font-size:11px;color:var(--text3);">${esc(p.description||'')}</div>
-        </div>
-        <button onclick="event.stopPropagation();deletePersona('${p.id}')" style="background:none;border:none;cursor:pointer;color:#999;font-size:12px;padding:2px 4px;">✕</button>
-      </div>
-    `).join('');
-  }
-
-  window._loadPersonaByIdx = function(idx) {
-    if (idx >= 0 && idx < personas.length) {
-      loadPersonaProfile(personas[idx].profile);
-    }
-  };
-
-  function loadPersonaProfile(p) {
-    activeSessionId = null;
-    fillForm(p);
-    collect();
-    if (p.stageOverride != null) profile.stage = p.stageOverride;
-    updateUI();
-    sendToIframe(profile);
-    toast('Persona loaded', 'success');
-    renderSessionList();
-  }
-
-  function promptSavePersona() {
-    const f = document.getElementById('save-persona-form');
-    f.style.display = 'flex';
-    document.getElementById('persona-name-input').focus();
-  }
-  function cancelSavePersona() {
-    document.getElementById('save-persona-form').style.display = 'none';
-    document.getElementById('persona-name-input').value = '';
-  }
-  async function confirmSavePersona() {
-    const name = document.getElementById('persona-name-input').value.trim();
-    if (!name || !sb) return;
-    collect();
-    const { data, error } = await sb.from('personas').insert([{ name, description: sessionName(profile), profile }]).select();
-    if (error) {
-      console.error('confirmSavePersona error:', error.message);
-      toast('Error saving persona: ' + error.message, 'error');
-      return;
-    }
-    if (data) { personas = [...personas, data[0]]; renderPersonaList(); }
-    cancelSavePersona();
-    toast('Persona saved: ' + name, 'success');
-  }
-  async function deletePersona(id) {
-    if (!confirm('Delete this persona?')) return;
-    const { error } = await sb.from('personas').delete().eq('id', id);
-    if (error) {
-      console.error('deletePersona error:', error.message);
-      toast('Error deleting persona', 'error');
-      return;
-    }
-    personas = personas.filter(p => p.id !== id);
-    renderPersonaList();
-    toast('Persona deleted', 'success');
-  }
-  function togglePersonas() {
-    const body = document.getElementById('personas-body');
-    const chevron = document.getElementById('personas-chevron');
-    const statusEl = document.getElementById('persona-status');
-
-    if (!body || !chevron) {
-      console.error('togglePersonas: missing elements', { body: !!body, chevron: !!chevron });
-      return;
-    }
-
-    const open = body.style.display !== 'none';
-    body.style.display = open ? 'none' : 'block';
-    chevron.textContent = open ? 'expand_more' : 'expand_less';
-
-    console.log('togglePersonas: now', open ? 'closed' : 'open', '- personas array length:', personas.length);
-
-    // When opening, show status or render list
-    if (!open) {
-      if (statusEl) statusEl.innerHTML = '';
-      if (personas.length === 0) {
-        renderPersonaList();
-      } else {
-        renderPersonaList();
-      }
-    }
-  }
-
-  // Debug: check personas and re-load if needed
-  window.debugPersonas = async function() {
-    const statusEl = document.getElementById('persona-status');
-    if (!statusEl) return;
-
-    statusEl.innerHTML = '<div style="color:#666;">🔍 Checking...</div>';
-    console.log('=== DEBUG PERSONAS ===');
-    console.log('sb:', !!sb);
-    console.log('personas array:', personas.length, personas);
-
-    let status = [];
-    status.push('Supabase: ' + (sb ? '✓ Connected' : '✗ Not initialized'));
-
-    if (!sb) {
-      statusEl.innerHTML = '<div style="color:#dc2626;">' + status.join('<br>') + '</div>';
-      return;
-    }
-
-    try {
-      // Test table exists
-      const { data: countData, error: countError } = await sb.from('personas').select('count');
-      if (countError) {
-        status.push('Table query: ✗ ' + countError.message);
-      } else {
-        status.push('Table: ✓ Accessible');
-      }
-
-      // Get actual count
-      const { data: allData, error: allError } = await sb.from('personas').select('*');
-      if (allError) {
-        status.push('Data fetch: ✗ ' + allError.message);
-      } else {
-        status.push('Rows in DB: ' + (allData?.length || 0));
-      }
-
-      // Try to reload
-      console.log('Attempting reload...');
-      await loadPersonas();
-      status.push('After reload: ' + personas.length + ' personas');
-
-    } catch (e) {
-      status.push('Exception: ' + e.message);
-    }
-
-    statusEl.innerHTML = '<div style="color:' + (personas.length > 0 ? '#16a34a' : '#666') + ';">' +
-      status.map(s => '• ' + s).join('<br>') + '</div>';
-    console.log(status);
-  };
-
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   /* ─── Send config to iframe ─── */
+  // Listen for signals from iframe
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'HOMEPAGE_READY') {
+      console.log('[panel] ✓ Received HOMEPAGE_READY signal from iframe');
+    }
+  });
+
   function sendToIframe(p) {
     const iframe = document.getElementById('preview-iframe');
-    if (!iframe || !iframe.contentWindow) return;
-    const payload = JSON.parse(JSON.stringify(p));
-    if (window.NINETY_NINE_ACRES_API_BASE) payload.apiBase = window.NINETY_NINE_ACRES_API_BASE;
-    if (window.OPENAI_API_KEY) payload.openAIKey = window.OPENAI_API_KEY;
-    iframe.contentWindow.postMessage({ type: 'CONFIG_UPDATE', config: payload }, '*');
-  }
-
-  /* ─── Apply: run full OpenAI pipeline then send ─── */
-  async function applyPreview() {
-    collect();
-    const btn = document.querySelector('.btn-apply');
-    if (btn) { btn.textContent = 'Fetching data…'; btn.disabled = true; }
-    if (window.OPENAI_API_KEY && (profile.location.primary || profile.location.secondary)) {
-      try { await resolveLocationWithOpenAI(); } catch (_) {}
-      try { await fetchOpenAIData(); } catch (_) {}
+    if (!iframe) {
+      console.log('[sendToIframe] ✗ iframe not found');
+      return false;
     }
-    collect(); // re-collect to pick up any city/type updates
-    updateUI();
-    sendToIframe(profile);
-    if (btn) { btn.textContent = 'Apply to Preview'; btn.disabled = false; }
-    writeLiveConfig();
-    toast('Applied to preview', 'success');
-  }
-
-  /* ─── Supabase init ─── */
-  function initSupabase() {
-    const url = window.SUPABASE_URL || '';
-    const key = window.SUPABASE_ANON_KEY || '';
-    const dot = document.getElementById('db-dot');
-    const lbl = document.getElementById('db-label');
-    if (!url || !key) {
-      lbl.textContent = 'No config.js';
-      return;
+    if (!iframe.contentWindow) {
+      console.log('[sendToIframe] ✗ iframe.contentWindow not accessible (still loading?)');
+      return false;
     }
     try {
-      sb = window.supabase.createClient(url, key);
-      lbl.textContent = 'Connecting…';
-      sb.from('sessions').select('id', { count: 'exact', head: true }).then(({ error }) => {
-        if (error) {
-          dot.classList.add('error');
-          lbl.textContent = 'DB error';
-          console.error('Supabase:', error.message);
-        } else {
-          dot.classList.add('connected');
-          lbl.textContent = 'DB connected';
-          loadSessions();
-          loadPersonas();
-          loadObservations();
-        }
-      });
-    } catch (e) {
-      dot.classList.add('error');
-      lbl.textContent = 'DB error';
+      const payload = JSON.parse(JSON.stringify(p));
+      if (window.NINETY_NINE_ACRES_API_BASE) payload.apiBase = window.NINETY_NINE_ACRES_API_BASE;
+      if (window.OPENAI_API_KEY) payload.openAIKey = window.OPENAI_API_KEY;
+      console.log('[sendToIframe] → Sending CONFIG_UPDATE, stage:', payload.stage, 'location:', payload.location?.primary || 'unset', 'BHK:', payload.filters?.bhk || []);
+      iframe.contentWindow.postMessage({ type: 'CONFIG_UPDATE', config: payload }, '*');
+      // Update status indicator when successfully sending
+      const dbLabel = document.getElementById('db-label');
+      if (dbLabel) dbLabel.textContent = '✓ Homepage Synced';
+      return true;
+    } catch(err) {
+      console.log('[sendToIframe] ✗ Error posting message:', err.message);
+      const dbLabel = document.getElementById('db-label');
+      if (dbLabel) dbLabel.textContent = '⚠ Check console';
+      return false;
     }
   }
 
@@ -1794,6 +1521,54 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     fillForm(defaultProfile());
     renderSessionList();
     toast('New session');
+  }
+
+  /* ─── Apply: run full OpenAI pipeline then send ─── */
+  async function applyPreview() {
+    collect();
+    const btn = document.querySelector('.btn-apply');
+    if (btn) { btn.textContent = 'Fetching data…'; btn.disabled = true; }
+    if (window.OPENAI_API_KEY && (profile.location.primary || profile.location.secondary)) {
+      try { await resolveLocationWithOpenAI(); } catch (_) {}
+      try { await fetchOpenAIData(); } catch (_) {}
+    }
+    collect(); // re-collect to pick up any city/type updates
+    updateUI();
+    sendToIframe(profile);
+    if (btn) { btn.textContent = 'Apply to Preview'; btn.disabled = false; }
+    writeLiveConfig();
+    toast('Applied to preview', 'success');
+  }
+
+  /* ─── Supabase init ─── */
+  function initSupabase() {
+    const url = window.SUPABASE_URL || '';
+    const key = window.SUPABASE_ANON_KEY || '';
+    const dot = document.getElementById('db-dot');
+    const lbl = document.getElementById('db-label');
+    if (!url || !key) {
+      lbl.textContent = 'No config.js';
+      return;
+    }
+    try {
+      sb = window.supabase.createClient(url, key);
+      lbl.textContent = 'Connecting…';
+      sb.from('sessions').select('id', { count: 'exact', head: true }).then(({ error }) => {
+        if (error) {
+          dot.classList.add('error');
+          lbl.textContent = 'DB error';
+          console.error('Supabase:', error.message);
+        } else {
+          dot.classList.add('connected');
+          lbl.textContent = 'DB connected';
+          loadSessions();
+          loadObservations();
+        }
+      });
+    } catch (e) {
+      dot.classList.add('error');
+      lbl.textContent = 'DB error';
+    }
   }
 
   /* ─── Relative time ─── */
@@ -2031,34 +1806,42 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     initSupabase();
 
     // Attach personas header click handler
-    const personasHeader = document.getElementById('personas-header');
-    if (personasHeader) {
-      personasHeader.addEventListener('click', function(e) {
-        e.stopPropagation();
-        togglePersonas();
-      });
-      console.log('Personas header click handler attached');
-    } else {
-      console.warn('Could not find personas-header element');
-    }
 
     const iframe = document.getElementById('preview-iframe');
     var _iframeReady = false;
 
-    // Mark connected + send config when iframe fires load event
-    if (iframe) {
-      iframe.addEventListener('load', function() {
-        _iframeReady = true;
-        sendToIframe(profile);
-      });
+    console.log('[panel init] Looking for iframe...');
+    if (!iframe) {
+      console.error('[panel init] ✗ CRITICAL ERROR: iframe#preview-iframe not found in DOM!');
+      return;
     }
+    console.log('[panel init] ✓ iframe found:', iframe.id);
 
-    // Belt-and-suspenders: retry every 400ms for 8 seconds
-    // Covers file:// timing issues where load event fires before listener attaches
-    var _retryTimer = setInterval(function() {
+    // Wait for iframe to load, then send initial config
+    iframe.addEventListener('load', function() {
+      _iframeReady = true;
+      console.log('[panel init] ✓ iframe load event fired');
       sendToIframe(profile);
-    }, 400);
-    setTimeout(function() { clearInterval(_retryTimer); }, 8000);
+    });
+
+    // Also try sending immediately (in case load event already fired)
+    sendToIframe(profile);
+
+    // Keep retrying to send to iframe every 200ms until success
+    // This ensures sync even if iframe loads slowly
+    var _sendCount = 0;
+    var _retryTimer = setInterval(function() {
+      _sendCount++;
+      if (_iframeReady && _sendCount > 3) {
+        // Already sent 3 times after iframe load, slow down to every 1s
+        clearInterval(_retryTimer);
+        console.log('[panel init] ✓ Iframe ready (sent ' + _sendCount + ' times), now listening for changes');
+        // Continue sending on form changes (via sync() function)
+        return;
+      }
+      console.log('[panel init] retry #' + _sendCount + ': sending CONFIG_UPDATE to iframe...');
+      sendToIframe(profile);
+    }, 200);
 
     // Restore mobile view preference
     if (window.matchMedia('(max-width: 900px)').matches) {

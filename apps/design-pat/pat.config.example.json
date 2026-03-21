@@ -1,0 +1,39 @@
+{
+  "figma": {
+    "token": "figd_YOUR_PERSONAL_TOKEN_HERE",
+    "fileId": "YOUR_FIGMA_FILE_ID"
+  },
+  "outputDir": "./output",
+  "threshold": 0.1,
+  "ciThreshold": 95,
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "ignoreRegions": [],
+  "minRegionArea": 25,
+  "minPixelCount": 3,
+  "screens": [
+    {
+      "id": "homepage-s2",
+      "name": "Homepage — Stage 2 (Priya)",
+      "url": "http://localhost:3000/v2/homepage/index.html",
+      "figmaNodeId": "1234:5678",
+      "threshold": 0.08,
+      "ciThreshold": 97,
+      "ignoreRegions": [],
+      "minRegionArea": 25,
+      "minPixelCount": 3,
+      "waitForSelector": "#content",
+      "waitMs": 800,
+      "postMessagePayload": {
+        "type": "CONFIG_UPDATE",
+        "config": {
+          "stage": 2,
+          "primaryLocality": "Sector 75, Noida",
+          "budget": 7500000
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verify Supabase Replication</title>
+  <style>
+    body { font-family: system-ui; padding: 20px; max-width: 600px; }
+    .status { padding: 12px; border-radius: 8px; margin: 10px 0; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>🔧 Supabase Replication Verification</h1>
+
+  <button onclick="testConnection()">Test Supabase Connection</button>
+  <button onclick="testReplication()">Test Real-Time Replication</button>
+
+  <div id="results"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://qlfttxrnnjueycffwdmy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_Q2sDwYGsgMXv-O5voOjfDQ_9EQDri1t';
+    const resultsEl = document.getElementById('results');
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function log(message, type = 'info') {
+      const div = document.createElement('div');
+      div.className = `status ${type}`;
+      div.textContent = message;
+      resultsEl.appendChild(div);
+    }
+
+    async function testConnection() {
+      resultsEl.innerHTML = '';
+      log('🔄 Testing Supabase connection...', 'info');
+
+      try {
+        const { data, error } = await supabase
+          .from('live_config')
+          .select('id', { count: 'exact', head: true });
+
+        if (error) {
+          log(`❌ Connection failed: ${error.message}`, 'error');
+          return;
+        }
+
+        log('✅ Connected to Supabase successfully!', 'success');
+        log(`📊 live_config table exists and is accessible`, 'success');
+      } catch (err) {
+        log(`❌ Error: ${err.message}`, 'error');
+      }
+    }
+
+    async function testReplication() {
+      resultsEl.innerHTML = '';
+      log('🔄 Testing real-time replication...', 'info');
+
+      try {
+        // Insert test data
+        const testPayload = {
+          stage: 2,
+          location: { primary: 'Test Sector', city: 'Test City' },
+          timestamp: new Date().toISOString()
+        };
+
+        log('📝 Inserting test config...', 'info');
+        const { data: insertData, error: insertError } = await supabase
+          .from('live_config')
+          .upsert({
+            id: 'replication-test',
+            config: testPayload,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'id' })
+          .select();
+
+        if (insertError) {
+          log(`❌ Insert failed: ${insertError.message}`, 'error');
+          return;
+        }
+
+        log('✅ Test data inserted successfully', 'success');
+
+        // Subscribe to changes
+        log('📡 Subscribing to real-time changes...', 'info');
+        let receivedUpdate = false;
+
+        const subscription = supabase
+          .channel('live:replication-test')
+          .on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: 'live_config',
+            filter: 'id=eq.replication-test'
+          }, (payload) => {
+            log('✅ REAL-TIME UPDATE RECEIVED!', 'success');
+            log(`📊 Change detected: ${JSON.stringify(payload.new.config).substring(0, 80)}...`, 'success');
+            receivedUpdate = true;
+            subscription.unsubscribe();
+
+            // Clean up
+            supabase.from('live_config').delete().eq('id', 'replication-test');
+          })
+          .subscribe();
+
+        // Trigger an update
+        log('🔄 Sending update to trigger real-time notification...', 'info');
+        setTimeout(async () => {
+          const { error: updateError } = await supabase
+            .from('live_config')
+            .update({
+              config: { ...testPayload, trigger: 'update-' + Date.now() }
+            })
+            .eq('id', 'replication-test');
+
+          if (updateError) {
+            log(`❌ Update failed: ${updateError.message}`, 'error');
+          }
+        }, 500);
+
+        // Wait for response
+        setTimeout(() => {
+          if (!receivedUpdate) {
+            log('⚠️  No real-time update received', 'error');
+            log('💡 You may need to enable replication in Supabase Dashboard:', 'info');
+            log('Go to: Database → Replication → Toggle live_config ON', 'info');
+            subscription.unsubscribe();
+            supabase.from('live_config').delete().eq('id', 'replication-test');
+          }
+        }, 3000);
+
+      } catch (err) {
+        log(`❌ Error: ${err.message}`, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

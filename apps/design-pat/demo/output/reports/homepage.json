@@ -1,0 +1,229 @@
+{
+  "screenId": "homepage",
+  "screenName": "Homepage Demo",
+  "timestamp": "2026-03-19T12:00:04.499Z",
+  "accuracy": 94.5,
+  "mismatchPixels": 18500,
+  "totalPixels": 329160,
+  "passed": false,
+  "ciThreshold": 95,
+  "files": {
+    "figma": "figma/homepage.png",
+    "screenshot": "screenshots/homepage.png",
+    "diff": "diffs/homepage-diff.png",
+    "annotated": "annotated/homepage-annotated.png"
+  },
+  "regions": [
+    {
+      "id": 0,
+      "bounds": {
+        "x": 26,
+        "y": 205,
+        "width": 280,
+        "height": 20
+      },
+      "pixelCount": 5600,
+      "elements": [
+        {
+          "selector": "h2.property-title",
+          "tagName": "h2",
+          "textContent": "Luxury 3 BHK in Sector 75",
+          "rect": {
+            "x": 26,
+            "y": 205,
+            "width": 280,
+            "height": 24
+          },
+          "computedStyles": {
+            "fontSize": "16px",
+            "fontWeight": "700",
+            "color": "#111827",
+            "gap": "0px",
+            "display": "block"
+          }
+        }
+      ],
+      "issues": [
+        {
+          "type": "font-size",
+          "severity": "high",
+          "element": "h2.property-title",
+          "description": "Font size is 16px but Figma shows 18px",
+          "cssFix": "h2.property-title { font-size: 18px; }"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "bounds": {
+        "x": 26,
+        "y": 224,
+        "width": 120,
+        "height": 14
+      },
+      "pixelCount": 1680,
+      "elements": [
+        {
+          "selector": "p.property-location",
+          "tagName": "p",
+          "textContent": "Noida • 45 Lac",
+          "rect": {
+            "x": 26,
+            "y": 224,
+            "width": 180,
+            "height": 18
+          },
+          "computedStyles": {
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "color": "#999999"
+          }
+        }
+      ],
+      "issues": [
+        {
+          "type": "color",
+          "severity": "high",
+          "element": "p.property-location",
+          "description": "Text color is #999999 but Figma shows #6B7280",
+          "cssFix": "p.property-location { color: #6B7280; }"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "bounds": {
+        "x": 26,
+        "y": 248,
+        "width": 338,
+        "height": 52
+      },
+      "pixelCount": 17576,
+      "elements": [
+        {
+          "selector": "button.primary",
+          "tagName": "button",
+          "textContent": "View Details",
+          "rect": {
+            "x": 30,
+            "y": 252,
+            "width": 330,
+            "height": 44
+          },
+          "computedStyles": {
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "#ffffff",
+            "paddingTop": "12px",
+            "paddingBottom": "12px",
+            "paddingLeft": "16px",
+            "paddingRight": "16px"
+          }
+        }
+      ],
+      "issues": [
+        {
+          "type": "font-size",
+          "severity": "medium",
+          "element": "button.primary",
+          "description": "Font size is 14px but Figma shows 16px",
+          "cssFix": "button.primary { font-size: 16px; }"
+        },
+        {
+          "type": "padding-top",
+          "severity": "low",
+          "element": "button.primary",
+          "description": "Padding-top is 12px but Figma shows 16px",
+          "cssFix": "button.primary { padding-top: 16px; }"
+        },
+        {
+          "type": "padding-bottom",
+          "severity": "low",
+          "element": "button.primary",
+          "description": "Padding-bottom is 12px but Figma shows 16px",
+          "cssFix": "button.primary { padding-bottom: 16px; }"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "bounds": {
+        "x": 16,
+        "y": 312,
+        "width": 358,
+        "height": 12
+      },
+      "pixelCount": 4296,
+      "elements": [
+        {
+          "selector": ".gap-indicator",
+          "tagName": "div",
+          "textContent": "Gap: 8px",
+          "rect": {
+            "x": 16,
+            "y": 312,
+            "width": 358,
+            "height": 16
+          },
+          "computedStyles": {
+            "display": "flex",
+            "gap": "8px"
+          }
+        }
+      ],
+      "issues": [
+        {
+          "type": "gap",
+          "severity": "low",
+          "element": ".gap-indicator",
+          "description": "Gap is 8px but Figma shows 12px",
+          "cssFix": ".gap-indicator { gap: 12px; }"
+        }
+      ]
+    }
+  ],
+  "allIssues": [
+    {
+      "type": "font-size",
+      "severity": "high",
+      "element": "h2.property-title",
+      "description": "Font size is 16px but Figma shows 18px",
+      "cssFix": "h2.property-title { font-size: 18px; }"
+    },
+    {
+      "type": "color",
+      "severity": "high",
+      "element": "p.property-location",
+      "description": "Text color is #999999 but Figma shows #6B7280",
+      "cssFix": "p.property-location { color: #6B7280; }"
+    },
+    {
+      "type": "font-size",
+      "severity": "medium",
+      "element": "button.primary",
+      "description": "Font size is 14px but Figma shows 16px",
+      "cssFix": "button.primary { font-size: 16px; }"
+    },
+    {
+      "type": "padding-top",
+      "severity": "low",
+      "element": "button.primary",
+      "description": "Padding-top is 12px but Figma shows 16px",
+      "cssFix": "button.primary { padding-top: 16px; }"
+    },
+    {
+      "type": "padding-bottom",
+      "severity": "low",
+      "element": "button.primary",
+      "description": "Padding-bottom is 12px but Figma shows 16px",
+      "cssFix": "button.primary { padding-bottom: 16px; }"
+    },
+    {
+      "type": "gap",
+      "severity": "low",
+      "element": ".gap-indicator",
+      "description": "Gap is 8px but Figma shows 12px",
+      "cssFix": ".gap-indicator { gap: 12px; }"
+    }
+  ]
+}

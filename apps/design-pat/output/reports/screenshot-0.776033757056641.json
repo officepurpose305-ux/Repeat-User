@@ -1,0 +1,31 @@
+{
+  "screenId": "screenshot-0.776033757056641",
+  "screenName": "Last searched",
+  "timestamp": "2026-03-20T03:07:19.171Z",
+  "accuracy": 100,
+  "mismatchPixels": 0,
+  "totalPixels": 329160,
+  "passed": true,
+  "ciThreshold": 95,
+  "files": {
+    "figma": "/figma/screenshot-0.776033757056641.png",
+    "screenshot": "/screenshots/screenshot-0.776033757056641.png",
+    "diff": "/diffs/screenshot-0.776033757056641-diff.png",
+    "annotated": "/annotated/screenshot-0.776033757056641-annotated.png"
+  },
+  "regions": [
+    {
+      "id": 0,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844
+      },
+      "pixelCount": 339200,
+      "elements": [],
+      "issues": []
+    }
+  ],
+  "allIssues": []
+}
