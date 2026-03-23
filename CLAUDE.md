@@ -265,24 +265,23 @@ Stage is **inferred** from behavior signals in `inferStage(profile)` (panel). Re
 
 ## Module Visibility Matrix
 
-Each `modX()` function in the homepage returns content or `null`. Here's which stage renders which:
+Each `modX()` function in the homepage returns content or `null`. Here's which stage renders which, per the **99acres Homepage Evolution Framework** (`99acres-homepage-evolution.md`):
 
 | Module | S1 | S2 | S3 | S4 | S5 |
 |--------|----|----|----|----|-----|
 | `modContextChips` | ✓ | ✓ | ✓ | ✓ | ✓ |
-| `modStaleLocationNudge` | ✓ | ✓ | ✓ | — | — |
-| `modBudgetAnchor` | ✓ | — | — | — | — |
-| `modNewLaunches` | ✓ | — | — | — | — |
-| `modLocalitySuggestions` | — | ✓ | — | — | — |
-| `modNearbyLocalities` | — | ✓ | — | — | — |
-| `modPropertyCards` | — | ✓ | ✓ | ✓ | ✓ |
-| `modHeadToHead` | — | — | ✓ | — | — |
-| `modLandmarks` | — | — | ✓ | — | — |
-| `modComparisonGrid` | — | ✓ | ✓ | — | — |
-| `modBudgetNudge` | — | ✓ | ✓ | — | — |
-| `modPriceTrend` | ✓ | ✓ | ✓ | ✓ | ✓ |
-| `modShortlistPreview` | — | — | — | ✓ | ✓ |
-| `modToolGrid` | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `modContinue` (Continue Where You Left Off) | — | ✓ | ✓ | — | — |
+| `modDecisionSpotlight` | — | — | — | ✓ | ✓ |
+| `modStillConsidering` | — | — | — | ✓ | ✓ |
+| `modLocalitySuggestions` | — | ✓ | ✓ | — | — |
+| `modNearbyLocalities` (Adjacent Localities) | — | ✓ | ✓ | — | — |
+| `modPropertyCards` | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `modHeadToHead` (Locality Comparison) | — | — | ✓ | — | — |
+| `modNewLaunches` | ✓ | ✓ | ✓ | — | — |
+| `modPriceTrend` (Social Proof / Urgency) | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `modTools` (Tools & Calculators) | — | ◐ | ✓ | ✓ | ✓ |
+
+**Legend:** `✓` = Shown | `◐` = Partially shown | `—` = Hidden
 
 ---
 

@@ -1286,7 +1286,7 @@ function reactionHtml(key, notePlaceholder) {
 
 // WIREFRAME-ALIGNED: modContinue now shows for all stages (S1-S5)
 function modContinue(stage, primary, secondary) {
-  if (stage < 2) return null;  // S2, S3, S4, S5 only
+  if (stage < 2 || stage > 3) return null;  // S2, S3 only (Continue Where You Left Off)
   if (!primary && stage !== 1) return null; // S1 is okay with no primary
 
   // PRIORITY: rawData → data → getMockData
@@ -2078,7 +2078,7 @@ function modBudgetFit(stage, f, primary, secondary) {
 }
 
 function modDecisionSpotlight(stage, primary, worksNear) {
-  if (stage !== 4) return null;
+  if (stage < 4) return null;  // S4, S5 (Decision Spotlight)
   const prop = data.properties[0];
   if (!prop) return null;
   const loc = data.localities[0] || getMockData(config).localities[0];
