@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>99acres</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="../../apps/design-system/design-system.css">
-<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="homepage.css">
 </head>
 <body>
 
@@ -902,138 +903,29 @@ async function getFromSupabaseCache(locationKey) {
 async function fetchData(cfg) {
   var loc = cfg.location || {};
   var primary = loc.primary || '';
-  var locationKey = generateLocationKey(loc);
 
-  console.log('[fetchData] === STARTING MULTI-SOURCE FALLBACK ===');
-  console.log('[fetchData] Called with:', {
-    apiBase: cfg.apiBase,
-    primary: primary,
-    locationKey: locationKey,
-    hasFilters: !!(cfg.filters)
-  });
+  console.log('[fetchData] === USING REAL SUPABASE DATA ONLY ===');
+  console.log('[fetchData] Fetching for:', primary);
 
-  // ── 1. TRY: 99acres API ──────────────────────────────────────────────────────
-  if (cfg.apiBase && primary) {
-    console.log('[fetchData] 1. Attempting 99acres API...');
-    try {
-      var bedroom = ((cfg.filters.bhk||['2BHK'])[0]||'2BHK').replace(/\D/g,'') || '2';
-      var locationQuery = primary + (loc.city && loc.city !== primary ? ' '+loc.city : '');
+  // ── ONLY SOURCE: Real Data from Supabase ────────────────────────────────────
+  if (!primary) {
+    console.log('[fetchData] No primary location provided');
+    return { properties:[], localities:[], adjacentLocalities:[], landmarks:{} };
+  }
 
-      // Step 1: resolve location text → structured entities
-      var entUrl = cfg.apiBase+'/debug/entities?text='+encodeURIComponent(locationQuery);
-      console.log('[99acres] Calling entities:', entUrl);
-      var entitiesRes = await fetchWithTimeout(entUrl, 5000);
-      var entities = {};
-      if (entitiesRes.ok) {
-        var entJson = await entitiesRes.json();
-        console.log('[99acres] Entities response:', entJson);
-        // Real API wraps in { entities: {...} }; mock server returns flat object
-        entities = entJson.entities || entJson;
-      }
-      entities.bedroom       = bedroom;
-      entities.preference    = entities.preference || 'S'; // 'S' = Sale
-      entities.property_type = entities.property_type || '1';
-      if ((cfg.filters||{}).readyToMove === 'yes') entities.ready_to_move = true;
-
-      // Step 2: fetch scraped listing page — returns text blocks with Landing URL / Title / etc.
-      var searchUrl = cfg.apiBase+'/debug/search-urls?entities='+encodeURIComponent(JSON.stringify(entities));
-      console.log('[99acres] Calling search-urls');
-      var searchRes = await fetchWithTimeout(searchUrl, 5000);
-      if (searchRes.ok) {
-        var j = await searchRes.json();
-        console.log('[99acres] Search-urls response keys:', Object.keys(j));
-        var pageContent = (j.content && j.content[0] && j.content[0].page_content) || '';
-        console.log('[99acres] Page content length:', pageContent.length);
-        if (pageContent) {
-          var raw = parseApiListings(pageContent, primary);
-          console.log('[99acres] parseApiListings returned', raw.length, 'properties');
-          if (raw.length >= 2) {
-            console.log('[99acres] SUCCESS: returning', raw.length, 'properties');
-            var apiResult = { properties: raw, localities: [], adjacentLocalities: [], landmarks: {} };
-
-            // ✅ CACHE THE SUCCESSFUL RESPONSE (7 day TTL)
-            await cacheInSupabase(locationKey, apiResult, 7*24*60*60);
-            config.dataSource = 'real-api';
-
-            return apiResult;
-          }
-        }
-      }
-    } catch(err) {
-      // API unreachable or timed out — fall through to cache
-      console.log('[99acres] Error:', err.message);
+  try {
+    var realResult = await fetchRealDataFromSupabase(cfg);
+    if (realResult && realResult.properties && realResult.properties.length > 0) {
+      console.log('[fetchData] ✓ Real Supabase data:', realResult.properties.length, 'properties');
+      config.dataSource = 'real-data';
+      return realResult;
     }
+  } catch(err) {
+    console.log('[fetchData] Real data error:', err.message);
   }
 
-  // ── 2. TRY: Supabase Cache ───────────────────────────────────────────────────
-  console.log('[fetchData] 2. Checking Supabase cache...');
-  var cached = await getFromSupabaseCache(locationKey);
-  if (cached) {
-    config.dataSource = cached.isStale ? 'cache-stale' : 'cache-fresh';
-    // Merge with mock data for localities/landmarks (cache only has properties)
-    var merged = {
-      properties: cached.payload.properties || [],
-      localities: getMockData(cfg).localities,
-      adjacentLocalities: getMockData(cfg).adjacentLocalities,
-      landmarks: getMockData(cfg).landmarks
-    };
-    console.log('[fetchData] ✓ Using', config.dataSource, 'data (cached', cached.age, 'min ago)');
-    return merged;
-  }
-
-  // ── 3. OpenAI pre-fetched by panel (Apply button) ───────────────────────────
-  console.log('[fetchData] 3. Checking OpenAI pre-fetched data...');
-  if (cfg.openAIData && cfg.openAIData.properties && cfg.openAIData.properties.length) {
-    console.log('[fetchData] ✓ Using OpenAI pre-fetched data:', cfg.openAIData.properties.length, 'properties');
-    config.dataSource = 'openai-prefetched';
-    return {
-      properties:         cfg.openAIData.properties         || [],
-      localities:         cfg.openAIData.localities         || [],
-      adjacentLocalities: cfg.openAIData.adjacentLocalities || [],
-      landmarks:          cfg.openAIData.landmarks          || {}
-    };
-  }
-
-  // ── 4. TRY: Real Data from Supabase (actual 99acres listings) ────────────────
-  console.log('[fetchData] 4. Attempting to fetch real data from Supabase...');
-  if (primary) {
-    try {
-      var realResult = await fetchRealDataFromSupabase(cfg);
-      if (realResult && realResult.properties && realResult.properties.length >= 2) {
-        console.log('[fetchData] ✓ Using real Supabase data:', realResult.properties.length, 'properties');
-        return realResult;
-      }
-    } catch(err) {
-      console.log('[fetchData] Real data fetch error:', err.message);
-    }
-  }
-
-  // ── 5. Direct OpenAI call (key from panel config OR window global) ───────────
-  console.log('[fetchData] 5. Attempting direct OpenAI call...');
-  var oaiKey = cfg.openAIKey || (typeof window !== 'undefined' && window.OPENAI_API_KEY) || '';
-  if (oaiKey && primary) {
-    try {
-      var aiCfg = Object.assign({}, cfg, { openAIKey: oaiKey });
-      var oaiResult = await fetchFromOpenAI(aiCfg);
-      console.log('[OpenAI] ✓ Got result with', oaiResult.properties.length, 'properties');
-      config.dataSource = 'openai';
-      return oaiResult;
-    } catch(err) {
-      // OpenAI failed — fall through to mock data
-      console.log('[OpenAI] Error:', err.message);
-    }
-  }
-
-  // ── 6. FALLBACK: Intelligent Mock Data (smart, not random) ─────────────────
-  console.log('[fetchData] 6. Falling back to intelligent mock data');
-  if (primary) {
-    var mockResult = generateIntelligentMockData(loc.city, primary);
-    console.log('[fetchData] ✓ Using intelligent mock:', mockResult.properties.length, 'properties');
-    config.dataSource = 'mock-intelligent';
-    return mockResult;
-  }
-  console.log('[fetchData] No primary location provided');
-  config.dataSource = 'none';
+  // No data available
+  console.log('[fetchData] No properties found');
   return { properties:[], localities:[], adjacentLocalities:[], landmarks:{} };
 }
 
@@ -1250,9 +1142,6 @@ function renderPage() {
   if (!primary) { page.innerHTML = renderEmpty(); return; }
   if (loading) { page.innerHTML = renderLoading(); return; }
 
-  // DEBUG: Show data source
-  const dataSourceBadge = config.dataSource ? `<div style="position:fixed;bottom:10px;right:10px;background:#333;color:#fff;padding:8px 12px;border-radius:4px;font-size:11px;z-index:99;font-family:monospace;">📊 ${config.dataSource}</div>` : '';
-
   const mods = [];
 
   // ════════════════════════════════════════════════════════════════════════════════
@@ -1338,7 +1227,7 @@ function renderPage() {
   mods.push(modQuickLinks());                                  // Quick links
   mods.push(modHelpful());                                     // Helpful feedback
 
-  page.innerHTML = mods.filter(Boolean).join('') + dataSourceBadge;
+  page.innerHTML = mods.filter(Boolean).join('');
 }
 
 // ── Modules ───────────────────────────────────────────────────────────────────
