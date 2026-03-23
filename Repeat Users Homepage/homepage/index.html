@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>99acres</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="../../apps/design-system/design-system.css">
 <link rel="stylesheet" href="homepage.css">
@@ -1106,12 +1107,12 @@ async function fetchRealDataFromSupabase(cfg) {
 
   try {
     // Check if Supabase is available
-    if (!window.supabase_client && typeof supabase === 'undefined') {
+    if (!window.supabase && typeof supabase === 'undefined') {
       console.log('[real-data] Supabase not initialized');
       return null;
     }
 
-    const sb = window.supabase_client || supabase;
+    const sb = window.supabase || supabase;
 
     // Fetch properties matching city and locality
     console.log('[real-data] Fetching properties for', city, '/', primary);
