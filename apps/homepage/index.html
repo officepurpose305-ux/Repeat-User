@@ -1250,6 +1250,9 @@ function renderPage() {
   if (!primary) { page.innerHTML = renderEmpty(); return; }
   if (loading) { page.innerHTML = renderLoading(); return; }
 
+  // DEBUG: Show data source
+  const dataSourceBadge = config.dataSource ? `<div style="position:fixed;bottom:10px;right:10px;background:#333;color:#fff;padding:8px 12px;border-radius:4px;font-size:11px;z-index:99;font-family:monospace;">📊 ${config.dataSource}</div>` : '';
+
   const mods = [];
 
   // ════════════════════════════════════════════════════════════════════════════════
@@ -1335,7 +1338,7 @@ function renderPage() {
   mods.push(modQuickLinks());                                  // Quick links
   mods.push(modHelpful());                                     // Helpful feedback
 
-  page.innerHTML = mods.filter(Boolean).join('');
+  page.innerHTML = mods.filter(Boolean).join('') + dataSourceBadge;
 }
 
 // ── Modules ───────────────────────────────────────────────────────────────────
