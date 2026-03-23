@@ -1106,13 +1106,25 @@ async function fetchRealDataFromSupabase(cfg) {
   }
 
   try {
-    // Check if Supabase is available
-    if (!window.supabase && typeof supabase === 'undefined') {
-      console.log('[real-data] Supabase not initialized');
+    // Check if Supabase library and credentials are available
+    if (typeof supabase === 'undefined') {
+      console.log('[real-data] Supabase library not loaded');
       return null;
     }
 
-    const sb = window.supabase || supabase;
+    // Get or create Supabase client
+    let sb = window.supabase;
+    if (!sb) {
+      const _supaUrl = window.SUPABASE_URL || '';
+      const _supaKey = window.SUPABASE_ANON_KEY || '';
+      if (!_supaUrl || !_supaKey) {
+        console.log('[real-data] Missing Supabase credentials');
+        return null;
+      }
+      console.log('[real-data] Creating Supabase client on-demand');
+      sb = supabase.createClient(_supaUrl, _supaKey);
+      window.supabase = sb; // Cache for future use
+    }
 
     // Fetch properties matching city and locality
     console.log('[real-data] Fetching properties for', city, '/', primary);
