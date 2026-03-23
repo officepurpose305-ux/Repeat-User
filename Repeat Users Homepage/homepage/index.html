@@ -510,8 +510,9 @@ function propImg(p) {
   const url = getPropertyImage(p);
   const uniqueId = 'img-' + Math.random().toString(36).substr(2, 9);
   // Display property image with CORS support; fallback emoji if image fails to load
+  // NOTE: Do NOT esc() the URL - it breaks the src attribute by escaping quotes
   return `<div style="width:100%;height:100%;background:#e5e7eb;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-    <img id="${uniqueId}" src="${esc(url)}" alt="Property image" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s ease-in;" onload="this.style.opacity='1'; console.log('[img-load] ✓ Image loaded:', this.src.substring(0,60));" onerror="console.log('[img-error] ✗ Failed to load:', this.src.substring(0,80)); this.parentElement.style.background='#dbeafe'; this.style.display='none';" />
+    <img id="${uniqueId}" src='${url}' alt="Property image" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s ease-in;" onload="this.style.opacity='1'; console.log('[img-load] ✓ Image loaded:', this.src.substring(0,60));" onerror="console.log('[img-error] ✗ Failed to load:', this.src.substring(0,80)); this.parentElement.style.background='#dbeafe'; this.style.display='none';" />
     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;pointer-events:none;color:#6b7280;opacity:0.4;">🏢</div>
   </div>`;
 }
