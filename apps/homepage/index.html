@@ -1155,10 +1155,11 @@ function renderPage() {
   mods.push(modBudgetAnchor(stage, primary));                  // Budget anchor (S1 only entry point)
 
   // ── S1: DISCOVERY FLOW ───────────────────────────────────────────────────────────
-  // Continue → Fresh Listings → Similar BHK → Budget Check → Upcoming → Experts →
-  // Price Trend → Nearby → Articles → Tools
+  // Continue → Locations Radar → Fresh Listings → Similar BHK → Budget Check → Upcoming →
+  // Experts → Price Trend → Nearby → Articles → Tools
   if (stage === 1) {
     mods.push(modContinue(stage, primary, secondary));         // Continue (for returning S1 users)
+    mods.push(modLocalitiesRadar(stage, city, primary));       // Locations on your radar
     mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
     mods.push(modSimilarBHK(stage, bhk, primary));             // Similar BHK
     mods.push(modBudgetCheck(stage, f));                       // Budget validation
@@ -1170,7 +1171,8 @@ function renderPage() {
 
   // ── S2: LOCALITY AWARENESS FLOW ──────────────────────────────────────────────────
   // Continue → Localities Radar → Consideration Set → Fresh Listings → Nearby Localities →
-  // Budget Check → Similar BHK → Preference Confirmation
+  // Upcoming Projects → Budget Check → Similar BHK → Expert Agents → Upcoming Developments →
+  // Preference Confirmation → Price Trend → Articles → Tools
   else if (stage === 2) {
     mods.push(modContinue(stage, primary, secondary));         // Continue (multi-sector view)
     mods.push(modLocalitiesRadar(stage, city, primary));       // Localities on radar + nearby suggestions
@@ -1180,7 +1182,10 @@ function renderPage() {
     mods.push(modUpcomingProjects(stage, primary));            // Upcoming projects (if specific locality)
     mods.push(modBudgetCheck(stage, f));                       // Open to view properties in ₹80-1 Cr?
     mods.push(modSimilarBHK(stage, bhk, primary));             // Similar BHK
+    mods.push(modExpertAgents(stage, primary, secondary));     // Expert sellers who can help
+    mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments in area
     mods.push(modPreferenceConfirmation(stage, bhk));          // Do you want to continue with 2BHK?
+    mods.push(modPriceTrend(stage, primary));                  // Price trend insights
   }
 
   // ── S3: COMPARISON FLOW ──────────────────────────────────────────────────────────
