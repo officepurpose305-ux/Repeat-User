@@ -994,24 +994,8 @@ async function fetchData(cfg) {
     };
   }
 
-  // ── 4. Direct OpenAI call (key from panel config OR window global) ───────────
-  console.log('[fetchData] 4. Attempting direct OpenAI call...');
-  var oaiKey = cfg.openAIKey || (typeof window !== 'undefined' && window.OPENAI_API_KEY) || '';
-  if (oaiKey && primary) {
-    try {
-      var aiCfg = Object.assign({}, cfg, { openAIKey: oaiKey });
-      var oaiResult = await fetchFromOpenAI(aiCfg);
-      console.log('[OpenAI] ✓ Got result with', oaiResult.properties.length, 'properties');
-      config.dataSource = 'openai';
-      return oaiResult;
-    } catch(err) {
-      // OpenAI failed — fall through to real data
-      console.log('[OpenAI] Error:', err.message);
-    }
-  }
-
-  // ── 5. TRY: Real Data from Supabase (actual 99acres listings) ────────────────
-  console.log('[fetchData] 5. Attempting to fetch real data from Supabase...');
+  // ── 4. TRY: Real Data from Supabase (actual 99acres listings) ────────────────
+  console.log('[fetchData] 4. Attempting to fetch real data from Supabase...');
   if (primary) {
     try {
       var realResult = await fetchRealDataFromSupabase(cfg);
@@ -1021,6 +1005,22 @@ async function fetchData(cfg) {
       }
     } catch(err) {
       console.log('[fetchData] Real data fetch error:', err.message);
+    }
+  }
+
+  // ── 5. Direct OpenAI call (key from panel config OR window global) ───────────
+  console.log('[fetchData] 5. Attempting direct OpenAI call...');
+  var oaiKey = cfg.openAIKey || (typeof window !== 'undefined' && window.OPENAI_API_KEY) || '';
+  if (oaiKey && primary) {
+    try {
+      var aiCfg = Object.assign({}, cfg, { openAIKey: oaiKey });
+      var oaiResult = await fetchFromOpenAI(aiCfg);
+      console.log('[OpenAI] ✓ Got result with', oaiResult.properties.length, 'properties');
+      config.dataSource = 'openai';
+      return oaiResult;
+    } catch(err) {
+      // OpenAI failed — fall through to mock data
+      console.log('[OpenAI] Error:', err.message);
     }
   }
 
