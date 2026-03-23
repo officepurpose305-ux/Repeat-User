@@ -1095,7 +1095,9 @@ Return 5 localities, 6 properties, 4 adjacent. Realistic for ${city}, India.`;
 async function fetchRealDataFromSupabase(cfg) {
   const loc = cfg.location||{};
   const primary = loc.primary || '';
-  const city = (loc.city || '').toLowerCase();
+  // Normalize city to title case (database stores as "Noida", "Bangalore", "Mumbai")
+  const rawCity = (loc.city || '').trim();
+  const city = rawCity.charAt(0).toUpperCase() + rawCity.slice(1).toLowerCase();
 
   if (!primary || !city) {
     console.log('[real-data] Missing primary location or city, skipping');
