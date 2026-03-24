@@ -1807,23 +1807,23 @@ function modHeadToHead(stage, primary, secondary, worksNear) {
       </div>
     </div>
     <!-- Landmarks Section -->
-    <div style="padding:12px 14px;border-top:1px solid var(--border);margin-top:12px;">
-      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:8px;padding:8px 0;">NEAREST LANDMARKS</div>
+    <div style="padding:16px 14px 12px;margin-top:4px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);letter-spacing:0.5px;margin-bottom:12px;text-transform:uppercase;">Nearest Landmarks</div>
       <div class="lm-table-wrap">
         ${(() => {
           const lm = (data.landmarks && data.landmarks.primary) ? data.landmarks : getMockData(config).landmarks;
-          const iconMap = { Metro: { icon: 'directions_subway', cls: 'metro' }, Hospital: { icon: 'local_hospital', cls: 'hospital' }, School: { icon: 'school', cls: 'school' }, Mall: { icon: 'shopping_bag', cls: 'mall' } };
+          const iconMap = { Metro: { icon: 'directions_subway', color: '#2563eb' }, Hospital: { icon: 'local_hospital', color: '#dc2626' }, School: { icon: 'school', color: '#7c3aed' }, Mall: { icon: 'shopping_bag', color: '#059669' } };
           const lmRows = [
             { type:'Metro', p: lm.primary.metro, s: lm.secondary.metro },
             { type:'Hospital', p: lm.primary.hospital, s: lm.secondary.hospital },
             { type:'School', p: lm.primary.school, s: lm.secondary.school },
             { type:'Mall', p: lm.primary.mall, s: lm.secondary.mall },
           ];
-          return `<table class="lm-table" style="width:100%;font-size:11px;">
+          return `<table class="lm-table" style="width:100%;font-size:12px;border-collapse:separate;border-spacing:0;">
             <caption class="sr-only">Landmark distances for ${esc(primary)} and ${esc(secondary||'Nearby')}</caption>
-            <thead><tr style="border-bottom:1px solid var(--border);"><th scope="col" style="text-align:left;padding:6px 0;font-weight:600;color:var(--text-secondary);">Landmark</th><th scope="col" style="text-align:center;padding:6px 0;font-weight:600;color:var(--text-secondary);">${esc(primary)}</th><th scope="col" style="text-align:center;padding:6px 0;font-weight:600;color:var(--text-secondary);">${esc(secondary||'Nearby')}</th></tr></thead>
+            <thead><tr style="background:rgba(0,0,0,0.02);border-bottom:1px solid var(--border);"><th scope="col" style="text-align:left;padding:10px 8px;font-weight:600;color:var(--text-secondary);font-size:11px;">Landmark</th><th scope="col" style="text-align:center;padding:10px 8px;font-weight:600;color:var(--text-secondary);font-size:11px;">${esc(primary)}</th><th scope="col" style="text-align:center;padding:10px 8px;font-weight:600;color:var(--text-secondary);font-size:11px;">${esc(secondary||'Nearby')}</th></tr></thead>
             <tbody>
-              ${lmRows.map(r=>{const ic=iconMap[r.type];return `<tr style="border-bottom:1px solid var(--border);"><td scope="row" style="padding:8px 0;"><div style="display:flex;align-items:center;gap:6px;"><span class="material-icons" aria-hidden="true" style="font-size:16px;color:var(--blue);">${ic.icon}</span><span>${r.type}</span></div></td><td style="text-align:center;padding:8px 0;font-weight:600;">${esc(r.p||'—')}</td><td style="text-align:center;padding:8px 0;font-weight:600;">${esc(r.s||'—')}</td></tr>`;}).join('')}
+              ${lmRows.map((r,i)=>{const ic=iconMap[r.type];return `<tr style="border-bottom:${i===lmRows.length-1?'none':'1px solid var(--border)'}; hover-bg:rgba(0,0,0,0.01);"><td scope="row" style="padding:11px 8px;"><div style="display:flex;align-items:center;gap:8px;"><span class="material-icons" aria-hidden="true" style="font-size:18px;color:${ic.color};">${ic.icon}</span><span style="font-weight:500;color:var(--text-primary);">${r.type}</span></div></td><td style="text-align:center;padding:11px 8px;font-weight:600;color:var(--text-primary);">${esc(r.p||'—')}</td><td style="text-align:center;padding:11px 8px;font-weight:600;color:var(--text-primary);">${esc(r.s||'—')}</td></tr>`;}).join('')}
             </tbody>
           </table>`;
         })()}
