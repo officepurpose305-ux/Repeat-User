@@ -1617,14 +1617,18 @@ function modLocalitiesRadar(stage, city, primary) {
     }
   });
 
-  // Generate dynamic insight from top localities' metros
+  // Generate dynamic insight ONLY from real Supabase data (not MOCK_DATA fallback)
   let insightText = 'Your top views + nearby alternatives';
-  const topMetros = allCards.slice(0, 3).map(c => c.meta?.metro || '').filter(Boolean);
-  if (topMetros.length >= 2) {
-    const commonMetro = topMetros[0]?.split('·')[0]?.trim();
-    const allSame = topMetros.every(m => m.includes(commonMetro || ''));
-    if (allSame && commonMetro) {
-      insightText = `Your ${allCards.slice(0, 3).length} top views are all on the ${commonMetro} corridor`;
+  const hasRealData = data.localities && data.localities.length > 0;
+
+  if (hasRealData) {
+    const topMetros = allCards.slice(0, 3).map(c => c.meta?.metro || '').filter(Boolean);
+    if (topMetros.length >= 2) {
+      const commonMetro = topMetros[0]?.split('·')[0]?.trim();
+      const allSame = topMetros.every(m => m.includes(commonMetro || ''));
+      if (allSame && commonMetro) {
+        insightText = `Your ${allCards.slice(0, 3).length} top views are all on the ${commonMetro} corridor`;
+      }
     }
   }
 
