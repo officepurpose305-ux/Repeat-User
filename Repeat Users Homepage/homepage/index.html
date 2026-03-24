@@ -1239,7 +1239,7 @@ function renderPage() {
 // ── Modules ───────────────────────────────────────────────────────────────────
 
 function modContextChips(stage, primary, secondary) {
-  if (stage === 1 || !primary) return null;
+  if (!primary || stage < 2) return null;  // Show S2+ with primary location
   const locations = [primary];
   if (secondary && secondary !== primary) locations.push(secondary);
   const chips = locations.map(loc => `<button class="ds-chip ds-chip-md">${esc(loc)}</button>`).join('');
@@ -1291,7 +1291,7 @@ function reactionHtml(key, notePlaceholder) {
 
 // WIREFRAME-ALIGNED: modContinue now shows for all stages (S1-S5)
 function modContinue(stage, primary, secondary) {
-  if (stage < 2 || stage > 3) return null;  // S2, S3 only (Continue Where You Left Off)
+  if (stage < 1 || stage > 4) return null;  // S1-S4 (Continue Where You Left Off)
   if (!primary && stage !== 1) return null; // S1 is okay with no primary
 
   // PRIORITY: rawData → data → getMockData
@@ -1585,7 +1585,7 @@ function modLocalitySuggestions(stage, primary, secondary) {
 }
 
 function modLocalitiesRadar(stage, city, primary) {
-  if (stage < 2 || stage > 3) return null;  // S2-S3
+  if (stage < 1 || stage > 3) return null;  // S1-S3
 
   // For S2: Show recently viewed + nearby suggestions in one consolidated view
   const props = data.properties || [];
@@ -1724,7 +1724,7 @@ function modPropertiesInSecondary(stage, secondary) {
   if (stage !== 3 || !secondary) return null;
   const f = config.filters||{};
   const budget = f.budgetMax ? '₹'+f.budgetMin+'L–₹'+f.budgetMax+'L' : '';
-  const props = data.properties.slice(2, 4);
+  const props = (data && data.properties) ? data.properties.slice(2, 4) : [];
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
       <div style="padding:12px 14px;text-align:left;"><div class="ds-section-heading">Properties in ${esc(secondary)}${budget?' · '+budget:''}</div></div>
@@ -1739,8 +1739,8 @@ function modHeadToHead(stage, primary, secondary, worksNear) {
   if (stage !== 3) return null;
   if (!secondary) return null;
   const _fb = getMockData(config);
-  const l1 = data.localities[0]||_fb.localities[0];
-  const l2 = data.localities[1]||_fb.localities[1];
+  const l1 = (data && data.localities && data.localities[0]) || _fb.localities[0];
+  const l2 = (data && data.localities && data.localities[1]) || _fb.localities[1];
   const filt = config.filters || {};
   const cap = filt.budgetMax || 85;
   const sqft1 = Math.round(cap * 100000 / (l1.avgPsqft || 8000) / 10) * 10;
@@ -1837,7 +1837,7 @@ function modNearestLandmarks(stage, primary, secondary) {
 function modTradeoff(stage, primary, secondary) {
   if (stage !== 3 || !secondary) return null;
   const _adjFb = getMockData(config).adjacentLocalities;
-  const adj0 = data.adjacentLocalities[0] || _adjFb[0] || {};
+  const adj0 = (data && data.adjacentLocalities && data.adjacentLocalities[0]) || _adjFb[0] || {};
   const saving = Math.abs(adj0.delta || 8);
   const metroNote = adj0.metro || _adjFb[0] && _adjFb[0].metro || 'farther from metro';
   return `<div class="sec sec-pad">
@@ -1859,29 +1859,29 @@ function modPropertiesPrimary(stage, primary, secondary, worksNear) {
 
   // ── INTELLIGENT FALLBACK FILTERING ──
   // Stage 1: Filter by exact primary location
-  let candidateProperties = data.properties.filter(p => p.location.includes(primary));
+  let candidateProperties = (data && data.properties) ? data.properties.filter(p => p.location.includes(primary)) : [];
   let fallbackType = null;
 
   // Stage 2: If empty, try adjacent localities
-  if (!candidateProperties.length && (data.adjacentLocalities || []).length > 0) {
+  if (!candidateProperties.length && (data && data.adjacentLocalities && data.adjacentLocalities.length)) {
     const adjacentNames = data.adjacentLocalities.map(a => a.name);
-    candidateProperties = data.properties.filter(p =>
+    candidateProperties = (data && data.properties) ? data.properties.filter(p =>
       adjacentNames.some(adj => p.location.includes(adj))
-    );
+    ) : [];
     if (candidateProperties.length) fallbackType = 'adjacent';
   }
 
   // Stage 3: If still empty, try same price tier (±30%)
   if (!candidateProperties.length) {
-    const targetLoc = data.localities && data.localities.find(l =>
+    const targetLoc = (data && data.localities) ? data.localities.find(l =>
       l.name.toLowerCase().includes(primary.toLowerCase())
-    );
+    ) : null;
     if (targetLoc) {
       const priceBand = targetLoc.avgPsqft * 0.3;
-      candidateProperties = data.properties.filter(p => {
+      candidateProperties = (data && data.properties) ? data.properties.filter(p => {
         const pPrice = parsePriceLakhs(p.price);
         return Math.abs(pPrice - targetLoc.avgPsqft) <= priceBand;
-      });
+      }) : [];
       if (candidateProperties.length) fallbackType = 'price-tier';
     }
   }
@@ -1953,8 +1953,8 @@ function modPropertiesPrimary(stage, primary, secondary, worksNear) {
 
 function modNearbyLocalities(stage, primary) {
   if (stage < 2 || stage > 3) return null;  // Show S2-S3 only
-  const adjs = data.adjacentLocalities.length ? data.adjacentLocalities : getMockData(config).adjacentLocalities;
-  const propPool = data.properties.length > 5 ? data.properties : getMockData(config).properties;
+  const adjs = (data && data.adjacentLocalities && data.adjacentLocalities.length) ? data.adjacentLocalities : getMockData(config).adjacentLocalities;
+  const propPool = (data && data.properties && data.properties.length > 5) ? data.properties : getMockData(config).properties;
 
   const cards = adjs.slice(0, 2).map((a, ai) => {
     // For this adjacent locality, filter and score all properties in it
@@ -1998,7 +1998,7 @@ function modNearbyLocalities(stage, primary) {
 
 function modBudgetAnchor(stage, primary) {
   if (stage !== 1) return null;
-  const loc = data.localities[0] || getMockData(config).localities[0];
+  const loc = (data && data.localities && data.localities[0]) || getMockData(config).localities[0];
   if (!loc || !loc.avgPsqft) return null;
   const entry = Math.round(loc.avgPsqft * 900 / 100000);
   const mid   = Math.round(loc.avgPsqft * 1050 / 100000);
@@ -2034,12 +2034,12 @@ function modBudgetFit(stage, f, primary, secondary) {
   const max = f.budgetMax || 0;
   if (!max) return null;
 
-  const loc = data.localities[0] || getMockData(config).localities[0];
+  const loc = (data && data.localities && data.localities[0]) || getMockData(config).localities[0];
   if (!loc || !loc.avgPsqft) return null;
 
   let headline, bodyText, btnText;
   if (stage === 3 && secondary) {
-    const loc2 = data.localities[1] || getMockData(config).localities[1];
+    const loc2 = (data && data.localities && data.localities[1]) || getMockData(config).localities[1];
     if (loc2 && loc2.avgPsqft) {
       const sqft1 = Math.round(max * 100000 / loc.avgPsqft / 10) * 10;
       const sqft2 = Math.round(max * 100000 / loc2.avgPsqft / 10) * 10;
@@ -2084,9 +2084,9 @@ function modBudgetFit(stage, f, primary, secondary) {
 
 function modDecisionSpotlight(stage, primary, worksNear) {
   if (stage < 4) return null;  // S4, S5 (Decision Spotlight)
-  const prop = data.properties[0];
+  const prop = (data && data.properties) ? data.properties[0] : null;
   if (!prop) return null;
-  const loc = data.localities[0] || getMockData(config).localities[0];
+  const loc = (data && data.localities && data.localities[0]) || getMockData(config).localities[0];
   const yoy = loc ? (loc.yoy || 12) : 12;
   // EMI estimate: approx (price in lakhs * 100000 * 0.0085) / 1000 = rough ₹/mo
   const priceLakhs = parsePriceLakhs(prop.price);
@@ -2136,9 +2136,9 @@ function modDecisionSpotlight(stage, primary, worksNear) {
 
 function modStillConsidering(stage, primary) {
   if (stage !== 4 && stage !== 5) return null;
-  const props = data.properties.slice(1, 4);
+  const props = (data && data.properties) ? data.properties.slice(1, 4) : [];
   if (!props.length) return null;
-  const topProp = data.properties[0];
+  const topProp = (data && data.properties) ? data.properties[0] : null;
   const topPrice = parsePriceLakhs(topProp ? topProp.price : null);
   const cards = props.map((p, i) => {
     const propPrice = parsePriceLakhs(p.price);
@@ -2208,7 +2208,7 @@ function modStillConsidering(stage, primary) {
 
 function modVisitPlanner(stage) {
   if (stage !== 4) return null;
-  const props = data.properties.slice(1, 4);
+  const props = (data && data.properties) ? data.properties.slice(1, 4) : [];
   if (!props.length) return null;
   const cards = props.slice(0, 3).map(p => `<div class="ds-prop-card horizontal">
     <div class="ds-prop-card-img" style="position:relative;">
@@ -2235,10 +2235,11 @@ function modVisitPlanner(stage) {
 }
 
 function modSimilarBHK(stage, bhk, primary) {
-  if (stage !== 2) return null;
+  if (stage !== 1 && stage !== 2) return null;  // S1-S2
   // Use rawData so budget/RTM filter doesn't shrink the pool; deduplicate against what PropertiesPrimary already shows
-  const shown = new Set(data.properties.slice(0, 4).map(p => p.name));
-  const pool = (rawData.properties || data.properties).filter(p => !shown.has(p.name));
+  const shownProps = (data && data.properties) ? data.properties.slice(0, 4) : [];
+  const shown = new Set(shownProps.map(p => p.name));
+  const pool = ((rawData && rawData.properties) || (data && data.properties) || []).filter(p => !shown.has(p.name));
   const props = pool.slice(0, 3);
   if (!props.length) return null;
   const cards = props.map(p => `<div class="ds-prop-card horizontal">
@@ -2264,7 +2265,7 @@ function modSimilarBHK(stage, bhk, primary) {
 }
 
 function modExpertAgents(stage, primary, secondary) {
-  if (stage !== 3) return null;
+  if (stage < 1 || stage > 3) return null;  // S1-S3
   const agents = [
     { init:'AS', name:'Arpit Sharma', area:'Expert for '+primary+' & '+( secondary||'nearby'), avClass:'av-blue', rating:4.8, deals:12 },
     { init:'PJ', name:'Preeti Joshi', area:'Expert for '+(secondary||primary)+' · 5yr experience', avClass:'av-purple', rating:4.6, deals:8 },
@@ -2280,7 +2281,7 @@ function modExpertAgents(stage, primary, secondary) {
 }
 
 function modUpcomingDevelopments(stage, primary) {
-  if (stage < 3 || stage > 4) return null;  // Show S3-S4
+  // Show for all stages (S1-S5) - upcoming developments in area are always relevant
   const cityName = (config.location && config.location.city) || primary;
   const devs = [
     { title:'Property prices are rising rapidly in '+cityName, date:'Feb 28, 2026' },
@@ -2358,7 +2359,7 @@ function modNearbyComparison(stage, primary) {
   if (stage !== 3) return null;
   if (config.location && config.location.secondary) return null;
   const _fb2 = getMockData(config);
-  const adjs = data.adjacentLocalities.length ? data.adjacentLocalities : _fb2.adjacentLocalities;
+  const adjs = (data && data.adjacentLocalities && data.adjacentLocalities.length) ? data.adjacentLocalities : _fb2.adjacentLocalities;
   const pair = adjs.slice(0, 2);
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;"><div class="ds-section-heading">More localities to explore</div></div>
@@ -2377,7 +2378,7 @@ function modNearbyComparison(stage, primary) {
 
 function modNewLaunches(stage, primary) {
   if (stage > 3) return null; // Show S1-S3; S4+: discovery noise
-  const nl = data.properties.filter(p=>!p.ready_to_move)[0] || getMockData(config).properties[2];
+  const nl = ((data && data.properties) ? data.properties.filter(p=>!p.ready_to_move)[0] : null) || getMockData(config).properties[2];
   return `<div class="nl-wrap">
     <div class="nl-top">
       <div class="nl-icon">✦</div>
@@ -2429,7 +2430,7 @@ function modPeopleAlsoViewed(stage, primary) {
 }
 
 function modPriceTrend(stage, primary) {
-  const loc = data.localities[0]||getMockData(config).localities[0];
+  const loc = (data && data.localities && data.localities[0]) || getMockData(config).localities[0];
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
       <div class="ds-section-heading">Price Trends</div>
@@ -2500,7 +2501,7 @@ function modDecisionVelocity(stage) {
 }
 
 function modTools(stage) {
-  if (stage === 1) return null;  // Show S2, S3, S4, S5
+  // Show for all stages (S1-S5), with fallback to S2 tools
   const sets = {
     2:[{icon:'trending_up',name:'Price Trends',desc:'Locality history'},{icon:'menu_book',name:'Buyer Guide',desc:'Step-by-step checklist'}],
     3:[{icon:'trending_up',name:'Price Trends',desc:'Locality history'},{icon:'calculate',name:'EMI Calculator',desc:'Monthly outflow'},{icon:'account_balance',name:'Home Loan Guide',desc:'Rates & eligibility'},{icon:'menu_book',name:'Buyer Guide',desc:'Step-by-step checklist'}],
@@ -2529,7 +2530,7 @@ function modHelpWith(stage) {
 }
 
 function modArticles(stage, primary, secondary) {
-  if (stage === 1) return null;
+  // Show for all stages (S1-S5)
   const city = (config.location && config.location.city) || primary;
   const sets = {
     2:[
