@@ -1617,6 +1617,17 @@ function modLocalitiesRadar(stage, city, primary) {
     }
   });
 
+  // Generate dynamic insight from top localities' metros
+  let insightText = 'Your top views + nearby alternatives';
+  const topMetros = allCards.slice(0, 3).map(c => c.meta?.metro || '').filter(Boolean);
+  if (topMetros.length >= 2) {
+    const commonMetro = topMetros[0]?.split('·')[0]?.trim();
+    const allSame = topMetros.every(m => m.includes(commonMetro || ''));
+    if (allSame && commonMetro) {
+      insightText = `Your ${allCards.slice(0, 3).length} top views are all on the ${commonMetro} corridor`;
+    }
+  }
+
   const cards = allCards.map(card => {
     const opacity = card.isSuggested ? 0.85 : 1;
     const borderColor = card.isSuggested ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.16)';
@@ -1626,6 +1637,10 @@ function modLocalitiesRadar(stage, city, primary) {
       ? `<div style="display:inline-block;background:rgba(59,130,246,0.15);color:#2563eb;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;margin-bottom:6px;">💡 SUGGESTED</div>`
       : '';
 
+    // Better metro/location display
+    const metroInfo = card.meta?.metro ? card.meta.metro.split('·').map(s => s.trim()) : [];
+    const metroDisplay = metroInfo.length > 1 ? `${metroInfo[0]} · ${metroInfo[1]}` : (metroInfo[0] || '—');
+
     return `<div style="flex-shrink:0;width:220px;background:white;border:1px solid ${borderColor};border-radius:8px;padding:12px;opacity:${opacity};display:flex;flex-direction:column;">
       ${badgeHtml}
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
@@ -1633,9 +1648,9 @@ function modLocalitiesRadar(stage, city, primary) {
       </div>
       ${card.isSuggested ? `<div style="font-size:10px;color:var(--text2);margin-bottom:8px;">≈ ${Math.abs(card.distance).toFixed(1)}km from ${esc(primary)}</div>` : ''}
       <div style="font-size:12px;color:#555555;margin-bottom:8px;">${esc(card.meta?.bhkRange||'2-3 BHK')}</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text2);margin-bottom:8px;"><span>📍</span><span>${metroDisplay}</span></div>
       <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:#999999;">₹/sqft</span><span style="color:#111111;font-weight:700;">₹${card.meta?.avgPsqft||'—'}</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:#999999;">Price growth</span><span style="color:#16a34a;font-weight:700;">+${card.meta?.yoy||'—'}% YoY</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:11px;flex:1;"><span style="color:#999999;">Metro</span><span style="color:#111111;font-weight:700;">${esc(card.meta?.metro||'—')}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:11px;flex:1;"><span style="color:#999999;">Growth</span><span style="color:#16a34a;font-weight:700;">+${card.meta?.yoy||'—'}% YoY</span></div>
       <button class="ds-btn ds-btn-tertiary ds-btn-xs" style="width:100%;margin-top:auto;">View properties →</button>
     </div>`;
   }).join('');
@@ -1643,7 +1658,7 @@ function modLocalitiesRadar(stage, city, primary) {
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
       <div class="ds-section-heading">Localities on your radar</div>
-      <div class="ds-heading-sub">Your top views + nearby alternatives</div>
+      <div class="ds-heading-sub">${insightText}</div>
     </div>
     <div class="hscroll">${cards}</div>
   </div>`;
