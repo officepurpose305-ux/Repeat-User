@@ -584,16 +584,20 @@
         <div class="section-title">Quick Load Persona</div>
         <select id="persona-selector" onchange="window.loadPersona(this.value, true)" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;cursor:pointer;">
           <option value="">— Select a persona —</option>
-          <optgroup label="── STAGE 2: LOCALITY AWARENESS ────">
-            <option value="priya">Priya Mehta | Budget: ₹70L–1.2Cr | Sector 137</option>
-            <option value="rahul">Rahul Sharma | Budget: ₹70L–1Cr | Sector 137</option>
+          <optgroup label="── 2-3 VISIT (CITY ENTRY) ────">
+            <option value="priya">Priya Mehta | ₹70L–1.2Cr | Exploring Noida</option>
           </optgroup>
-          <optgroup label="── STAGE 3: COMPARISON ────────────">
-            <option value="meera">Meera Iyer | Budget: ₹65L–90L | Noida</option>
-            <option value="vikram">Vikram Nair | Budget: ₹85L–3.5Cr | Noida</option>
+          <optgroup label="── 2-3 VISIT (LOCALITY CONFIDENT) ────">
+            <option value="rahul">Rahul Sharma | ₹70L–1Cr | Sector 137 Only</option>
           </optgroup>
-          <optgroup label="── STAGE 4: DECISION ──────────────">
-            <option value="upgrader">Ankit Verma | Budget: ₹1.1Cr–2Cr | Sector 137</option>
+          <optgroup label="── 5+ VISIT (COMPARISON) ────">
+            <option value="meera">Meera Iyer | ₹65L–90L | Sector 137 vs Noida Ext</option>
+          </optgroup>
+          <optgroup label="── 7+ VISIT (MULTIPLE LOCALITIES) ────">
+            <option value="vikram">Vikram Nair | ₹85L–3.5Cr | Sector 75 vs 107</option>
+          </optgroup>
+          <optgroup label="── DECISION ────">
+            <option value="upgrader">Ankit Verma | ₹110L–2Cr | Ready to Buy</option>
           </optgroup>
         </select>
       </div>
@@ -837,6 +841,7 @@ console.log('[panel] Script loaded - starting initialization...');
   };
   const STAGE_COLORS = {
     1: '#6B7280',
+    '1.5': '#06B6D4',  // Cyan for locality-confident
     2: '#3B82F6',
     3: '#8B5CF6',
     4: '#F59E0B',
@@ -853,7 +858,7 @@ console.log('[panel] Script loaded - starting initialization...');
   /* ─── Preset personas ─── */
   const PERSONAS = {
     priya: {
-      // S2: Broad city entry, locality aware, exploring options. Budget: Sector 137 2BHK range ₹72-85L
+      // 2-3 visit (City): Broad city entry, locality aware, exploring options. Budget: Sector 137 2BHK range ₹70-120L
       user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 3,
       location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: true },
@@ -862,7 +867,7 @@ console.log('[panel] Script loaded - starting initialization...');
       stageOverride: 2
     },
     rahul: {
-      // S2: Tight budget, Sector 137 2BHK focus. Budget: ₹72-100L range
+      // 2-3 visit (Locality): Locality-confident buyer. Single locality (Sector 137), tight budget, 2BHK focus. Budget: ₹70-100L range
       user: { name: 'Rahul Sharma', age: 34, occupation: 'Software Engineer', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 5,
       location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: false },
@@ -871,7 +876,7 @@ console.log('[panel] Script loaded - starting initialization...');
       stageOverride: 2
     },
     meera: {
-      // S3: Budget-constrained teacher. Budget: ₹65-90L for affordable Sector 137 2BHK
+      // 5+ visit: Budget-constrained teacher comparing Sector 137 & Noida Extension. Budget: ₹65-90L for affordable 2BHK
       user: { name: 'Meera Iyer', age: 29, occupation: 'Teacher', worksNear: null },
       lastVisitDaysAgo: 7,
       location: { primary: 'Sector 137', secondary: 'Noida Extension', city: 'Noida', openToNearby: true },
@@ -880,7 +885,7 @@ console.log('[panel] Script loaded - starting initialization...');
       stageOverride: 3
     },
     vikram: {
-      // S3: Business owner investor. Budget: ₹85-350L covers Sector 75 2BHK to Sector 107 3BHK luxury
+      // 7+ visit (Multiple localities): Business owner investor comparing Sector 75 & 107. Budget: ₹85-350L covers 2BHK to luxury 3BHK
       user: { name: 'Vikram Nair', age: 45, occupation: 'Business Owner', worksNear: null },
       lastVisitDaysAgo: 2,
       location: { primary: 'Sector 75', secondary: 'Sector 107', city: 'Noida', openToNearby: true },
@@ -889,7 +894,7 @@ console.log('[panel] Script loaded - starting initialization...');
       stageOverride: 3
     },
     upgrader: {
-      // S4: Senior manager upgrading to 3BHK. Budget: ₹110-200L covers Sector 137 3BHK range
+      // Decision: Senior manager ready to upgrade to 3BHK, high intent. Budget: ₹110-200L for Sector 137 3BHK
       user: { name: 'Ankit Verma', age: 38, occupation: 'Senior Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 1,
       location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: false },
@@ -1188,6 +1193,18 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     } else {
       profile.stage = inferStage(profile);
     }
+
+    // S1.5 DETECTION: Locality-confident buyers (single locality, not exploring alternatives)
+    const { primary, secondary, openToNearby } = profile.location;
+    const isLocalityConfident = profile.stage === 2 &&
+                                 primary &&
+                                 !secondary &&
+                                 !openToNearby;
+    profile.isLocalityConfident = isLocalityConfident;
+    if (isLocalityConfident) {
+      console.log('[collect] ✓ S1.5 detected for', primary, '- isLocalityConfident:', isLocalityConfident);
+    }
+
     return profile;
   }
 
@@ -1237,12 +1254,21 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
   /* ─── Update UI elements ─── */
   function updateUI() {
     const { score, reasons } = scoreProfile(profile);
-    const stage = profile.stage; // respect stageOverride — don't re-infer here
-    const color = STAGE_COLORS[stage] || '#555';
-    const name = STAGE_NAMES[stage] || '—';
+    let stage = profile.stage; // respect stageOverride — don't re-infer here
+    let stageName = STAGE_NAMES[stage] || '—';
+
+    // S1.5: Locality-confident variant
+    let colorKey = profile.stage;
+    if (profile.isLocalityConfident) {
+      stage = '1.5';
+      stageName = 'Locality Confident';
+      colorKey = '1.5';  // Use S1.5 color
+    }
+
+    const color = STAGE_COLORS[colorKey] || '#555';
     // Stage badge in sidebar
     document.getElementById('stage-dot').style.background = color;
-    document.getElementById('stage-label').textContent = 'Stage ' + stage + ' · ' + name;
+    document.getElementById('stage-label').textContent = 'Stage ' + stage + ' · ' + stageName;
     // Scored reasons list
     const reasonsEl = document.getElementById('stage-reasons');
     if (reasonsEl) {
@@ -1261,7 +1287,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     // Preview header
     const pName = profile.user && profile.user.name ? profile.user.name + ' · Preview' : 'Preview';
     document.getElementById('preview-title').textContent = pName;
-    document.getElementById('preview-stage').textContent = 'Stage ' + stage + ' · ' + name;
+    document.getElementById('preview-stage').textContent = 'Stage ' + stage + ' · ' + stageName;
   }
 
   /* ─── Budget parser ─── */
@@ -1335,8 +1361,14 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     const p = PERSONAS[key];
     if (!p) return;
     activeSessionId = null;
-    fillForm(p);  // fillForm() calls collect() internally, no need to call it again
-    if (p.stageOverride != null) profile.stage = p.stageOverride;
+    fillForm(p);  // fillForm() calls collect() + updateUI() internally
+    if (p.stageOverride != null) {
+      profile.stageOverride = p.stageOverride;
+      profile.stage = p.stageOverride;
+      // Re-run collect() to update isLocalityConfident with the final stage
+      collect();
+      updateUI();  // Update UI after collect() to reflect isLocalityConfident
+    }
     sendToIframe(profile);
     if (!silent) toast('Loaded: ' + (p.user.name || key), 'success');
     renderSessionList();
@@ -1371,7 +1403,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
       const payload = JSON.parse(JSON.stringify(p));
       if (window.NINETY_NINE_ACRES_API_BASE) payload.apiBase = window.NINETY_NINE_ACRES_API_BASE;
       if (window.OPENAI_API_KEY) payload.openAIKey = window.OPENAI_API_KEY;
-      console.log('[sendToIframe] ✓ About to post CONFIG_UPDATE with stage:', payload.stage, 'primary:', payload.location?.primary, 'secondary:', payload.location?.secondary);
+      console.log('[sendToIframe] ✓ About to post CONFIG_UPDATE with stage:', payload.stage, 'primary:', payload.location?.primary, 'isLocalityConfident:', payload.isLocalityConfident);
       iframe.contentWindow.postMessage({ type: 'CONFIG_UPDATE', config: payload }, '*');
       console.log('[sendToIframe] ✓✓ CONFIG_UPDATE posted successfully');
       // Update status indicator when successfully sending
