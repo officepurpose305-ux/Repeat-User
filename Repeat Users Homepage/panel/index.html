@@ -1152,6 +1152,16 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     document.querySelectorAll('.bhk-chip.on').forEach(el => bhk.push(el.dataset.bhk));
     const oldCity = profile.location && profile.location.city ? profile.location.city : null;
     const oldStageOverride = profile.stageOverride; // Preserve stageOverride from persona
+
+    const budgetMin = parseBudgetToLakhs(v('f-bmin'));
+    const budgetMax = parseBudgetToLakhs(v('f-bmax'));
+    console.log('[collect] Budget from inputs:', {
+      rawMin: v('f-bmin'),
+      rawMax: v('f-bmax'),
+      parsedMin: budgetMin,
+      parsedMax: budgetMax
+    });
+
     profile = {
       user: {
         name: v('f-name') || null,
@@ -1167,8 +1177,8 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
         openToNearby: on('t-nearby')
       },
       filters: {
-        budgetMin: parseBudgetToLakhs(v('f-bmin')),
-        budgetMax: parseBudgetToLakhs(v('f-bmax')),
+        budgetMin: budgetMin,
+        budgetMax: budgetMax,
         bhk: bhk.length ? bhk : ['2BHK'],
         readyToMove: v('f-rtm'),
         buyTimeline: v('f-timeline')
@@ -1295,7 +1305,9 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     if (inferredCity) profile.location.city = inferredCity;
     updateUI();
     clearTimeout(syncTimer);
+    console.log('[sync] Timer set. Will send to iframe with filters:', profile.filters);
     syncTimer = setTimeout(function() {
+      console.log('[sync] Timer fired. Sending to iframe with filters:', profile.filters);
       sendToIframe(profile);
       writeLiveConfig();
     }, 400);
