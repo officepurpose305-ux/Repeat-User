@@ -1170,15 +1170,14 @@ function renderPage() {
   }
 
   // ── S3: COMPARISON FLOW ──────────────────────────────────────────────────────────
-  // Continue → Consideration Set → Properties in Secondary → Head to Head → Tradeoff →
-  // Landmarks → Expert Sellers → Upcoming → Price Trend → Nearby Localities
+  // Continue → Consideration Set → Properties in Secondary → Head to Head (with Landmarks) →
+  // Tradeoff → Expert Sellers → Upcoming → Price Trend → Nearby Localities
   else if (stage === 3) {
     mods.push(modContinue(stage, primary, secondary));         // Continue where you left off
     mods.push(modConsiderationSet(stage));                     // What is your consideration set?
     mods.push(modPropertiesInSecondary(stage, secondary));     // Properties in secondary locality
-    mods.push(modHeadToHead(stage, primary, secondary, worksNear)); // Head to Head comparison
+    mods.push(modHeadToHead(stage, primary, secondary, worksNear)); // Head to Head comparison + Nearest landmarks
     mods.push(modTradeoff(stage, primary, secondary));         // Tradeoff insight (budget vs space vs commute)
-    mods.push(modNearestLandmarks(stage, primary, secondary)); // Nearest landmarks
     mods.push(modExpertAgents(stage, primary, secondary));     // Experts to help you
     mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments
     mods.push(modPriceTrend(stage, primary));                  // Price trend / Social proof
@@ -1805,6 +1804,29 @@ function modHeadToHead(stage, primary, secondary, worksNear) {
             <div style="font-size:14px;font-weight:800;color:${r.win===1?'var(--green)':'var(--text-primary)'};">${esc(r.v2)}</div>
           </div>`).join('')}
         </div>
+      </div>
+    </div>
+    <!-- Landmarks Section -->
+    <div style="padding:12px 14px;border-top:1px solid var(--border);margin-top:12px;">
+      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:8px;padding:8px 0;">NEAREST LANDMARKS</div>
+      <div class="lm-table-wrap">
+        ${(() => {
+          const lm = (data.landmarks && data.landmarks.primary) ? data.landmarks : getMockData(config).landmarks;
+          const iconMap = { Metro: { icon: 'directions_subway', cls: 'metro' }, Hospital: { icon: 'local_hospital', cls: 'hospital' }, School: { icon: 'school', cls: 'school' }, Mall: { icon: 'shopping_bag', cls: 'mall' } };
+          const lmRows = [
+            { type:'Metro', p: lm.primary.metro, s: lm.secondary.metro },
+            { type:'Hospital', p: lm.primary.hospital, s: lm.secondary.hospital },
+            { type:'School', p: lm.primary.school, s: lm.secondary.school },
+            { type:'Mall', p: lm.primary.mall, s: lm.secondary.mall },
+          ];
+          return `<table class="lm-table" style="width:100%;font-size:11px;">
+            <caption class="sr-only">Landmark distances for ${esc(primary)} and ${esc(secondary||'Nearby')}</caption>
+            <thead><tr style="border-bottom:1px solid var(--border);"><th scope="col" style="text-align:left;padding:6px 0;font-weight:600;color:var(--text-secondary);">Landmark</th><th scope="col" style="text-align:center;padding:6px 0;font-weight:600;color:var(--text-secondary);">${esc(primary)}</th><th scope="col" style="text-align:center;padding:6px 0;font-weight:600;color:var(--text-secondary);">${esc(secondary||'Nearby')}</th></tr></thead>
+            <tbody>
+              ${lmRows.map(r=>{const ic=iconMap[r.type];return `<tr style="border-bottom:1px solid var(--border);"><td scope="row" style="padding:8px 0;"><div style="display:flex;align-items:center;gap:6px;"><span class="material-icons" aria-hidden="true" style="font-size:16px;color:var(--blue);">${ic.icon}</span><span>${r.type}</span></div></td><td style="text-align:center;padding:8px 0;font-weight:600;">${esc(r.p||'—')}</td><td style="text-align:center;padding:8px 0;font-weight:600;">${esc(r.s||'—')}</td></tr>`;}).join('')}
+            </tbody>
+          </table>`;
+        })()}
       </div>
     </div>
   </div>`;
