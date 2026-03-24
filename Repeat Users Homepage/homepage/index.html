@@ -1607,24 +1607,24 @@ function modConsiderationSet(stage) {
       { icon:'train', label:'Metro' },
       { icon:'local_hospital', label:'Hospital' },
       { icon:'school', label:'School' },
-      { icon:'shopping_center', label:'Market/shops' },
+      { icon:'shopping_center', label:'Market', count:123 },
     ];
-    return `<div class="sec" style="padding:16px 0;">
+    return `<div class="sec">
       <div class="sec-pad">
         <div class="ds-section-heading">Which of these matters most to your daily routine?</div>
         <div class="ds-heading-sub">Accordingly let's help in figuring out a locality for you</div>
       </div>
-      <div style="padding:0 14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-        ${factors.slice(0, 3).map(f=>`<button class="ds-chip ds-chip-md">
-          <span class="material-icons" aria-hidden="true">${f.icon}</span> ${f.label}
+      <div style="padding:0 14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        ${factors.map(f=>`<button class="landmark-chip" title="Select ${f.label}">
+          <span class="material-icons" aria-hidden="true" style="font-size:20px;">${f.icon}</span>
+          <span style="flex:1;text-align:left;font-size:14px;">${f.label}</span>
+          ${f.count ? `<span class="landmark-badge">${f.count}</span>` : ''}
         </button>`).join('')}
       </div>
-      <div style="padding:0 14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-        <button class="ds-chip ds-chip-md">
-          <span class="material-icons" aria-hidden="true">shopping_center</span> Market
-        </button>
-        <button class="ds-chip ds-chip-md">
-          <span class="material-icons" aria-hidden="true">add</span> Add a landmark
+      <div style="padding:0 14px 0;">
+        <button class="landmark-chip landmark-chip-add">
+          <span class="material-icons" aria-hidden="true" style="font-size:20px;">add</span>
+          <span style="flex:1;text-align:left;font-size:14px;">Add a landmark</span>
         </button>
       </div>
     </div>`;

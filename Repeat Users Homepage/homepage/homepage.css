@@ -460,3 +460,67 @@ button:focus:not(:focus-visible),
 /* ── Borders ── */
 .border-bottom { border-bottom: 1px solid var(--border); }
 
+/* ── Landmark selector chips ── */
+.landmark-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-weight: 500;
+  color: var(--text2);
+  font-size: 14px;
+  position: relative;
+}
+
+.landmark-chip:hover {
+  border-color: var(--blue);
+  background: var(--blue-light);
+  color: var(--text);
+}
+
+.landmark-chip:active {
+  transform: scale(0.97);
+}
+
+.landmark-chip:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.landmark-chip.active {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+}
+
+.landmark-chip-add {
+  justify-content: center;
+  border: 1.5px dashed var(--border);
+  background: rgba(37, 99, 235, 0.04);
+  color: var(--blue);
+}
+
+.landmark-chip-add:hover {
+  border-color: var(--blue);
+  background: var(--blue-light);
+}
+
+.landmark-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blue);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  min-width: 24px;
+  height: 20px;
+}
+
