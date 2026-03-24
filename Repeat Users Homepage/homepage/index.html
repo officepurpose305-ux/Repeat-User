@@ -882,8 +882,16 @@ async function fetchData(cfg) {
     }
   }
 
-  // No fallback — return empty if Supabase unavailable
-  console.log('[fetchData] ⚠ No real data available from Supabase');
+  // ── FALLBACK: Use MOCK_DATA from PDFs (Bangalore, Noida, Mumbai) ───────────
+  var mockData = getMockData(cfg);
+  if (mockData && mockData.properties && mockData.properties.length > 0) {
+    console.log('[fetchData] ✓ Using MOCK_DATA:', mockData.properties.length, 'properties from', loc.city || 'detected city');
+    config.dataSource = 'mock-data';
+    return mockData;
+  }
+
+  // Fallback to empty (shouldn't reach here if MOCK_DATA is populated)
+  console.log('[fetchData] ⚠ No data available');
   return { properties:[], localities:[], adjacentLocalities:[], landmarks:{} };
 }
 
@@ -1278,8 +1286,14 @@ function modContinue(stage, primary, secondary) {
   else if (rawData && rawData.properties && rawData.properties.length > 0) {
     props = rawData.properties.slice(0, 2);
   }
+  // Fallback to mock data - this ALWAYS works
+  else {
+    const mockData = getMockData(config);
+    if (mockData && mockData.properties) {
+      props = mockData.properties.slice(0, 2);
+    }
+  }
 
-  // No fallback to MOCK_DATA — require real data
   if (!props || props.length === 0) return null; // No data, skip
 
   const lastDays = config.lastVisitDaysAgo;
@@ -1387,10 +1401,8 @@ function modNewInSectors(stage, primary, worksNear) {
   if (stage < 1 || stage > 3) return null;
   const f = config.filters || {};
   const selectedBhk = f.bhk && f.bhk.length ? f.bhk : null;
-
-  // No MOCK_DATA fallback — require real data
-  const pool = (rawData && rawData.properties) || (data && data.properties) || [];
-  if (!pool || pool.length === 0) return null;
+  const fallback = getMockData(config);
+  const pool = (rawData && rawData.properties) || (data && data.properties) || (fallback.properties);
 
   // Filter: prefer properties matching BHK preference; if none match, fall back to unfiltered
   let newProps = pool.filter(p => !p.ready_to_move);
@@ -1571,13 +1583,9 @@ function modLocalitiesRadar(stage, city, primary) {
   });
 
   const uniqueLocalities = Object.keys(localityMap);
-
-  // No fallback to MOCK_DATA — require real data
-  if (!data.localities || !data.localities.length) return null;
-  if (!data.adjacentLocalities || !data.adjacentLocalities.length) return null;
-
-  const allLocs = data.localities;
-  const adjs = data.adjacentLocalities;
+  const fallback = getMockData(config);
+  const allLocs = data.localities && data.localities.length ? data.localities : fallback.localities;
+  const adjs = data.adjacentLocalities && data.adjacentLocalities.length ? data.adjacentLocalities : fallback.adjacentLocalities;
 
   // Combine: recently viewed (with stars) + suggested alternatives (lighter styling)
   const allCards = [];
@@ -1726,11 +1734,9 @@ function modPropertiesInSecondary(stage, secondary) {
 function modHeadToHead(stage, primary, secondary, worksNear) {
   if (stage !== 3) return null;
   if (!secondary) return null;
-
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.localities || data.localities.length < 2) return null;
-  const l1 = data.localities[0];
-  const l2 = data.localities[1];
+  const _fb = getMockData(config);
+  const l1 = (data && data.localities && data.localities[0]) || _fb.localities[0];
+  const l2 = (data && data.localities && data.localities[1]) || _fb.localities[1];
   const filt = config.filters || {};
   const cap = filt.budgetMax || 85;
   const sqft1 = Math.round(cap * 100000 / (l1.avgPsqft || 8000) / 10) * 10;
@@ -1826,12 +1832,10 @@ function modNearestLandmarks(stage, primary, secondary) {
 
 function modTradeoff(stage, primary, secondary) {
   if (stage !== 3 || !secondary) return null;
-
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.adjacentLocalities || data.adjacentLocalities.length === 0) return null;
-  const adj0 = data.adjacentLocalities[0] || {};
+  const _adjFb = getMockData(config).adjacentLocalities;
+  const adj0 = (data && data.adjacentLocalities && data.adjacentLocalities[0]) || _adjFb[0] || {};
   const saving = Math.abs(adj0.delta || 8);
-  const metroNote = adj0.metro || 'farther from metro';
+  const metroNote = adj0.metro || _adjFb[0] && _adjFb[0].metro || 'farther from metro';
   return `<div class="sec sec-pad">
     <div class="ds-insight">
       <div class="ds-insight-title-row">
@@ -1995,10 +1999,7 @@ function modNearbyLocalities(stage, primary) {
 
 function modBudgetAnchor(stage, primary) {
   if (stage !== 1) return null;
-
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.localities || data.localities.length === 0) return null;
-  const loc = data.localities[0];
+  const loc = (data && data.localities && data.localities[0]) || getMockData(config).localities[0];
   if (!loc || !loc.avgPsqft) return null;
   const entry = Math.round(loc.avgPsqft * 900 / 100000);
   const mid   = Math.round(loc.avgPsqft * 1050 / 100000);
@@ -2034,14 +2035,12 @@ function modBudgetFit(stage, f, primary, secondary) {
   const max = f.budgetMax || 0;
   if (!max) return null;
 
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.localities || data.localities.length === 0) return null;
-  const loc = data.localities[0];
+  const loc = (data && data.localities && data.localities[0]) || getMockData(config).localities[0];
   if (!loc || !loc.avgPsqft) return null;
 
   let headline, bodyText, btnText;
   if (stage === 3 && secondary) {
-    const loc2 = data.localities.length > 1 ? data.localities[1] : null;
+    const loc2 = (data && data.localities && data.localities[1]) || getMockData(config).localities[1];
     if (loc2 && loc2.avgPsqft) {
       const sqft1 = Math.round(max * 100000 / loc.avgPsqft / 10) * 10;
       const sqft2 = Math.round(max * 100000 / loc2.avgPsqft / 10) * 10;
@@ -2086,13 +2085,9 @@ function modBudgetFit(stage, f, primary, secondary) {
 
 function modDecisionSpotlight(stage, primary, worksNear) {
   if (stage < 4) return null;  // S4, S5 (Decision Spotlight)
-
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.properties || data.properties.length === 0) return null;
-  if (!data || !data.localities || data.localities.length === 0) return null;
-
-  const prop = data.properties[0];
-  const loc = data.localities[0];
+  const prop = (data && data.properties) ? data.properties[0] : null;
+  if (!prop) return null;
+  const loc = (data && data.localities && data.localities[0]) || getMockData(config).localities[0];
   const yoy = loc ? (loc.yoy || 12) : 12;
   // EMI estimate: approx (price in lakhs * 100000 * 0.0085) / 1000 = rough ₹/mo
   const priceLakhs = parsePriceLakhs(prop.price);
@@ -2150,13 +2145,10 @@ function modDecisionSpotlight(stage, primary, worksNear) {
 
 function modStillConsidering(stage, primary) {
   if (stage !== 4 && stage !== 5) return null;
-
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.properties || data.properties.length < 2) return null;
-
-  const props = data.properties.slice(1, 4);
+  const fallback = getMockData(config);
+  const props = (data && data.properties && data.properties.length) ? data.properties.slice(1, 4) : (fallback.properties || []).slice(1, 4);
   if (!props.length) return null;
-  const topProp = data.properties[0];
+  const topProp = (data && data.properties && data.properties.length) ? data.properties[0] : (fallback.properties || [])[0];
   const topPrice = parsePriceLakhs(topProp ? topProp.price : null);
   const cards = props.map((p, i) => {
     const propPrice = parsePriceLakhs(p.price);
@@ -2232,11 +2224,8 @@ function modStillConsidering(stage, primary) {
 
 function modVisitPlanner(stage) {
   if (stage !== 4) return null;
-
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.properties || data.properties.length < 2) return null;
-
-  const props = data.properties.slice(1, 4);
+  const fallback = getMockData(config);
+  const props = (data && data.properties && data.properties.length) ? data.properties.slice(1, 4) : (fallback.properties || []).slice(1, 4);
   if (!props.length) return null;
   const cards = props.slice(0, 3).map(p => `<div class="ds-prop-card horizontal">
     <div class="ds-prop-card-img" style="position:relative;">
@@ -2367,10 +2356,9 @@ function modUpcomingProjects(stage, primary) {
   if (cityLevel) return null;
 
   // Show new/upcoming properties in the primary location
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.properties || data.properties.length === 0) return null;
-
-  const props = data.properties
+  const fallback = getMockData(config);
+  const allProps = (data && data.properties && data.properties.length) ? data.properties : (fallback.properties || []);
+  const props = allProps
     .filter(p => p.location && p.location.includes(primary) && !p.ready_to_move)
     .slice(0, 2);
 
@@ -2415,19 +2403,17 @@ function modUpcomingProjects(stage, primary) {
 function modNearbyComparison(stage, primary) {
   if (stage !== 3) return null;
   if (config.location && config.location.secondary) return null;
-
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.adjacentLocalities || data.adjacentLocalities.length === 0) return null;
-
-  const pair = data.adjacentLocalities.slice(0, 2);
+  const _fb2 = getMockData(config);
+  const adjs = (data && data.adjacentLocalities && data.adjacentLocalities.length) ? data.adjacentLocalities : _fb2.adjacentLocalities;
+  const pair = adjs.slice(0, 2);
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;"><div class="ds-section-heading">More localities to explore</div></div>
     <div style="display:flex;gap:8px;padding:0 14px 4px;">
       ${pair.map(a=>`<div style="flex:1;background:white;border-radius:6px;padding:10px;border:1px solid rgba(0,0,0,0.16);box-shadow:0 2px 6px rgba(0,0,0,0.06);">
         <div style="font-size:13px;font-weight:800;color:var(--text-primary);margin-bottom:3px;">${esc(a.name)}</div>
         <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:6px;">${esc(a.label||'')} vs ${esc(primary)}</div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-tertiary);">Avg/sqft</span><span style="font-size:10px;font-weight:700;color:var(--text-primary);">₹${a.avgPsqft||7400}</span></div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-tertiary);">YoY</span><span style="font-size:10px;font-weight:700;color:var(--green);">+${a.yoy||14}%</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-tertiary);">Avg/sqft</span><span style="font-size:10px;font-weight:700;color:var(--text-primary);">₹${a.avgPsqft||((_fb2.localities[2]||{}).avgPsqft)||7400}</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-tertiary);">YoY</span><span style="font-size:10px;font-weight:700;color:var(--green);">+${a.yoy||((_fb2.localities[2]||{}).yoy)||14}%</span></div>
         <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:10px;color:var(--text-tertiary);">Metro</span><span style="font-size:10px;font-weight:700;color:var(--text-primary);">${esc(a.metro||'~1.5km')}</span></div>
         <div style="margin-top:7px;padding-top:6px;border-top:1px solid var(--border);font-size:10px;color:var(--text-tertiary);">${esc(a.summary||'Similar residential zone')}</div>
       </div>`).join('')}
@@ -2437,11 +2423,7 @@ function modNearbyComparison(stage, primary) {
 
 function modNewLaunches(stage, primary) {
   if (stage > 3) return null; // Show S1-S3; S4+: discovery noise
-
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.properties || data.properties.length === 0) return null;
-  const nl = data.properties.filter(p=>!p.ready_to_move)[0];
-  if (!nl) return null;
+  const nl = ((data && data.properties) ? data.properties.filter(p=>!p.ready_to_move)[0] : null) || getMockData(config).properties[2];
   return `<div class="nl-wrap">
     <div class="nl-top">
       <div class="nl-icon">✦</div>
@@ -2493,9 +2475,7 @@ function modPeopleAlsoViewed(stage, primary) {
 }
 
 function modPriceTrend(stage, primary) {
-  // No MOCK_DATA fallback — require real data
-  if (!data || !data.localities || data.localities.length === 0) return null;
-  const loc = data.localities[0];
+  const loc = (data && data.localities && data.localities[0]) || getMockData(config).localities[0];
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
       <div class="ds-section-heading">Price Trends</div>
