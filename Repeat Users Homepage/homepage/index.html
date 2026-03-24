@@ -406,31 +406,20 @@ function generateIntelligentMockData(city, searchedLocality) {
 
 // ── Property image pool (Unsplash — residential buildings) ────────────────────
 // 12 diverse real residential property images for Indian apartment listings
-const PROP_IMAGES = [
-  'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop',  // Modern balcony
-  'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop',  // Building exterior
-  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',  // Residential tower
-  'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop',  // Apartment complex
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',  // Modern residential
-  'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop',  // Luxury apartment
-  'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop',  // Building facade
-  'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop',  // Residential building
-  'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop',  // Modern architecture
-  'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop',  // Apartment tower
-  'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop',  // Residential complex
-  'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop',  // Building exterior
-];
+// REMOVED: Random Unsplash fallback images
+// Properties must have image_url from their data source (MOCK_DATA or Supabase)
+// If not available, a gray placeholder is shown instead of random images
 
 // Get property image - prefer 99acres API, fallback to Unsplash
 function getPropertyImage(p) {
-  // ✅ PRIORITY 1: Use 99acres API image if available (real property photo)
+  // ✅ PRIORITY 1: Use property image if available (real property photo from Supabase or MOCK_DATA)
   if (p.image_url && p.image_url.length > 0) {
     return p.image_url;
   }
 
-  // FALLBACK: Use Unsplash (deterministic based on property name hash)
-  const hash = (p.name||'x').split('').reduce(function(a,c){ return a + c.charCodeAt(0); }, 0);
-  return PROP_IMAGES[hash % PROP_IMAGES.length];
+  // FALLBACK: Return a placeholder data URL (gray background) instead of random images
+  // This ensures only actual property images are displayed, not random Unsplash fallbacks
+  return 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22600%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22800%22 height=%22600%22/%3E%3C/svg%3E';
 }
 
 // Renders property image (99acres API > Unsplash fallback)
@@ -2215,13 +2204,15 @@ function modSimilarBHK(stage, bhk, primary) {
   const primaryBhk = Array.isArray(bhk) ? bhk[0] : bhk;
   const alternateBhk = primaryBhk === '2BHK' ? '3BHK' : '2BHK';
 
-  // Use rawData so budget/RTM filter doesn't shrink the pool; deduplicate against what PropertiesPrimary already shows
+  // Use rawData (unfiltered) to ensure we have alternate BHK options even if outside budget
   const shownProps = (data && data.properties) ? data.properties.slice(0, 4) : [];
   const shown = new Set(shownProps.map(p => p.name));
-  const pool = ((rawData && rawData.properties) || (data && data.properties) || []).filter(p => !shown.has(p.name));
+  const pool = (rawData && rawData.properties && rawData.properties.length)
+    ? rawData.properties
+    : (data && data.properties) || [];
 
-  // Filter to show only ALTERNATE BHK properties
-  const altProps = pool.filter(p => p.bhk && p.bhk.includes(alternateBhk));
+  // Deduplicate and filter to show only ALTERNATE BHK properties
+  const altProps = pool.filter(p => !shown.has(p.name) && p.bhk && p.bhk.includes(alternateBhk));
   const props = altProps.slice(0, 3);
   if (!props.length) return null;
 
