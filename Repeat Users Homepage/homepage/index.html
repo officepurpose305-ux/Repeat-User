@@ -583,14 +583,23 @@ function parsePriceLakhs(priceStr) {
   return null;
 }
 
-// Format price to Lakhs display: "₹5.09 Cr" → "₹509L"
+// Format price: ₹5.09 Cr → ₹509L (if ≤99L) or ₹5.09 Cr (if >99L)
 function formatPriceInLakhs(priceStr) {
   if (!priceStr || priceStr === '₹—') return '₹—';
   var lakhs = parsePriceLakhs(priceStr);
   if (lakhs === null) return priceStr; // fallback to original if can't parse
-  // Round to nearest integer first to handle floating point precision
+
+  // Round to nearest 0.1 to handle floating point precision
   var rounded = Math.round(lakhs * 10) / 10;
-  // Format: 509L for whole numbers, 509.5L if decimal
+
+  // If > 99L, convert to Crores and display with "Cr"
+  if (rounded > 99) {
+    var crores = rounded / 100;
+    var formatted = crores % 1 === 0 ? Math.round(crores).toString() : crores.toFixed(2);
+    return '₹' + formatted + ' Cr';
+  }
+
+  // Otherwise display in Lakhs with "L"
   var formatted = rounded % 1 === 0 ? Math.round(rounded).toString() : rounded.toFixed(1);
   return '₹' + formatted + 'L';
 }
