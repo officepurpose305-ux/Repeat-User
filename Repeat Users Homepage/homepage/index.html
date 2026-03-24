@@ -1693,12 +1693,12 @@ function modHeadToHead(stage, primary, secondary, worksNear) {
   }
 
   const rows = [
-    { label: commuteLabel, v1: commuteV1, v2: commuteV2, win: commutWin },
-    { label:'Entry price / sqft', v1:'₹'+(l1.avgPsqft||8100), v2:'₹'+(l2.avgPsqft||6200), win: (l1.avgPsqft||8100) < (l2.avgPsqft||6200) ? 0 : 1 },
-    { label:`Space for ₹${cap}L`, v1:'~'+sqft1+' sq ft', v2:'~'+sqft2+' sq ft', win: sqft1 >= sqft2 ? 0 : 1 },
-    { label:'YoY appreciation', v1:'+'+( l1.yoy||12)+'%', v2:'+'+( l2.yoy||14)+'%', win: (l1.yoy||12) >= (l2.yoy||14) ? 0 : 1 },
-    { label:'Who buys here', v1:'Owner-occupiers', v2:'Investors & end-users', win:0 },
-    { label:'Development stage', v1:'Established', v2:'Mixed — verify', win:0 },
+    { label: commuteLabel, v1: commuteV1, v2: commuteV2, win: commutWin, icon: 'directions_car' },
+    { label:'Entry price / sqft', v1:'₹'+(l1.avgPsqft||8100), v2:'₹'+(l2.avgPsqft||6200), win: (l1.avgPsqft||8100) < (l2.avgPsqft||6200) ? 0 : 1, icon: 'price_change' },
+    { label:`Space for ₹${cap}L`, v1:'~'+sqft1+' sq ft', v2:'~'+sqft2+' sq ft', win: sqft1 >= sqft2 ? 0 : 1, icon: 'zoom_out_map' },
+    { label:'YoY appreciation', v1:'+'+( l1.yoy||12)+'%', v2:'+'+( l2.yoy||14)+'%', win: (l1.yoy||12) >= (l2.yoy||14) ? 0 : 1, icon: 'trending_up' },
+    { label:'Who buys here', v1:'Owner-occupiers', v2:'Investors & end-users', win:0, icon: 'group' },
+    { label:'Development stage', v1:'Established', v2:'Mixed — verify', win:0, icon: 'construction' },
   ];
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:0;">
