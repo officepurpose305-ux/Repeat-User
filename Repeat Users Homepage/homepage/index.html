@@ -1243,16 +1243,16 @@ function modContinue(stage, primary, secondary) {
   if (stage < 1 || stage > 3) return null;  // S1-S3 only (hidden from S4 Shortlist/Decision)
   if (!primary && stage !== 1) return null; // S1 is okay with no primary
 
-  // PRIORITY: rawData → data → getMockData
+  // PRIORITY: data (filtered) → rawData → getMockData
   let props = [];
 
-  // Try primary source (rawData from latest fetch)
-  if (rawData && rawData.properties && rawData.properties.length > 0) {
-    props = rawData.properties.slice(0, 2);
-  }
-  // Try secondary source (currently filtered data)
-  else if (data && data.properties && data.properties.length > 0) {
+  // Try primary source (currently filtered data - respects budget/BHK filters)
+  if (data && data.properties && data.properties.length > 0) {
     props = data.properties.slice(0, 2);
+  }
+  // Try secondary source (rawData from latest fetch - if filters returned nothing)
+  else if (rawData && rawData.properties && rawData.properties.length > 0) {
+    props = rawData.properties.slice(0, 2);
   }
   // Fallback to mock data - this ALWAYS works
   else {
