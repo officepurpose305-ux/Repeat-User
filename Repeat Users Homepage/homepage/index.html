@@ -1616,15 +1616,15 @@ function modConsiderationSet(stage) {
       </div>
       <div style="padding:0 14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
         ${factors.map(f=>`<button class="landmark-chip" title="Select ${f.label}">
-          <span class="material-icons" aria-hidden="true" style="font-size:20px;">${f.icon}</span>
-          <span style="flex:1;text-align:left;font-size:14px;">${f.label}</span>
+          <span class="material-icons" aria-hidden="true" style="font-size:18px;">${f.icon}</span>
+          <span style="flex:1;text-align:left;font-size:13px;">${f.label}</span>
           ${f.count ? `<span class="landmark-badge">${f.count}</span>` : ''}
         </button>`).join('')}
       </div>
       <div style="padding:0 14px 0;">
         <button class="landmark-chip landmark-chip-add">
-          <span class="material-icons" aria-hidden="true" style="font-size:20px;">add</span>
-          <span style="flex:1;text-align:left;font-size:14px;">Add a landmark</span>
+          <span class="material-icons" aria-hidden="true" style="font-size:18px;">add</span>
+          <span style="flex:1;text-align:left;font-size:13px;">Add a landmark</span>
         </button>
       </div>
     </div>`;
