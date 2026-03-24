@@ -824,6 +824,7 @@
 
 <script src="config.js" onerror="console.warn('config.js not found — add it from config.example.js')"></script>
 <script>
+console.log('[panel] Script loaded - starting initialization...');
 (function () {
 
   /* ─── Constants ─── */
@@ -1806,6 +1807,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
 
   /* ─── Init ─── */
   function init() {
+    console.log('[panel init] Starting initialization...');
     loadPersona('priya', true); // boot with Priya persona — fills form, scores stage
     initSupabase();
 
