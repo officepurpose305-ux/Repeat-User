@@ -1614,17 +1614,17 @@ function modConsiderationSet(stage) {
         <div class="ds-section-heading">Which of these matters most to your daily routine?</div>
         <div class="ds-heading-sub">Accordingly let's help in figuring out a locality for you</div>
       </div>
-      <div style="padding:0 14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div style="padding:0 14px 16px;display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
         ${factors.map(f=>`<button class="landmark-chip" title="Select ${f.label}">
           <span class="material-icons" aria-hidden="true" style="font-size:18px;">${f.icon}</span>
-          <span style="flex:1;text-align:left;font-size:13px;">${f.label}</span>
+          <span style="white-space:nowrap;font-size:13px;">${f.label}</span>
           ${f.count ? `<span class="landmark-badge">${f.count}</span>` : ''}
         </button>`).join('')}
       </div>
       <div style="padding:0 14px 0;">
         <button class="landmark-chip landmark-chip-add">
           <span class="material-icons" aria-hidden="true" style="font-size:18px;">add</span>
-          <span style="flex:1;text-align:left;font-size:13px;">Add a landmark</span>
+          <span style="white-space:nowrap;font-size:13px;">Add a landmark</span>
         </button>
       </div>
     </div>`;
