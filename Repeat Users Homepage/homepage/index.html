@@ -1807,8 +1807,8 @@ function modHeadToHead(stage, primary, secondary, worksNear) {
       </div>
     </div>
     <!-- Landmarks Section -->
-    <div style="padding:16px 14px 12px;margin-top:4px;">
-      <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);letter-spacing:0.5px;margin-bottom:12px;text-transform:uppercase;">Nearest Landmarks</div>
+    <div style="padding:12px 14px 8px;margin-top:0;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-tertiary);letter-spacing:0.5px;margin-bottom:10px;text-transform:uppercase;">Nearest Landmarks</div>
       <div class="lm-table-wrap">
         ${(() => {
           const lm = (data.landmarks && data.landmarks.primary) ? data.landmarks : getMockData(config).landmarks;
@@ -1863,14 +1863,14 @@ function modTradeoff(stage, primary, secondary) {
   const adj0 = (data && data.adjacentLocalities && data.adjacentLocalities[0]) || _adjFb[0] || {};
   const saving = Math.abs(adj0.delta || 8);
   const metroNote = adj0.metro || _adjFb[0] && _adjFb[0].metro || 'farther from metro';
-  return `<div class="sec sec-pad">
+  return `<div class="sec sec-pad" style="padding:12px 14px;">
     <div class="ds-insight">
       <div class="ds-insight-title-row">
         <span class="ds-insight-icon material-icons" aria-hidden="true">auto_awesome</span>
-        <span class="ds-insight-title">${esc(secondary)} saves ~₹${saving}L vs ${esc(primary)} · ${esc(metroNote)}. Worth the trade-off?</span>
+        <span class="ds-insight-title" style="font-size:14px;font-weight:500;">${esc(secondary)} saves ~₹${saving}L vs ${esc(primary)} · ${esc(metroNote)}. Worth the trade-off?</span>
       </div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:10px;">
+    <div style="display:flex;gap:8px;margin-top:8px;">
       <button class="ds-btn ds-btn-sm ds-btn-primary">Metro first</button>
       <button class="ds-btn ds-btn-sm ds-btn-quaternary">₹${saving}L saving</button>
     </div>
