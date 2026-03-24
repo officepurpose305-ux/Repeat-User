@@ -857,7 +857,7 @@ console.log('[panel] Script loaded - starting initialization...');
       user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 3,
       location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: true },
-      filters: { budgetMin: 70, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
+      filters: { budgetMin: 70, budgetMax: 450, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
       behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'medium' },
       stageOverride: 2
     },
@@ -913,7 +913,7 @@ console.log('[panel] Script loaded - starting initialization...');
       stage: 1,
       lastVisitDaysAgo: 3,
       location: { primary: null, secondary: null, city: null, openToNearby: false },
-      filters: { budgetMin: 70, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
+      filters: { budgetMin: 70, budgetMax: 450, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
       behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'medium' }
     };
   }
@@ -1211,7 +1211,7 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     document.getElementById('secondary-wrap').style.display = showSec ? 'block' : 'none';
     const f = p.filters || {};
     setBudgetField('f-bmin', f.budgetMin != null ? f.budgetMin : 70);
-    setBudgetField('f-bmax', f.budgetMax != null ? f.budgetMax : 95);
+    setBudgetField('f-bmax', f.budgetMax != null ? f.budgetMax : 450);
     document.querySelectorAll('.bhk-chip').forEach(el => {
       el.classList.toggle('on', (f.bhk || ['2BHK']).includes(el.dataset.bhk));
     });

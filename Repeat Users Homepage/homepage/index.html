@@ -459,7 +459,7 @@ function defaultConfig() {
   return {
     user:{ name:'', age:null, occupation:'', worksNear:'' },
     location:{ primary:'', secondary:null, city:'', openToNearby:false },
-    filters:{ bhk:[], budgetMin:70, budgetMax:95, readyToMove:'either', buyTimeline:'exploring' },
+    filters:{ bhk:[], budgetMin:70, budgetMax:450, readyToMove:'either', buyTimeline:'exploring' },
     behavior:{ developerContact:'none', visitedSite:false, priceSensitivity:'medium' },
     lastVisitDaysAgo:null, stage:1, openAIData:null, openAIKey:null, apiBase:null
   };
@@ -592,6 +592,16 @@ function parsePriceLakhs(priceStr) {
   var lMatch = s.match(/^([\d.]+)[Ll]$/);
   if (lMatch) return parseFloat(lMatch[1]);
   return null;
+}
+
+// Format price to Lakhs display: "₹5.09 Cr" → "₹509L"
+function formatPriceInLakhs(priceStr) {
+  if (!priceStr || priceStr === '₹—') return '₹—';
+  var lakhs = parsePriceLakhs(priceStr);
+  if (lakhs === null) return priceStr; // fallback to original if can't parse
+  // Format: 509L for whole numbers, 509.5L if decimal
+  var formatted = lakhs % 1 === 0 ? lakhs.toString() : lakhs.toFixed(1);
+  return '₹' + formatted + 'L';
 }
 
 function applyFilters(result, cfg) {
@@ -1282,7 +1292,7 @@ function modContinue(stage, primary, secondary) {
           <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
         </div>
         <div class="ds-prop-card-body">
-          <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+          <div class="ds-prop-card-price">${formatPriceInLakhs(p.price||'₹—')}</div>
           <div class="ds-prop-card-subtitle">${esc(p.bhk||'2 BHK')}</div>
           <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
           <div class="text-xs text-tertiary mt-4">${esc(p.lm ? p.lm.split('·')[0].trim() : '')}</div>
@@ -1338,7 +1348,7 @@ function modContinue(stage, primary, secondary) {
           <div class="flex-center gap-sm mb-4 text-xs text-tertiary">
             <span class="material-icons" style="font-size:12px;">visibility</span> Viewed ${viewCount} time${viewCount > 1 ? 's' : ''}
           </div>
-          <div class="text-md font-bold text-primary mb-2">${esc(p.bhk||'2 BHK')} · ${esc(p.price||'₹—')}</div>
+          <div class="text-md font-bold text-primary mb-2">${esc(p.bhk||'2 BHK')} · ${formatPriceInLakhs(p.price||'₹—')}</div>
           <div class="text-base text-secondary mb-2">${esc(p.location||primary)}</div>
           <div class="text-xs text-tertiary mb-6">${p.lm ? esc(p.lm.split('·')[0].trim()) : ''}</div>
           ${commute ? `<div class="text-xs text-tertiary mb-6"><span class="material-icons" style="font-size:13px;vertical-align:-2px;">directions_car</span> ${commute} mins from ${config.user.worksNear}</div>` : ''}
@@ -1419,7 +1429,7 @@ function modNewInSectors(stage, primary, worksNear) {
         <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
       </div>
       <div class="ds-prop-card-body">
-        <div class="ds-prop-card-price">${esc(p.price)}</div>
+        <div class="ds-prop-card-price">${formatPriceInLakhs(p.price)}</div>
         <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
         <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
         <div class="text-xs text-tertiary mt-2">${esc(p.sqft||'')}${p.sqft?' · ':''}<span style="color:${p.ready_to_move?'var(--green)':'var(--text-tertiary)'}">${p.ready_to_move?'Ready to move':'UC'}</span></div>
@@ -1924,7 +1934,7 @@ function modNearbyLocalities(stage, primary) {
         ${ap.map(p=>`<div class="prop-sm">
           <div class="prop-sm-img">${propImg(p)}</div>
           <div class="prop-sm-body">
-            <div class="prop-sm-price">${esc(p.price)}</div>
+            <div class="prop-sm-price">${formatPriceInLakhs(p.price)}</div>
             <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:2px;">${esc(p.bhk||'')}</div>
             <div class="prop-sm-name">${esc(p.name||'')}</div>
             <div class="prop-sm-loc">${esc(a.name)}</div>
@@ -2128,7 +2138,7 @@ function modStillConsidering(stage, primary) {
         </div>
         <div style="flex:1;min-width:0;">
           <div class="text-xs text-tertiary mb-2"><span class="material-icons" style="font-size:12px;vertical-align:-2px;">visibility</span> ${engagementText} · ${shareAction}</div>
-          <div class="text-lg font-bold text-primary mb-2">${esc(p.bhk||'2 BHK')} · ${esc(p.price||'₹—')}</div>
+          <div class="text-lg font-bold text-primary mb-2">${esc(p.bhk||'2 BHK')} · ${formatPriceInLakhs(p.price||'₹—')}</div>
           <div class="text-base text-secondary mb-4">${esc(p.sqft||'')} sq ft · ${p.ready_to_move ? 'Ready to move' : 'UC'} · ${esc(p.location||primary)}</div>
           ${delta ? `<div class="text-xs text-tertiary mb-4"><span style="color:${isGood?'var(--green)':'var(--text-tertiary)'};font-weight:${isGood?'700':'400'};"><span aria-hidden="true">${isGood?'✓':'•'}</span> ${esc(delta)}</span></div>` : ''}
           ${landmarkDist ? `<div class="text-xs text-tertiary italic">${esc(landmarkDist)}</div>` : ''}
@@ -2181,7 +2191,7 @@ function modVisitPlanner(stage) {
       <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
     </div>
     <div class="ds-prop-card-body">
-      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-price">${formatPriceInLakhs(p.price)}</div>
       <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
       <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||'')}</div>
       <div class="text-xs text-tertiary mt-2">${esc(p.sqft||'')}${p.sqft?' · ':''}<span style="color:${p.ready_to_move?'var(--green)':'var(--text-tertiary)'}">${p.ready_to_move?'Ready to move':'UC'}</span></div>
@@ -2213,7 +2223,7 @@ function modSimilarBHK(stage, bhk, primary) {
       <div class="ds-prop-card-possession"><span>${p.ready_to_move?'Ready to move':'Under Construction'}</span></div>
     </div>
     <div class="ds-prop-card-body">
-      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-price">${formatPriceInLakhs(p.price)}</div>
       <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
       <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
       <div class="text-xs text-tertiary mt-2">${esc(p.sqft||'')}${p.sqft?' · ':''}<span style="color:${p.ready_to_move?'var(--green)':'var(--text-tertiary)'}">${p.ready_to_move?'Ready to move':'UC'}</span></div>
@@ -2294,7 +2304,7 @@ function modUpcomingProjects(stage, primary) {
       <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Save to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
     </div>
     <div class="ds-prop-card-body">
-      <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+      <div class="ds-prop-card-price">${formatPriceInLakhs(p.price||'₹—')}</div>
       <div class="ds-prop-card-subtitle" style="font-size:11px;margin-bottom:6px;">${esc(p.bhk||'')} · ${esc(p.sqft||'')} sqft</div>
       <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">${esc(p.name||'')}</div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">${esc(p.dev||'')} · ${esc(p.location||'')}</div>
@@ -2379,7 +2389,7 @@ function modPeopleAlsoViewed(stage, primary) {
       <div class="ds-prop-card-possession"><span>${esc(p.status||(p.ready_to_move?'Ready to Move':'Possession 2026'))}</span></div>
     </div>
     <div class="ds-prop-card-body">
-      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-price">${formatPriceInLakhs(p.price)}</div>
       <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
       <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
     </div>
@@ -2647,7 +2657,7 @@ function modVisitWithShortlist(stage, primary) {
       <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Save to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
     </div>
     <div class="ds-prop-card-body">
-      <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+      <div class="ds-prop-card-price">${formatPriceInLakhs(p.price||'₹—')}</div>
       <div class="ds-prop-card-subtitle" style="font-size:11px;">${esc(p.bhk||'')} · ${esc(p.location||primary)}</div>
       ${p.lm ? `<div class="ds-prop-card-highlights" style="margin-top:6px;font-size:11px;color:var(--text2);">${esc(p.lm)}</div>` : ''}
     </div>
