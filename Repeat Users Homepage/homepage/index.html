@@ -1783,40 +1783,44 @@ function modHeadToHead(stage, primary, secondary, worksNear) {
     { label:'Development stage', v1:'Established', v2:'Mixed — verify', win:0, icon: 'construction' },
   ];
   return `<div class="sec">
-    <div class="sec-pad" style="padding-bottom:0;">
+    <div class="sec-pad" style="padding-bottom:12px;">
       <div class="ds-section-heading">Head to Head</div>
-      <div class="ds-heading-sub" style="margin:2px 0 0;">${esc(primary)} vs ${esc(secondary||'Nearby')}</div>
+      <div class="ds-heading-sub" style="margin:4px 0 0;">${esc(primary)} vs ${esc(secondary||'Nearby')}</div>
     </div>
-    <div style="overflow:hidden;">
-      <table style="width:100%;border-collapse:collapse;font-size:12px;">
-        <caption class="sr-only">Comparison of ${esc(primary)} and ${esc(secondary||'Nearby')}</caption>
-        <thead style="background:#111827;color:white;">
-          <tr>
-            <th scope="col" style="padding:10px 12px;font-weight:800;text-align:left;">Feature</th>
-            <th scope="col" style="padding:10px 12px;font-weight:800;text-align:center;">${esc(primary)}</th>
-            <th scope="col" style="padding:10px 12px;font-weight:800;text-align:center;">${esc(secondary||'Nearby')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows.map(r=>`<tr style="border-bottom:1px solid var(--border);">
-            <td scope="row" style="padding:9px 12px;font-size:11px;color:var(--text-tertiary);font-weight:600;width:30%;">${r.label}</td>
-            <td style="padding:9px 12px;font-weight:700;color:var(--text-primary);text-align:center;">${r.win===0?`<span style="color:var(--green);">${esc(r.v1)}</span>`:esc(r.v1)}</td>
-            <td style="padding:9px 12px;font-weight:700;color:var(--text-primary);text-align:center;">${r.win===1?`<span style="color:var(--green);">${esc(r.v2)}</span>`:esc(r.v2)}</td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>
-    <div class="sec-pad" style="padding-top:4px;padding-bottom:0;">
-      <div class="ds-insight sm">
-        <div class="ds-insight-head">
-          <span class="material-icons" aria-hidden="true" style="font-size:15px;color:var(--purple-text);">auto_awesome</span>
-          <span class="ds-insight-title">Based on your filters</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px 12px;margin-bottom:8px;">
+      <!-- Cards for each locality -->
+      <div style="background:linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(37,99,235,0.02) 100%);border:1.5px solid #dbeafe;border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">${esc(primary)}</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          ${rows.map(r=>`<div style="display:flex;flex-direction:column;gap:2px;">
+            <div style="font-size:10px;color:var(--text-tertiary);font-weight:500;">${r.label}</div>
+            <div style="font-size:14px;font-weight:800;color:${r.win===0?'var(--green)':'var(--text-primary)'};">${esc(r.v1)}</div>
+          </div>`).join('')}
         </div>
-        <div class="ds-insight-sub">${esc(primary)} has more ready-to-move options within budget. ${esc(secondary)} offers ₹15–20L savings but with 2026–27 possession.</div>
+      </div>
+      <div style="background:linear-gradient(135deg, rgba(251,146,60,0.08) 0%, rgba(251,146,60,0.02) 100%);border:1.5px solid #fed7aa;border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">${esc(secondary||'Nearby')}</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          ${rows.map(r=>`<div style="display:flex;flex-direction:column;gap:2px;">
+            <div style="font-size:10px;color:var(--text-tertiary);font-weight:500;">${r.label}</div>
+            <div style="font-size:14px;font-weight:800;color:${r.win===1?'var(--green)':'var(--text-primary)'};">${esc(r.v2)}</div>
+          </div>`).join('')}
+        </div>
       </div>
     </div>
-    <div class="helpful-row"><span>Is this helpful?</span><div class="helpful-btns"><button class="ds-btn ds-btn-xs ds-btn-secondary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_up</span> Yes</button><button class="ds-btn ds-btn-xs ds-btn-tertiary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_down</span> No</button></div></div>
-    ${Object.keys(propNotes).length === 0 ? `<div style="padding:10px 14px 4px;font-size:12px;color:var(--text3);">💡 Add notes to individual properties to remember what stood out on your visit.</div>` : `<div style="padding:10px 14px 4px;font-size:12px;color:var(--green);font-weight:600;">✓ ${Object.keys(propNotes).length} propert${Object.keys(propNotes).length > 1 ? 'ies have' : 'y has'} notes — you're building your decision.</div>`}
+    <!-- AI Insight -->
+    <div class="sec-pad" style="padding-top:0;padding-bottom:8px;">
+      <div class="ds-insight sm" style="background:linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(139,92,246,0.02) 100%);border:1px solid rgba(139,92,246,0.2);">
+        <div class="ds-insight-head">
+          <span class="material-icons" aria-hidden="true" style="font-size:16px;color:var(--purple);">lightbulb</span>
+          <span class="ds-insight-title">Based on your filters</span>
+        </div>
+        <div class="ds-insight-sub" style="font-size:12px;margin-top:6px;">${esc(primary)} has more ready-to-move options within budget. ${esc(secondary)} offers ₹15–20L savings but with 2026–27 possession.</div>
+      </div>
+    </div>
+    <!-- Feedback & Notes -->
+    <div class="helpful-row"><span style="font-size:13px;font-weight:500;">Is this comparison helpful?</span><div class="helpful-btns"><button class="ds-btn ds-btn-xs ds-btn-secondary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_up</span> Yes</button><button class="ds-btn ds-btn-xs ds-btn-tertiary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_down</span> No</button></div></div>
+    ${Object.keys(propNotes).length === 0 ? `<div style="padding:8px 14px 0;font-size:12px;color:var(--text-tertiary);">💡 <span style="color:var(--text-secondary);font-weight:500;">Pro tip:</span> Add notes to individual properties to remember what stood out on your visit.</div>` : `<div style="padding:8px 14px 0;font-size:12px;color:var(--green);font-weight:600;">✓ ${Object.keys(propNotes).length} propert${Object.keys(propNotes).length > 1 ? 'ies have' : 'y has'} notes — you're building your decision.</div>`}
   </div>`;
 }
 
