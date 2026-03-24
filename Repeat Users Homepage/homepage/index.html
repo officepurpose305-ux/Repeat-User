@@ -448,9 +448,9 @@ function defaultConfig() {
   return {
     user:{ name:'', age:null, occupation:'', worksNear:'' },
     location:{ primary:'', secondary:null, city:'', openToNearby:false },
-    filters:{ bhk:[], budgetMin:70, budgetMax:450, readyToMove:'either', buyTimeline:'exploring' },
+    filters:{ bhk:['2BHK'], budgetMin:70, budgetMax:450, readyToMove:'either', buyTimeline:'exploring' },
     behavior:{ developerContact:'none', visitedSite:false, priceSensitivity:'medium' },
-    lastVisitDaysAgo:null, stage:1, openAIData:null, openAIKey:null, apiBase:null
+    lastVisitDaysAgo:3, stage:1, stageOverride:null, openAIData:null, openAIKey:null, apiBase:null
   };
 }
 
@@ -464,6 +464,12 @@ window.addEventListener('message', function(e) {
     console.log('[homepage-listener] ✓✓✓ CONFIG_UPDATE from panel!');
     _panelConnected = true;
     config = Object.assign(defaultConfig(), e.data.config || {});
+
+    // Apply stageOverride if present (persona stage takes precedence)
+    if (config.stageOverride != null) {
+      config.stage = config.stageOverride;
+    }
+
     console.log('[homepage-listener] ✓ Config applied:', {
       stage: config.stage,
       location: config.location.primary,
@@ -1012,18 +1018,35 @@ async function fetchRealDataFromSupabase(cfg) {
     }
 
     // Transform Supabase data to match our expected format
-    const properties = propData.map(p => ({
-      name: p.name || 'Property',
-      dev: p.developer || '',
-      location: [primary, city].join(', '),
-      price: p.price_avg_sqft ? '₹' + (p.price_min || 'varying') + 'L' : '₹—',
-      sqft: p.area_sqft ? p.area_sqft + ' sq ft' : '',
-      bhk: (p.bhk && p.bhk.length) ? p.bhk.join(', ') : '2 BHK',
-      status: p.status || 'Under Construction',
-      ready_to_move: p.ready_to_move || false,
-      lm: p.landmarks?.metro ? (p.landmarks.metro + ' (metro)') : '',
-      image_url: p.image_url || ''
-    }));
+    const properties = propData.map(p => {
+      // Convert price_min from raw rupees (e.g., 6500000) to Lakhs (e.g., 65)
+      let priceStr = '₹—';
+      if (p.price_min) {
+        // If price_min is a large number (> 100000), assume it's in rupees and convert to Lakhs
+        const priceNum = typeof p.price_min === 'string' ? parseFloat(p.price_min) : p.price_min;
+        if (priceNum > 100000) {
+          // Convert rupees to Lakhs (divide by 100000)
+          const lakhs = Math.round(priceNum / 100000);
+          priceStr = '₹' + lakhs + ' Cr';
+        } else {
+          // Already in Lakhs
+          priceStr = '₹' + priceNum + 'L';
+        }
+      }
+
+      return {
+        name: p.name || 'Property',
+        dev: p.developer || '',
+        location: [primary, city].join(', '),
+        price: priceStr,
+        sqft: p.area_sqft ? p.area_sqft + ' sq ft' : '',
+        bhk: (p.bhk && p.bhk.length) ? p.bhk.join(', ') : '2 BHK',
+        status: p.status || 'Under Construction',
+        ready_to_move: p.ready_to_move || false,
+        lm: p.landmarks?.metro ? (p.landmarks.metro + ' (metro)') : '',
+        image_url: p.image_url || ''
+      };
+    });
 
     const localities = (locData || []).map(l => ({
       name: l.name,
@@ -2961,8 +2984,9 @@ setTimeout(function() {
 function loadDemoConfig() {
   config = Object.assign(defaultConfig(), {
     stage: 2,
+    stageOverride: 2,
     location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: true },
-    filters: { bhk: ['2BHK'], budgetMin: 70, budgetMax: 95, readyToMove: 'either', buyTimeline: 'exploring' },
+    filters: { bhk: ['2BHK'], budgetMin: 70, budgetMax: 120, readyToMove: 'either', buyTimeline: 'exploring' },
     lastVisitDaysAgo: 3,
     user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager', worksNear: 'Sector 62' }
   });
