@@ -1,7 +1,14 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = 'https://qlfttxrnnjueycffwdmy.supabase.co';
-const supabaseServiceKey = 'sb_secret_ipXzLH_HMaBfGSvSQwDuDA_uAu_xXOs';
+// Load from environment variables
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Error: SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables are required');
+  process.exit(1);
+}
+
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Transform price string to number (e.g., "₹1.96 Cr" → 19600000)
