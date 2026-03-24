@@ -490,13 +490,18 @@ async function fetchAndRender() {
   var loc = config.location || {};
   var fetchKey = (loc.primary || '') + '|' + (loc.secondary || '') + '|' + (loc.city || '');
 
+  console.log('[fetchAndRender] Called. Location:', loc.primary, fetchKey, 'lastFetchKey:', _lastFetchKey, 'rawData length:', (rawData && rawData.properties ? rawData.properties.length : 0));
+
   // Filter-only change (BHK / budget / RTM / timeline) — location unchanged.
   // Skip the full API/OpenAI/mock pipeline and just re-apply filters on cached rawData.
   if (_lastFetchKey === fetchKey && rawData && (rawData.properties || []).length) {
+    console.log('[fetchAndRender] ✓ Filter-only path: applying filters to cached', (rawData.properties || []).length, 'properties');
     data = applyFilters(rawData, config);
     renderPage();
     return;
   }
+
+  console.log('[fetchAndRender] ✗ Full fetch path: fetchKey changed or rawData empty');
 
   _lastFetchKey = fetchKey;
   var myId = ++_fetchId;   // guard: if a newer fetch starts, this one becomes stale
