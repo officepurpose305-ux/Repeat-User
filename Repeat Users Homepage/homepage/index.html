@@ -1584,8 +1584,14 @@ function modLocalitiesRadar(stage, city, primary) {
 
   const uniqueLocalities = Object.keys(localityMap);
   const fallback = getMockData(config);
-  const allLocs = data.localities && data.localities.length ? data.localities : fallback.localities;
-  const adjs = data.adjacentLocalities && data.adjacentLocalities.length ? data.adjacentLocalities : fallback.adjacentLocalities;
+
+  // Prioritize real Supabase data for insights
+  const realLocalities = data.localities && data.localities.length ? data.localities : null;
+  const realAdjacentLocalities = data.adjacentLocalities && data.adjacentLocalities.length ? data.adjacentLocalities : null;
+
+  // Use real data if available, fallback to mock data for display
+  const allLocs = realLocalities || fallback.localities;
+  const adjs = realAdjacentLocalities || fallback.adjacentLocalities;
 
   // Combine: recently viewed (with stars) + suggested alternatives (lighter styling)
   const allCards = [];
@@ -1599,7 +1605,8 @@ function modLocalitiesRadar(stage, city, primary) {
       meta: locMeta,
       isSuggested: false,
       isPrimary: isBold,
-      distance: null
+      distance: null,
+      isRealData: !!realLocalities  // Track if this came from real data
     });
   });
 
@@ -1612,14 +1619,17 @@ function modLocalitiesRadar(stage, city, primary) {
         meta: locMeta || adj,
         isSuggested: true,
         isPrimary: false,
-        distance: adj.delta
+        distance: adj.delta,
+        isRealData: !!realAdjacentLocalities  // Track if this came from real data
       });
     }
   });
 
-  // Generate dynamic insight ONLY from real Supabase data (not MOCK_DATA fallback)
+  // Generate dynamic insight
   let insightText = 'Your top views + nearby alternatives';
-  const hasRealData = data.localities && data.localities.length > 0;
+  const hasRealData = realLocalities && realLocalities.length > 0;
+
+  console.log('[modLocalitiesRadar] Using', hasRealData ? 'real Supabase' : 'MOCK_DATA', 'for localities. Real:', realLocalities?.length, 'Mock:', fallback.localities.length);
 
   if (hasRealData) {
     const topMetros = allCards.slice(0, 3).map(c => c.meta?.metro || '').filter(Boolean);
@@ -1645,6 +1655,11 @@ function modLocalitiesRadar(stage, city, primary) {
     const metroInfo = card.meta?.metro ? card.meta.metro.split('·').map(s => s.trim()) : [];
     const metroDisplay = metroInfo.length > 1 ? `${metroInfo[0]} · ${metroInfo[1]}` : (metroInfo[0] || '—');
 
+    // Log insight information
+    if (card.meta?.conn) {
+      console.log(`[modLocalitiesRadar] ${card.name}: insight="${card.meta.conn}" (${card.isRealData ? 'Supabase' : 'MOCK_DATA'})`);
+    }
+
     return `<div style="flex-shrink:0;width:220px;background:white;border:1px solid ${borderColor};border-radius:8px;padding:12px;opacity:${opacity};display:flex;flex-direction:column;">
       ${badgeHtml}
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
@@ -1652,7 +1667,7 @@ function modLocalitiesRadar(stage, city, primary) {
       </div>
       ${card.isSuggested ? `<div style="font-size:10px;color:var(--text2);margin-bottom:8px;">≈ ${Math.abs(card.distance).toFixed(1)}km from ${esc(primary)}</div>` : ''}
       <div style="font-size:12px;color:#555555;margin-bottom:8px;">${esc(card.meta?.bhkRange||'2-3 BHK')}</div>
-      <!-- Insights/Context from PDF -->
+      <!-- Insights/Context from Supabase or MOCK_DATA -->
       ${card.meta?.conn ? `<div style="font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.4;">${esc(card.meta.conn)}</div>` : ''}
       <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text2);margin-bottom:8px;"><span>📍</span><span>${metroDisplay}</span></div>
       <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:#999999;">₹/sqft</span><span style="color:#111111;font-weight:700;">₹${card.meta?.avgPsqft||'—'}</span></div>
