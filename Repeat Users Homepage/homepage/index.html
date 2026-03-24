@@ -1140,10 +1140,9 @@ function renderPage() {
     mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to explore
     mods.push(modUpcomingProjects(stage, primary));            // Upcoming projects (if specific locality)
     mods.push(modBudgetCheck(stage, f));                       // Open to view properties in ₹80-1 Cr?
-    mods.push(modSimilarBHK(stage, bhk, primary));             // Similar BHK
+    mods.push(modSimilarBHK(stage, bhk, primary));             // More BHK options + Preference confirmation (merged)
     mods.push(modExpertAgents(stage, primary, secondary));     // Expert sellers who can help
     mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments in area
-    mods.push(modPreferenceConfirmation(stage, bhk));          // Do you want to continue with 2BHK?
     mods.push(modPriceTrend(stage, primary));                  // Price trend insights
   }
 
@@ -2209,13 +2208,23 @@ function modVisitPlanner(stage) {
 }
 
 function modSimilarBHK(stage, bhk, primary) {
-  if (stage !== 1 && stage !== 2) return null;  // S1-S2
+  if (stage !== 2) return null;  // S2 only (merged with preference confirmation)
+  if (!bhk || !bhk.length) return null;
+
+  // Calculate alternate BHK to offer
+  const primaryBhk = Array.isArray(bhk) ? bhk[0] : bhk;
+  const alternateBhk = primaryBhk === '2BHK' ? '3BHK' : '2BHK';
+
   // Use rawData so budget/RTM filter doesn't shrink the pool; deduplicate against what PropertiesPrimary already shows
   const shownProps = (data && data.properties) ? data.properties.slice(0, 4) : [];
   const shown = new Set(shownProps.map(p => p.name));
   const pool = ((rawData && rawData.properties) || (data && data.properties) || []).filter(p => !shown.has(p.name));
-  const props = pool.slice(0, 3);
+
+  // Filter to show only ALTERNATE BHK properties
+  const altProps = pool.filter(p => p.bhk && p.bhk.includes(alternateBhk));
+  const props = altProps.slice(0, 3);
   if (!props.length) return null;
+
   const cards = props.map(p => `<div class="ds-prop-card horizontal">
     <div class="ds-prop-card-img">
       ${propImg(p)}
@@ -2230,11 +2239,24 @@ function modSimilarBHK(stage, bhk, primary) {
       ${p.lm ? `<div class="text-xs text-tertiary mt-1" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📍 ${esc(p.lm.split('·')[0].trim())}</div>` : ''}
     </div>
   </div>`).join('');
+
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div style="padding:12px 14px;text-align:left;"><div class="ds-section-heading">More ${esc(bhk)} options in ${esc(primary)}</div></div>
+      <div style="padding:12px 14px;text-align:left;"><div class="ds-section-heading">More ${esc(alternateBhk)} options in ${esc(primary)}</div></div>
     </div>
     <div class="hscroll">${cards}</div>
+
+    <!-- Merged Preference Confirmation -->
+    <div style="padding:14px 14px 0;border-top:1px solid var(--border);">
+      <div style="background:#FFF7ED;border-radius:8px;padding:14px 16px;border:1px solid rgba(217,119,6,0.15);">
+        <div class="text-base text-primary font-bold mb-10">Do you want to continue viewing <b>${esc(alternateBhk)}s</b>?</div>
+        <div style="display:flex;gap:8px;">
+          <button class="ds-btn ds-btn-sm ds-btn-primary" style="flex:1;">Yes</button>
+          <button class="ds-btn ds-btn-sm ds-btn-tertiary" style="flex:1;">No</button>
+          <button class="ds-btn ds-btn-sm ds-btn-secondary" style="flex:1;">Only ${esc(primaryBhk)}</button>
+        </div>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -2588,24 +2610,9 @@ function modBudgetCheck(stage, filters) {
 }
 
 // Preference Confirmation: "Do you want to continue with 2BHK?" (S2)
+// MERGED INTO modSimilarBHK — now consolidated with property cards for better UX
 function modPreferenceConfirmation(stage, bhk) {
-  if (stage !== 2) return null;
-  if (!bhk || !bhk.length) return null;
-
-  const primaryBhk = Array.isArray(bhk) ? bhk[0] : bhk;
-  // If they've viewed multiple BHK types, ask about the alternate one
-  const alternateBhk = primaryBhk === '2BHK' ? '3BHK' : '2BHK';
-
-  return `<div class="sec sec-pad">
-    <div style="background:#FFF7ED;border-radius:8px;padding:14px 16px;border:1px solid rgba(217,119,6,0.15);">
-      <div class="text-base text-primary font-bold mb-10">Do you want to continue viewing <b>${esc(alternateBhk)}s</b>?</div>
-      <div class="flex gap-md">
-        <button class="ds-btn ds-btn-sm ds-btn-primary" style="flex:1;">Yes</button>
-        <button class="ds-btn ds-btn-sm ds-btn-tertiary" style="flex:1;">No</button>
-        <button class="ds-btn ds-btn-sm ds-btn-secondary" style="flex:1;">Only ${esc(primaryBhk)}</button>
-      </div>
-    </div>
-  </div>`;
+  return null;  // Disabled — now merged into modSimilarBHK
 }
 
 // Social Proof: "X people contacted this week" (S4) - DISABLED: Now integrated in Decision Spotlight card
