@@ -2216,14 +2216,15 @@ function modSimilarBHK(stage, bhk, primary) {
   const alternateBhk = primaryBhk === '2BHK' ? '3BHK' : '2BHK';
 
   // Use rawData (unfiltered) to ensure we have alternate BHK options even if outside budget
-  const shownProps = (data && data.properties) ? data.properties.slice(0, 4) : [];
+  // Deduplicate against all data properties shown so far (not just first 4)
+  const shownProps = (data && data.properties) ? data.properties : [];
   const shown = new Set(shownProps.map(p => p.name));
   const pool = (rawData && rawData.properties && rawData.properties.length)
     ? rawData.properties
     : (data && data.properties) || [];
 
   // Deduplicate and filter to show only ALTERNATE BHK properties
-  const altProps = pool.filter(p => !shown.has(p.name) && p.bhk && p.bhk.includes(alternateBhk));
+  const altProps = pool.filter(p => !shown.has(p.name) && p.bhk && p.bhk.replace(/\s/g, '').includes(alternateBhk));
   const props = altProps.slice(0, 3);
   if (!props.length) return null;
 
