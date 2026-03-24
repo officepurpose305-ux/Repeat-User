@@ -585,15 +585,15 @@
         <select id="persona-selector" onchange="window.loadPersona(this.value, true)" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;cursor:pointer;">
           <option value="">— Select a persona —</option>
           <optgroup label="── STAGE 2: LOCALITY AWARENESS ────">
-            <option value="priya">Priya Mehta | Budget: ₹70–95L | Sector 137</option>
-            <option value="rahul">Rahul Sharma | Budget: ₹75–90L | Sector 137</option>
+            <option value="priya">Priya Mehta | Budget: ₹70L–1.2Cr | Sector 137</option>
+            <option value="rahul">Rahul Sharma | Budget: ₹70L–1Cr | Sector 137</option>
           </optgroup>
           <optgroup label="── STAGE 3: COMPARISON ────────────">
-            <option value="meera">Meera Iyer | Budget: ₹50–60L | Noida</option>
-            <option value="vikram">Vikram Nair | Budget: ₹100–150L | Noida</option>
+            <option value="meera">Meera Iyer | Budget: ₹65L–90L | Noida</option>
+            <option value="vikram">Vikram Nair | Budget: ₹85L–3.5Cr | Noida</option>
           </optgroup>
           <optgroup label="── STAGE 4: DECISION ──────────────">
-            <option value="upgrader">Ankit Verma | Budget: ₹120–150L | Sector 137</option>
+            <option value="upgrader">Ankit Verma | Budget: ₹1.1Cr–2Cr | Sector 137</option>
           </optgroup>
         </select>
       </div>
@@ -1276,6 +1276,19 @@ Return ONLY: {"localities":[...],"properties":[...],"adjacentLocalities":[...]}`
     if (lMatch) return Math.round(parseFloat(lMatch[1]));
     const plain = parseFloat(s);
     return isNaN(plain) ? 0 : Math.round(plain);
+  }
+
+  // Format budget range for display: "70L to 1.2Cr", "85L to 3.5Cr", etc.
+  // Above 99L, display in Crores
+  function formatBudgetRange(minL, maxL) {
+    const formatValue = (lakhs) => {
+      if (lakhs >= 100) {
+        const cr = (lakhs / 100).toFixed(1).replace(/\.0$/, '');
+        return cr + 'Cr';
+      }
+      return Math.round(lakhs) + 'L';
+    };
+    return formatValue(minL) + ' to ' + formatValue(maxL);
   }
 
   // Writes a Lakhs value back into a text budget field in a readable form
