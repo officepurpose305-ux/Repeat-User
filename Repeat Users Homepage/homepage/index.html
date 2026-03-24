@@ -1170,10 +1170,11 @@ function renderPage() {
   }
 
   // ── S3: COMPARISON FLOW ──────────────────────────────────────────────────────────
-  // Continue → Consideration Set → Properties in Secondary → Head to Head (with Landmarks) →
+  // Continue → Fresh Listings → Consideration Set → Properties in Secondary → Head to Head →
   // Tradeoff → Expert Sellers → Upcoming → Price Trend → Nearby Localities
   else if (stage === 3) {
     mods.push(modContinue(stage, primary, secondary));         // Continue where you left off
+    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings in primary (filtered by BHK & budget)
     mods.push(modConsiderationSet(stage));                     // What is your consideration set?
     mods.push(modPropertiesInSecondary(stage, secondary));     // Properties in secondary locality
     mods.push(modHeadToHead(stage, primary, secondary, worksNear)); // Head to Head comparison + Nearest landmarks
