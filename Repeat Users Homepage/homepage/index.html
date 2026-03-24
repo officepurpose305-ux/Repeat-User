@@ -588,8 +588,10 @@ function formatPriceInLakhs(priceStr) {
   if (!priceStr || priceStr === '₹—') return '₹—';
   var lakhs = parsePriceLakhs(priceStr);
   if (lakhs === null) return priceStr; // fallback to original if can't parse
+  // Round to nearest integer first to handle floating point precision
+  var rounded = Math.round(lakhs * 10) / 10;
   // Format: 509L for whole numbers, 509.5L if decimal
-  var formatted = lakhs % 1 === 0 ? lakhs.toString() : lakhs.toFixed(1);
+  var formatted = rounded % 1 === 0 ? Math.round(rounded).toString() : rounded.toFixed(1);
   return '₹' + formatted + 'L';
 }
 
