@@ -1170,20 +1170,21 @@ function renderPage() {
   }
 
   // ── S3: COMPARISON FLOW ──────────────────────────────────────────────────────────
-  // Continue → Localities Radar → Consideration Set → Fresh Listings → Nearby Localities →
-  // Head to Head → Landmarks → Expert Sellers → Upcoming → Price Trend
+  // Continue → Consideration Set → Properties in Secondary → Head to Head → Tradeoff →
+  // Landmarks → Expert Sellers → Upcoming → Price Trend → Nearby Localities → Articles → Tools
   else if (stage === 3) {
-    mods.push(modContinue(stage, primary, secondary));         // Continue
-    mods.push(modLocalitiesRadar(stage, city, primary));       // Localities on radar
+    mods.push(modContinue(stage, primary, secondary));         // Continue where you left off
     mods.push(modConsiderationSet(stage));                     // What is your consideration set?
-    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
-    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to consider
     mods.push(modPropertiesInSecondary(stage, secondary));     // Properties in secondary locality
-    mods.push(modHeadToHead(stage, primary, secondary, worksNear)); // H2H with commute times
-    mods.push(modNearestLandmarks(stage, primary, secondary)); // Landmarks/amenities
-    mods.push(modExpertAgents(stage, primary, secondary));     // Expert sellers
+    mods.push(modHeadToHead(stage, primary, secondary, worksNear)); // Head to Head comparison
+    mods.push(modTradeoff(stage, primary, secondary));         // Tradeoff insight (budget vs space vs commute)
+    mods.push(modNearestLandmarks(stage, primary, secondary)); // Nearest landmarks
+    mods.push(modExpertAgents(stage, primary, secondary));     // Experts to help you
     mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments
-    mods.push(modPriceTrend(stage, primary));                  // Price trend
+    mods.push(modPriceTrend(stage, primary));                  // Price trend / Social proof
+    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to consider
+    mods.push(modArticles(stage, primary, secondary));         // Relevant articles
+    mods.push(modTools(stage));                                // Tools & calculators
   }
 
   // ── S4: SHORTLIST/DECISION FLOW ──────────────────────────────────────────────────
