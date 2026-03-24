@@ -1,7 +1,14 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = 'https://qlfttxrnnjueycffwdmy.supabase.co';
-const supabaseServiceKey = 'sb_secret_ipXzLH_HMaBfGSvSQwDuDA_uAu_xXOs';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('❌ Missing environment variables:');
+  console.error('   SUPABASE_URL and SUPABASE_SERVICE_KEY must be set');
+  process.exit(1);
+}
+
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Array of Unsplash image URLs for properties
