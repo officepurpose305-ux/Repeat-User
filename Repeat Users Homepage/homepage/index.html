@@ -478,6 +478,7 @@ window.addEventListener('message', function(e) {
     console.log('[homepage-listener] ✓ Config applied:', {
       stage: config.stage,
       location: config.location.primary,
+      filters: config.filters,
       hasApiBase: !!config.apiBase
     });
     fetchAndRender();
@@ -592,6 +593,13 @@ function applyFilters(result, cfg) {
   var f = cfg.filters || {};
   var props = (result.properties || []).slice();
 
+  console.log('[applyFilters] Starting with', props.length, 'properties. Filters:', {
+    bhk: f.bhk,
+    readyToMove: f.readyToMove,
+    budgetMin: f.budgetMin,
+    budgetMax: f.budgetMax
+  });
+
   // RTM filter — strict: respect the user's selection exactly
   if (f.readyToMove === 'yes') {
     props = props.filter(function(p) { return p.ready_to_move; });
@@ -610,15 +618,19 @@ function applyFilters(result, cfg) {
     });
     // Only apply if results remain — avoids blanking the page on stale cached data
     if (filtered.length > 0) props = filtered;
+    console.log('[applyFilters] After BHK filter:', props.length, 'properties');
   }
 
   // Budget filter — only apply when both min and max are valid (> 0)
   if ((f.budgetMin || 0) > 0 && (f.budgetMax || 0) > 0) {
+    console.log('[applyFilters] Applying budget filter:', f.budgetMin, '-', f.budgetMax, 'Lakhs');
+    var beforeBudget = props.length;
     props = props.filter(function(p) {
       var val = parsePriceLakhs(p.price);
       if (val === null) return true; // keep if unparseable
       return val >= f.budgetMin && val <= f.budgetMax;
     });
+    console.log('[applyFilters] After budget filter:', beforeBudget, '→', props.length, 'properties');
   }
 
   // Enrich lm field with dynamic commute calculation if worksNear is set
