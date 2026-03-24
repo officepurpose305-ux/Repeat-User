@@ -1171,7 +1171,7 @@ function renderPage() {
 
   // ── S3: COMPARISON FLOW ──────────────────────────────────────────────────────────
   // Continue → Consideration Set → Properties in Secondary → Head to Head → Tradeoff →
-  // Landmarks → Expert Sellers → Upcoming → Price Trend → Nearby Localities → Articles → Tools
+  // Landmarks → Expert Sellers → Upcoming → Price Trend → Nearby Localities
   else if (stage === 3) {
     mods.push(modContinue(stage, primary, secondary));         // Continue where you left off
     mods.push(modConsiderationSet(stage));                     // What is your consideration set?
@@ -1183,8 +1183,6 @@ function renderPage() {
     mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments
     mods.push(modPriceTrend(stage, primary));                  // Price trend / Social proof
     mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to consider
-    mods.push(modArticles(stage, primary, secondary));         // Relevant articles
-    mods.push(modTools(stage));                                // Tools & calculators
   }
 
   // ── S4: SHORTLIST/DECISION FLOW ──────────────────────────────────────────────────
@@ -1809,19 +1807,6 @@ function modHeadToHead(stage, primary, secondary, worksNear) {
         </div>
       </div>
     </div>
-    <!-- AI Insight -->
-    <div class="sec-pad" style="padding-top:0;padding-bottom:8px;">
-      <div class="ds-insight sm" style="background:linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(139,92,246,0.02) 100%);border:1px solid rgba(139,92,246,0.2);">
-        <div class="ds-insight-head">
-          <span class="material-icons" aria-hidden="true" style="font-size:16px;color:var(--purple);">lightbulb</span>
-          <span class="ds-insight-title">Based on your filters</span>
-        </div>
-        <div class="ds-insight-sub" style="font-size:12px;margin-top:6px;">${esc(primary)} has more ready-to-move options within budget. ${esc(secondary)} offers ₹15–20L savings but with 2026–27 possession.</div>
-      </div>
-    </div>
-    <!-- Feedback & Notes -->
-    <div class="helpful-row"><span style="font-size:13px;font-weight:500;">Is this comparison helpful?</span><div class="helpful-btns"><button class="ds-btn ds-btn-xs ds-btn-secondary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_up</span> Yes</button><button class="ds-btn ds-btn-xs ds-btn-tertiary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_down</span> No</button></div></div>
-    ${Object.keys(propNotes).length === 0 ? `<div style="padding:8px 14px 0;font-size:12px;color:var(--text-tertiary);">💡 <span style="color:var(--text-secondary);font-weight:500;">Pro tip:</span> Add notes to individual properties to remember what stood out on your visit.</div>` : `<div style="padding:8px 14px 0;font-size:12px;color:var(--green);font-weight:600;">✓ ${Object.keys(propNotes).length} propert${Object.keys(propNotes).length > 1 ? 'ies have' : 'y has'} notes — you're building your decision.</div>`}
   </div>`;
 }
 
