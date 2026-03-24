@@ -1,0 +1,3041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>99acres</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../apps/design-system/design-system.css">
+<link rel="stylesheet" href="homepage.css">
+</head>
+<body>
+
+<!-- Top nav -->
+<div class="topnav">
+  <div class="topnav-row1">
+    <div class="logo">99<span>acres</span></div>
+    <div class="topnav-actions">
+      <button class="ds-btn ds-btn-secondary ds-btn-sm">Post Property <span class="material-icons" style="font-size:16px;" aria-hidden="true">add_circle_outline</span></button>
+      <button class="ds-btn ds-btn-quaternary ds-btn-icon ds-btn-sm" aria-label="Notifications"><span class="material-icons" style="font-size:20px;color:var(--text-secondary);" aria-hidden="true">notifications_none</span></button>
+    </div>
+  </div>
+  <div class="topnav-row2">
+    <div class="ds-search" style="cursor:pointer;">
+      <span class="ds-search-icon"><span class="material-icons" style="font-size:18px;" aria-hidden="true">search</span></span>
+      <span id="nav-search-text" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-primary);">Search City/Locality...</span>
+      <div class="ds-search-actions">
+        <button class="ds-search-action-btn" aria-label="Voice search"><span class="material-icons" style="font-size:18px;" aria-hidden="true">mic</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main content -->
+<div id="page"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js" onerror=""></script>
+<script>
+// ── Built-in fallback ──────────────────────────────────────────────────────────
+// ── Mock data for 10 popular Indian cities ────────────────────────────────────
+const MOCK_DATA = {
+
+  noida: {
+    properties: [
+      { name:'ATS Tourmaline – Tower A', dev:'ATS', location:'Sector 109, Noida', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins commute · 800m Aqua Line metro', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Godrej Properties Phase 2', dev:'Godrej', location:'Sector 137, Noida Expressway', price:'₹79.5L', sqft:'975 sq ft', bhk:'2 BHK', status:'Possession Dec 2026', ready_to_move:false, lm:'1.2km metro · Good connectivity', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Gaur City 2', dev:'Gaursons', location:'Sector 16C, Greater Noida West', price:'₹62L', sqft:'885 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'3km metro · Budget friendly', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'Mahagun Mywoods', dev:'Mahagun', location:'Sector 16C, Greater Noida West', price:'₹75L', sqft:'1,150 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'2.8km metro · Established society', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Supertech Ecovillage', dev:'Supertech', location:'Sector 137, Noida', price:'₹84.5L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'900m metro · Good appreciation', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'ATS Pristine – Tower C', dev:'ATS', location:'Sector 137, Noida', price:'₹1.1 Cr', sqft:'1,340 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'700m metro · Premium location', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      // Sector 143
+      { name:'Lodha Meridian Sector 143', dev:'Lodha', location:'Sector 143, Noida', price:'₹92L', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'18 mins from Tech Mahindra · 1.2km Aqua Line metro', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Shapoorji Pallonji Meridian 143', dev:'Shapoorji Pallonji', location:'Sector 143, Noida', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'16 mins from office · 1.1km metro', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      // Sector 150
+      { name:'Godrej Palm Retreat Sector 150', dev:'Godrej', location:'Sector 150, Noida', price:'₹1.25 Cr', sqft:'1,480 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from metro · Premium township · 90-10 payment plan', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'Prem Nagar Towers 150', dev:'Prem', location:'Sector 150, Noida', price:'₹1.15 Cr', sqft:'1,400 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins to metro · Sector 150 prime location', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
+      // Sector 128
+      { name:'Assetz Marq Sector 128', dev:'Assetz', location:'Sector 128, Noida', price:'₹84L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'1km from metro · Near expressway · Good appreciation', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+      { name:'Raheja Pinnacle Sector 128', dev:'Raheja', location:'Sector 128, Noida', price:'₹86L', sqft:'1,120 sq ft', bhk:'2 BHK', status:'Possession Nov 2025', ready_to_move:false, lm:'15 mins from office · High YoY growth area', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
+      // Sector 93A
+      { name:'Bestech Park View Sector 93A', dev:'Bestech', location:'Sector 93A, Noida', price:'₹72L', sqft:'950 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'1.5km from metro · Budget friendly · Established society', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Tata Value Homes Sector 93A', dev:'Tata', location:'Sector 93A, Noida', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Sec 18 connectivity · Good rental yields', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      // Sector 75
+      { name:'Pivotal Pinnacle Sector 75', dev:'Pivotal', location:'Sector 75, Noida', price:'₹82L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'12 mins from Cyber City · Good commute · Metro planned', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'3C Lotus Boulevard Sector 75', dev:'3C', location:'Sector 75, Noida', price:'₹80L', sqft:'1,000 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Noida metro connectivity · Near NH-24', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'Sector 137', bhkRange:'₹84L–1.1Cr · 2BHK', avgPsqft:8200, yoy:12, metro:'Aqua Line · 800m', conn:'Noida Expressway', count:'1.3k properties' },
+      { name:'Sector 143', bhkRange:'₹75–95L · 2BHK', avgPsqft:7400, yoy:14, metro:'Aqua Line · 1.2km', conn:'Yamuna Expressway', count:'980 properties' },
+      { name:'Sector 150', bhkRange:'₹95L–1.2Cr · 2BHK', avgPsqft:9100, yoy:15, metro:'2km from metro', conn:'Noida Expressway', count:'560 properties' },
+      { name:'Sector 128', bhkRange:'₹78L–1Cr · 2BHK', avgPsqft:7800, yoy:16, metro:'~1km from metro', conn:'Noida Expressway', count:'720 properties' },
+      { name:'Sector 93A', bhkRange:'₹65–85L · 2BHK', avgPsqft:6900, yoy:12, metro:'1.5km from metro', conn:'Sec 18 nearby', count:'850 properties' },
+      { name:'Greater Noida West', bhkRange:'₹55–80L · 2BHK', avgPsqft:5800, yoy:16, metro:'3km from metro', conn:'NH-9', count:'2.1k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Sector 128', delta:-8, label:'₹8L cheaper', metro:'1km metro', summary:'Similar Expressway corridor' },
+      { name:'Sector 93A', delta:-15, label:'₹15L cheaper', metro:'1.5km metro', summary:'Established residential zone' },
+      { name:'Greater Noida West', delta:-22, label:'₹22L cheaper', metro:'3km metro', summary:'High appreciation, farther commute' },
+      { name:'Sector 150', delta:8, label:'₹8L premium', metro:'2km metro', summary:'Premium planned township' },
+    ],
+    landmarks: {
+      primary:   { metro:'Noida Sec 52 (Aqua Line)', hospital:'Fortis Hospital', school:'DPS Sec 132 / KV School', mall:'DLF Mall of India' },
+      secondary: { metro:'Sec 143 (Aqua Line)', hospital:'Jaypee Hospital', school:'Wishtown School', mall:'Sec 143 Market' },
+    }
+  },
+
+  gurgaon: {
+    properties: [
+      { name:'Signature Global City 37D', dev:'Signature Global', location:'Sector 37D, Gurgaon', price:'₹88L', sqft:'1,055 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'28 mins from Cyber City · 3km from NH-48', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Pareena Micasa', dev:'Pareena', location:'Sector 68, Gurgaon', price:'₹97L', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'22 mins from Golf Course Rd · 2km Sikanderpur metro', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'SS The Leaf', dev:'SS Group', location:'Sector 85, Gurgaon', price:'₹83L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'New Gurgaon corridor · 3.5km from NH-48', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Bestech Park View', dev:'Bestech', location:'Sector 57, Gurgaon', price:'₹1.24 Cr', sqft:'1,190 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Golf Course Rd · 900m metro', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Emaar Palm Heights', dev:'Emaar', location:'Sector 77, Gurgaon', price:'₹1.82 Cr', sqft:'1,450 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Cyber City · 1.2km Yellow Line metro', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'Godrej Meridien', dev:'Godrej', location:'Sector 106, Gurgaon', price:'₹1.44 Cr', sqft:'1,275 sq ft', bhk:'3 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'20 mins from Golf Course Road · 2km metro', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
+      { name:'M3M Crown', dev:'M3M', location:'Sector 111, Gurgaon', price:'₹2.1 Cr', sqft:'1,680 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Udyog Vihar · 1.8km metro', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+      { name:'Sobha City Tower', dev:'Sobha', location:'Sector 108, Gurgaon', price:'₹1.62 Cr', sqft:'1,395 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'18 mins from Cyber Hub · 1.5km metro', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
+      // Sector 67/68
+      { name:'Suncity Sector 67', dev:'Suncity', location:'Sector 67, Gurgaon', price:'₹1.35 Cr', sqft:'1,280 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Cyber City · 1.2km Yellow Line metro', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      // Sohna Road
+      { name:'DLF Gardenia Sohna Road', dev:'DLF', location:'Sohna Road, Gurgaon', price:'₹1.28 Cr', sqft:'1,250 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'2.5km from metro · Golf Course Ext connectivity · Grade A locality', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Ireo Skyon Sohna Road', dev:'Ireo', location:'Sohna Road, Gurgaon', price:'₹1.18 Cr', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Aug 2026', ready_to_move:false, lm:'2.5km metro · Good appreciation · Established area', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'Golf Course Road', bhkRange:'₹1.8–3.5Cr · 3BHK', avgPsqft:14500, yoy:18, metro:'Yellow Line · 600m', conn:'NH-48', count:'1.8k properties' },
+      { name:'Sector 67 / 68', bhkRange:'₹1.2–2Cr · 3BHK', avgPsqft:9800, yoy:16, metro:'Yellow Line · 1.5km', conn:'Sohna Road', count:'1.1k properties' },
+      { name:'Sohna Road', bhkRange:'₹95L–1.5Cr · 2BHK', avgPsqft:8200, yoy:14, metro:'2.5km from metro', conn:'Golf Course Ext', count:'2.3k properties' },
+      { name:'New Gurgaon (Sec 80–95)', bhkRange:'₹85L–1.4Cr · 3BHK', avgPsqft:7400, yoy:15, metro:'3km from metro', conn:'Dwarka Expressway', count:'3.2k properties' },
+      { name:'Dwarka Expressway', bhkRange:'₹90L–1.6Cr · 3BHK', avgPsqft:8600, yoy:16, metro:'1km from metro', conn:'NH-48', count:'2.7k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'New Gurgaon', delta:-18, label:'₹18L cheaper', metro:'3km metro', summary:'Fast-developing, high appreciation' },
+      { name:'Sohna Road', delta:-10, label:'₹10L cheaper', metro:'2.5km metro', summary:'Established mid-segment zone' },
+      { name:'Manesar', delta:-30, label:'₹30L cheaper', metro:'8km metro', summary:'Industrial corridor, lower prices' },
+      { name:'Golf Course Ext', delta:12, label:'₹12L premium', metro:'1km metro', summary:'Premium lifestyle zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'HUDA City Centre (Yellow)', hospital:'Medanta Hospital', school:'DPS International', mall:'Ambience Mall' },
+      secondary: { metro:'Sikanderpur (Yellow)', hospital:'Artemis Hospital', school:'GD Goenka School', mall:'MGF Metropolitan' },
+    }
+  },
+
+  mumbai: {
+    properties: [
+      { name:'Lodha Azzuro', dev:'Lodha', location:'Thane West, Mumbai', price:'₹1.24 Cr', sqft:'1,100 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'25 mins from BKC · Thane railway station 1.2km', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Godrej Origins', dev:'Godrej', location:'Thane West, Mumbai', price:'₹1.42 Cr', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'30 mins from Andheri · 1.5km station', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Rustomjee Seasons', dev:'Rustomjee', location:'Bandra East, Mumbai', price:'₹3.2 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from BKC · Bandra station 800m', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'L&T Seawoods Residences', dev:'L&T', location:'Navi Mumbai', price:'₹1.12 Cr', sqft:'980 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Seawoods station · 15 mins from CBD Belapur', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Kalpataru Magnus', dev:'Kalpataru', location:'Borivali West, Mumbai', price:'₹1.58 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'Borivali station 700m · NH-8 nearby', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Runwal Forests', dev:'Runwal', location:'Kanjurmarg East, Mumbai', price:'₹1.32 Cr', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Kanjurmarg station 400m · 20 mins from BKC', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      // Powai
+      { name:'Lodha Belmore', dev:'Lodha', location:'Powai, Mumbai', price:'₹2.15 Cr', sqft:'1,380 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'1km metro · Powai Lake · Premium lifestyle', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Hiranandani Atlantis', dev:'Hiranandani', location:'Powai, Mumbai', price:'₹1.95 Cr', sqft:'1,320 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'800m from metro · International school · Business district', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'Thane West', bhkRange:'₹1.1–2Cr · 2BHK', avgPsqft:11500, yoy:14, metro:'Metro Line 4 nearby', conn:'Eastern Express Hwy', count:'4.2k properties' },
+      { name:'Powai', bhkRange:'₹1.8–3.5Cr · 2BHK', avgPsqft:18000, yoy:10, metro:'Metro Line 6 · 1km', conn:'Eastern Express Hwy', count:'1.4k properties' },
+      { name:'Andheri West', bhkRange:'₹1.6–3Cr · 2BHK', avgPsqft:20000, yoy:8, metro:'Yellow Line · 500m', conn:'WEH', count:'2.1k properties' },
+      { name:'Navi Mumbai', bhkRange:'₹90L–1.8Cr · 2BHK', avgPsqft:8500, yoy:18, metro:'Metro Line 1 nearby', conn:'Palm Beach Rd', count:'5.6k properties' },
+      { name:'Mulund West', bhkRange:'₹1.2–2.2Cr · 2BHK', avgPsqft:12500, yoy:12, metro:'Metro Line 4 upcoming', conn:'LBS Road', count:'1.8k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Navi Mumbai', delta:-25, label:'₹25L cheaper', metro:'Metro upcoming', summary:'Airport boost · high growth' },
+      { name:'Mulund', delta:-12, label:'₹12L cheaper', metro:'Metro Line 4', summary:'Established, well-connected' },
+      { name:'Dombivli', delta:-35, label:'₹35L cheaper', metro:'Railway station', summary:'Affordable, longer commute' },
+      { name:'Bandra / Khar', delta:80, label:'₹80L premium', metro:'Western line', summary:'Premium coastal location' },
+    ],
+    landmarks: {
+      primary:   { metro:'Ghatkopar (Yellow Line)', hospital:'Jupiter Hospital, Thane', school:'Podar International', mall:'Viviana Mall' },
+      secondary: { metro:'Seawoods–Darave', hospital:'MGM Hospital, Vashi', school:'DY Patil School', mall:'Seawoods Grand Central' },
+    }
+  },
+
+  bangalore: {
+    properties: [
+      { name:'Prestige Falcon City', dev:'Prestige', location:'Konanakunte, Bangalore', price:'₹1.08 Cr', sqft:'1,250 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Electronic City · 2km Banashankari metro', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'Brigade Utopia', dev:'Brigade', location:'Whitefield, Bangalore', price:'₹96L', sqft:'1,180 sq ft', bhk:'2 BHK', status:'Possession Aug 2026', ready_to_move:false, lm:'15 mins from Manyata Tech Park · 1.5km metro', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
+      { name:'Sobha Dream Acres', dev:'Sobha', location:'Panathur, Whitefield', price:'₹88L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from EPIP Zone · Whitefield metro 1.2km', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+      { name:'Purva Atmosphere', dev:'Puravankara', location:'Hebbal, Bangalore', price:'₹1.32 Cr', sqft:'1,380 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Manyata Tech · Hebbal flyover', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
+      { name:'Assetz 63° East', dev:'Assetz', location:'Whitefield, Bangalore', price:'₹85L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'10 mins from ITPL · 1km metro', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Godrej Splendour', dev:'Godrej', location:'Whitefield, Bangalore', price:'₹82L', sqft:'990 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'18 mins from Marathahalli · Kadugodi metro 900m', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      // Sarjapur Road
+      { name:'Sattva Hermitage', dev:'Sattva', location:'Sarjapur Road, Bangalore', price:'₹78L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Metro Phase 3 · ORR connectivity · Central Bangalore location', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'Whitefield', bhkRange:'₹80L–1.5Cr · 2BHK', avgPsqft:7800, yoy:18, metro:'Purple Line · 1km', conn:'Old Madras Road', count:'4.8k properties' },
+      { name:'Sarjapur Road', bhkRange:'₹75L–1.4Cr · 2BHK', avgPsqft:7200, yoy:15, metro:'Metro Phase 3', conn:'Outer Ring Road', count:'3.6k properties' },
+      { name:'Koramangala', bhkRange:'₹1.4–2.8Cr · 2BHK', avgPsqft:14500, yoy:10, metro:'Green Line · 1.5km', conn:'Inner Ring Road', count:'1.2k properties' },
+      { name:'Hebbal', bhkRange:'₹1.1–2Cr · 3BHK', avgPsqft:10500, yoy:16, metro:'Metro Phase 2', conn:'NH-44', count:'1.8k properties' },
+      { name:'Electronic City', bhkRange:'₹55–90L · 2BHK', avgPsqft:5200, yoy:14, metro:'Metro Phase 2', conn:'Hosur Road', count:'2.9k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Electronic City', delta:-20, label:'₹20L cheaper', metro:'Metro upcoming', summary:'IT hub, lower prices' },
+      { name:'Sarjapur Road', delta:-8, label:'₹8L cheaper', metro:'Metro Phase 3', summary:'High growth, ORR access' },
+      { name:'Marathahalli', delta:-5, label:'₹5L cheaper', metro:'Purple Line', summary:'Established IT corridor' },
+      { name:'Koramangala', delta:40, label:'₹40L premium', metro:'Green Line', summary:'Premium lifestyle zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Whitefield (Purple Line)', hospital:'Manipal Hospital', school:'Delhi Public School', mall:'Phoenix Marketcity' },
+      secondary: { metro:'Marathahalli (upcoming)', hospital:'Columbia Asia', school:'Inventure Academy', mall:'Orion East Mall' },
+    }
+  },
+
+  pune: {
+    properties: [
+      { name:'Godrej Woodsville', dev:'Godrej', location:'Hinjewadi Phase 2, Pune', price:'₹78L', sqft:'925 sq ft', bhk:'2 BHK', status:'Possession Sep 2026', ready_to_move:false, lm:'5 mins from Infosys Campus · Metro Phase 1 nearby', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Kolte-Patil Life Republic', dev:'Kolte-Patil', location:'Hinjewadi, Pune', price:'₹72L', sqft:'875 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from IT Park · 20 mins from Baner', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Paranjape Trident', dev:'Paranjape', location:'Baner, Pune', price:'₹1.12 Cr', sqft:'1,200 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Balewadi · Baner-Pashan Link Rd', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'Rohan Harita', dev:'Rohan', location:'Wakad, Pune', price:'₹85L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Hinjewadi IT Park · Wakad Chowk', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Kohinoor Grandeur', dev:'Kohinoor', location:'Wakad, Pune', price:'₹92L', sqft:'1,075 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'15 mins from Infosys · 1km from Wakad Chowk', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Gera Song of Joy', dev:'Gera', location:'Kharadi, Pune', price:'₹88L', sqft:'1,045 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from EON IT Park · NH-60 access', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      // Baner / Balewadi
+      { name:'Lodha Codename Next', dev:'Lodha', location:'Balewadi, Pune', price:'₹1.08 Cr', sqft:'1,150 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Balewadi · Baner Road connectivity · Grade A society', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'Hinjewadi', bhkRange:'₹65–1.2Cr · 2BHK', avgPsqft:7200, yoy:18, metro:'Metro Phase 1 · 1km', conn:'Mumbai-Pune Hwy', count:'3.4k properties' },
+      { name:'Baner / Balewadi', bhkRange:'₹90L–1.6Cr · 2BHK', avgPsqft:9800, yoy:14, metro:'Metro Phase 1', conn:'Baner-Pashan Rd', count:'2.1k properties' },
+      { name:'Kharadi', bhkRange:'₹80L–1.4Cr · 2BHK', avgPsqft:8600, yoy:16, metro:'Metro Phase 2', conn:'NH-60', count:'2.8k properties' },
+      { name:'Wakad', bhkRange:'₹72–1.2Cr · 2BHK', avgPsqft:8000, yoy:15, metro:'Metro Phase 1 · 1.5km', conn:'Mumbai-Pune Hwy', count:'1.9k properties' },
+      { name:'Viman Nagar', bhkRange:'₹1–1.8Cr · 2BHK', avgPsqft:11200, yoy:10, metro:'Near airport', conn:'Nagar Road', count:'1.3k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Wakad', delta:-10, label:'₹10L cheaper', metro:'Metro Phase 1', summary:'IT corridor, slightly farther' },
+      { name:'Punawale', delta:-18, label:'₹18L cheaper', metro:'Metro upcoming', summary:'New development, affordable' },
+      { name:'Undri', delta:-22, label:'₹22L cheaper', metro:'No metro yet', summary:'Upcoming residential hub' },
+      { name:'Baner', delta:15, label:'₹15L premium', metro:'Metro Phase 1', summary:'Established lifestyle zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Hinjewadi Phase 1 (Metro)', hospital:'Lifepoint Hospital', school:'Indus International', mall:'Xion Mall' },
+      secondary: { metro:'Wakad (Metro Phase 1)', hospital:'Ruby Hall Clinic', school:'DPS Pune', mall:'Westend Mall' },
+    }
+  },
+
+  hyderabad: {
+    properties: [
+      { name:'My Home Vihanga', dev:'My Home', location:'Bachupally, Hyderabad', price:'₹1.1 Cr', sqft:'1,320 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from HITEC City · Miyapur metro 2km', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+      { name:'Incor Carmel Heights', dev:'Incor', location:'Miyapur, Hyderabad', price:'₹82L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Miyapur metro · 15 mins from HITEC', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
+      { name:'Aparna HillPark', dev:'Aparna', location:'Miyapur, Hyderabad', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Possession Jun 2026', ready_to_move:false, lm:'10 mins from Miyapur · TSRTC bus depot nearby', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Prestige High Fields', dev:'Prestige', location:'Gachibowli, Hyderabad', price:'₹1.42 Cr', sqft:'1,480 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Amazon HQ · 1.2km metro', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Sumadhura Folium', dev:'Sumadhura', location:'Kondapur, Hyderabad', price:'₹95L', sqft:'1,185 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'12 mins from HITEC City · Kothaguda metro 1km', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'Sattva Magnus', dev:'Sattva', location:'Gachibowli, Hyderabad', price:'₹1.22 Cr', sqft:'1,350 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Microsoft · Gachibowli junction', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'Gachibowli', bhkRange:'₹1.1–2.5Cr · 3BHK', avgPsqft:9200, yoy:16, metro:'Metro Green Line · 1km', conn:'ORR', count:'2.4k properties' },
+      { name:'Kondapur', bhkRange:'₹85L–1.8Cr · 2BHK', avgPsqft:8400, yoy:18, metro:'Metro Green Line · 1km', conn:'Jubilee Hills Rd', count:'2.1k properties' },
+      { name:'Miyapur', bhkRange:'₹70–1.2Cr · 2BHK', avgPsqft:6800, yoy:16, metro:'Metro Blue Line · 500m', conn:'NH-9', count:'2.9k properties' },
+      { name:'Kokapet', bhkRange:'₹1–1.8Cr · 3BHK', avgPsqft:8800, yoy:16, metro:'Metro upcoming · 2km', conn:'ORR', count:'1.6k properties' },
+      { name:'Narsingi', bhkRange:'₹80L–1.4Cr · 3BHK', avgPsqft:7200, yoy:15, metro:'Metro Phase 2', conn:'ORR / Financial Dist', count:'1.8k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Miyapur', delta:-15, label:'₹15L cheaper', metro:'Blue Line metro', summary:'Metro-connected, affordable' },
+      { name:'Narsingi', delta:-10, label:'₹10L cheaper', metro:'Metro upcoming', summary:'Financial District access' },
+      { name:'Tellapur', delta:-20, label:'₹20L cheaper', metro:'Metro upcoming', summary:'Fast-developing suburb' },
+      { name:'Kokapet', delta:10, label:'₹10L premium', metro:'Metro Phase 2', summary:'Premium ORR corridor' },
+    ],
+    landmarks: {
+      primary:   { metro:'Gachibowli (Green Line)', hospital:'KIMS Hospital', school:'Oakridge International', mall:'Sarath City Capital Mall' },
+      secondary: { metro:'Kothaguda (Green Line)', hospital:'Continental Hospital', school:'Chirec Public School', mall:'Inorbit Mall' },
+    }
+  },
+
+  chennai: {
+    properties: [
+      { name:'Casagrand Primrose', dev:'Casagrand', location:'OMR, Chennai', price:'₹75L', sqft:'980 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Sholinganallur IT Park · MRTS nearby', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Appaswamy Platina', dev:'Appaswamy', location:'Porur, Chennai', price:'₹82L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from DLF IT Park · Porur junction', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'TVH Lumbini Square', dev:'TVH', location:'Sholinganallur, Chennai', price:'₹88L', sqft:'1,080 sq ft', bhk:'2 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'5 mins from TCS · OMR 500m', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Radiance Mercury', dev:'Radiance', location:'Perumbakkam, Chennai', price:'₹72L', sqft:'935 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Velachery · Outer Ring Road', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Mahindra Eden', dev:'Mahindra', location:'Perungudi, Chennai', price:'₹95L', sqft:'1,145 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from RMZ Millenia · Perungudi 700m', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'VBHC Serene Town', dev:'VBHC', location:'Oragadam, Chennai', price:'₹62L', sqft:'880 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from Mahindra City · NH-32', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
+      // Porur
+      { name:'RMZ Ecocity', dev:'RMZ', location:'Porur, Chennai', price:'₹85L', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Porur junction · Chennai Bypass connectivity', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'Sholinganallur (OMR)', bhkRange:'₹75–1.4Cr · 2BHK', avgPsqft:7800, yoy:14, metro:'Metro Phase 2 · 1.5km', conn:'Old Mahabalipuram Road', count:'3.1k properties' },
+      { name:'Perumbakkam', bhkRange:'₹65–1Cr · 2BHK', avgPsqft:6500, yoy:16, metro:'Metro Phase 2', conn:'ORR', count:'2.4k properties' },
+      { name:'Porur', bhkRange:'₹80L–1.5Cr · 2BHK', avgPsqft:8200, yoy:12, metro:'Metro Phase 2 · 1km', conn:'Chennai Bypass', count:'1.8k properties' },
+      { name:'Velachery', bhkRange:'₹95L–1.8Cr · 2BHK', avgPsqft:10500, yoy:10, metro:'Green Line · 500m', conn:'Inner Ring Road', count:'1.5k properties' },
+      { name:'Pallikaranai', bhkRange:'₹60–95L · 2BHK', avgPsqft:6200, yoy:18, metro:'Metro Phase 2', conn:'OMR junction', count:'2.2k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Perumbakkam', delta:-12, label:'₹12L cheaper', metro:'Metro Phase 2', summary:'Fast-growing OMR suburb' },
+      { name:'Pallikaranai', delta:-18, label:'₹18L cheaper', metro:'Metro upcoming', summary:'Affordable, high growth' },
+      { name:'Oragadam', delta:-25, label:'₹25L cheaper', metro:'No metro yet', summary:'Industrial zone, affordable' },
+      { name:'Velachery', delta:15, label:'₹15L premium', metro:'Green Line', summary:'Established metro-connected zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Sholinganallur (Metro Phase 2)', hospital:'Gleneagles Global Health', school:'PSBB Learning Leadership', mall:'Phoenix Marketcity' },
+      secondary: { metro:'Perumbakkam (Metro upcoming)', hospital:'Fortis Malar Hospital', school:'Chettinad Vidyashram', mall:'Express Avenue' },
+    }
+  },
+
+  delhi: {
+    properties: [
+      { name:'DDA LIG Flats', dev:'DDA', location:'Dwarka Sector 12, Delhi', price:'₹1.18 Cr', sqft:'1,050 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Dwarka Sector 12 metro · NH-48 nearby', image_url:'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop' },
+      { name:'Ansal Elegance', dev:'Ansal API', location:'Rohini Sector 24, Delhi', price:'₹1.12 Cr', sqft:'1,080 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'8 mins from Rohini West metro · 20 mins from Connaught Place', image_url:'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop' },
+      { name:'Omaxe Heights', dev:'Omaxe', location:'Rohini Sector 10, Delhi', price:'₹92L', sqft:'950 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from metro · DSP cricket ground nearby', image_url:'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop' },
+      { name:'Tata Housing Primanti', dev:'Tata Housing', location:'Dwarka Sector 23, Delhi', price:'₹1.52 Cr', sqft:'1,280 sq ft', bhk:'3 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'Dwarka Sec 23 metro · 15 mins from airport', image_url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop' },
+      { name:'NBCC Green View', dev:'NBCC', location:'Okhla Phase 1, Delhi', price:'₹1.42 Cr', sqft:'1,240 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'Jasola Apollo metro 1km · 12 mins from Saket', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Eldeco Aamantran', dev:'Eldeco', location:'Sector 119, Delhi NCR', price:'₹1.28 Cr', sqft:'1,195 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from South Delhi · Noida Border', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'Dwarka', bhkRange:'₹1–2Cr · 3BHK', avgPsqft:9800, yoy:12, metro:'Blue Line · 500m', conn:'NH-48 / Dwarka Exp', count:'2.8k properties' },
+      { name:'Rohini', bhkRange:'₹85L–1.6Cr · 3BHK', avgPsqft:8500, yoy:10, metro:'Red / Yellow Lines', conn:'Outer Ring Road', count:'3.2k properties' },
+      { name:'Saket', bhkRange:'₹2–5Cr · 3BHK', avgPsqft:18000, yoy:8, metro:'Yellow Line · 500m', conn:'Mehrauli-Badarpur Rd', count:'800 properties' },
+      { name:'Vasant Kunj', bhkRange:'₹2.5–6Cr · 3BHK', avgPsqft:22000, yoy:7, metro:'Yellow Line · 2km', conn:'Nelson Mandela Marg', count:'600 properties' },
+      { name:'Janakpuri', bhkRange:'₹1.2–2.5Cr · 3BHK', avgPsqft:11200, yoy:10, metro:'Blue Line · 400m', conn:'Outer Ring Road', count:'1.4k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Rohini', delta:-15, label:'₹15L cheaper', metro:'Red Line', summary:'Established Delhi suburb' },
+      { name:'Janakpuri', delta:-8, label:'₹8L cheaper', metro:'Blue Line', summary:'West Delhi, metro-connected' },
+      { name:'Noida Border', delta:-30, label:'₹30L cheaper', metro:'Blue Line', summary:'NCR fringe, high appreciation' },
+      { name:'Saket', delta:50, label:'₹50L premium', metro:'Yellow Line', summary:'South Delhi premium zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Dwarka Sec 12 (Blue Line)', hospital:'Venkateshwar Hospital', school:'Ryan International', mall:'Ambience Mall Dwarka' },
+      secondary: { metro:'Rohini West (Red Line)', hospital:'Fortis Shalimar Bagh', school:'DPS Rohini', mall:'Mangalam Place' },
+    }
+  },
+
+  kolkata: {
+    properties: [
+      { name:'Merlin Maxima', dev:'Merlin Group', location:'New Town Action Area II, Kolkata', price:'₹82L', sqft:'1,095 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Salt Lake Sec V · New Town metro 1km', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'PS Equinox', dev:'PS Group', location:'New Town AA-I, Kolkata', price:'₹75L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'20 mins from IT Hub · Action Area I Rd', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Hiland Park Condoville', dev:'Hiland', location:'New Town, Kolkata', price:'₹88L', sqft:'1,140 sq ft', bhk:'3 BHK', status:'Possession Mar 2026', ready_to_move:false, lm:'10 mins from Wipro · Biswa Bangla Gate 2km', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Ambuja Utalika', dev:'Ambuja Realty', location:'Mukundapur, EM Bypass', price:'₹92L', sqft:'1,180 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from Ruby Hospital · EM Bypass', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+      { name:'Siddha Pines', dev:'Siddha', location:'Rajarhat, Kolkata', price:'₹65L', sqft:'940 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'25 mins from Salt Lake · Eco Park 2km', image_url:'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop' },
+      { name:'Diamond City West', dev:'Shapoorji Pallonji', location:'Tollygunge, Kolkata', price:'₹78L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'Mahanayak Uttam Kumar metro 800m · EM Bypass', image_url:'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'New Town', bhkRange:'₹65L–1.2Cr · 2BHK', avgPsqft:6200, yoy:16, metro:'Orange Line · 1km', conn:'New Town Expressway', count:'3.8k properties' },
+      { name:'Salt Lake Sector V', bhkRange:'₹80L–1.5Cr · 2BHK', avgPsqft:7800, yoy:12, metro:'Blue Line · 1km', conn:'VIP Road', count:'1.8k properties' },
+      { name:'Rajarhat', bhkRange:'₹55–95L · 2BHK', avgPsqft:5400, yoy:18, metro:'Orange Line nearby', conn:'Rajarhat Main Rd', count:'2.9k properties' },
+      { name:'EM Bypass', bhkRange:'₹80L–1.8Cr · 3BHK', avgPsqft:8500, yoy:10, metro:'Green Line', conn:'Eastern Metropolitan Byp', count:'2.1k properties' },
+      { name:'Garia / Narendrapur', bhkRange:'₹45–80L · 2BHK', avgPsqft:4800, yoy:14, metro:'Blue Line · 500m', conn:'Diamond Harbour Road', count:'2.4k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Rajarhat', delta:-15, label:'₹15L cheaper', metro:'Orange Line', summary:'Fastest-growing suburb' },
+      { name:'Garia', delta:-20, label:'₹20L cheaper', metro:'Blue Line', summary:'South Kolkata, metro-linked' },
+      { name:'Narendrapur', delta:-28, label:'₹28L cheaper', metro:'No metro yet', summary:'Green suburb, affordable' },
+      { name:'Salt Lake Sec V', delta:12, label:'₹12L premium', metro:'Blue Line', summary:'IT hub zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'New Town (Orange Line)', hospital:'Charnock Hospital', school:'DPS New Town', mall:'City Centre 2' },
+      secondary: { metro:'Rajarhat (Orange Line)', hospital:'Desun Hospital', school:'Springdale High School', mall:'Axis Mall' },
+    }
+  },
+
+  ahmedabad: {
+    properties: [
+      { name:'Adani Shantigram – Alto', dev:'Adani Realty', location:'SG Highway, Ahmedabad', price:'₹85L', sqft:'1,150 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'15 mins from GIFT City · SG Highway', image_url:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop' },
+      { name:'Safal Prelude', dev:'Safal', location:'Satellite, Ahmedabad', price:'₹72L', sqft:'1,020 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'10 mins from Prahlad Nagar · 20 mins from Iscon', image_url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop' },
+      { name:'Shivalik Sharda', dev:'Shivalik', location:'Bopal, Ahmedabad', price:'₹68L', sqft:'975 sq ft', bhk:'2 BHK', status:'Possession Sep 2025', ready_to_move:false, lm:'20 mins from GIFT City · SH-17 access', image_url:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop' },
+      { name:'Goyal My Home', dev:'Goyal & Co', location:'Thaltej, Ahmedabad', price:'₹78L', sqft:'1,060 sq ft', bhk:'2 BHK', status:'Ready to move', ready_to_move:true, lm:'12 mins from Prahlad Nagar · Thaltej Char Rasta', image_url:'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop' },
+      { name:'Patel Shivalik Residency', dev:'Patel Group', location:'Prahlad Nagar, Ahmedabad', price:'₹92L', sqft:'1,180 sq ft', bhk:'3 BHK', status:'Ready to move', ready_to_move:true, lm:'5 mins from Corporate Road · Ahmedabad BRT', image_url:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop' },
+      { name:'Iscon Platinum', dev:'Iscon', location:'Bopal, Ahmedabad', price:'₹75L', sqft:'1,010 sq ft', bhk:'2 BHK', status:'Possession Dec 2025', ready_to_move:false, lm:'18 mins from SG Highway · NH-947', image_url:'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop' },
+    ],
+    localities: [
+      { name:'SG Highway', bhkRange:'₹75L–1.5Cr · 2BHK', avgPsqft:6800, yoy:16, metro:'BRTS · 500m', conn:'SG Highway / GIFT City', count:'3.2k properties' },
+      { name:'Prahlad Nagar', bhkRange:'₹85L–1.6Cr · 2BHK', avgPsqft:8200, yoy:12, metro:'Metro Line 1 · 1km', conn:'Corporate Road', count:'1.8k properties' },
+      { name:'Bopal', bhkRange:'₹60–1.1Cr · 2BHK', avgPsqft:5800, yoy:18, metro:'Metro upcoming', conn:'SH-17', count:'2.9k properties' },
+      { name:'Thaltej', bhkRange:'₹72–1.3Cr · 2BHK', avgPsqft:7200, yoy:15, metro:'Metro Line 1 · 800m', conn:'SG Highway', count:'2.2k properties' },
+      { name:'Satellite', bhkRange:'₹70L–1.4Cr · 2BHK', avgPsqft:7600, yoy:11, metro:'Metro Line 1 · 600m', conn:'Judges Bungalow Rd', count:'1.5k properties' },
+    ],
+    adjacentLocalities: [
+      { name:'Bopal', delta:-14, label:'₹14L cheaper', metro:'Metro upcoming', summary:'High growth western suburb' },
+      { name:'Shela', delta:-20, label:'₹20L cheaper', metro:'Metro upcoming', summary:'New planned township' },
+      { name:'Chandkheda', delta:-22, label:'₹22L cheaper', metro:'Metro Line 2', summary:'North Ahmedabad, affordable' },
+      { name:'Thaltej', delta:8, label:'₹8L premium', metro:'Metro Line 1', summary:'Premium SG Hwy zone' },
+    ],
+    landmarks: {
+      primary:   { metro:'Thaltej (Metro Line 1)', hospital:'HCG Hospital', school:'Udgam School', mall:'Ahmedabad One Mall' },
+      secondary: { metro:'Bopal (Metro upcoming)', hospital:'Zydus Hospital', school:'Anand Niketan', mall:'Nexus Ahmedabad' },
+    }
+  },
+};
+
+// City aliases → canonical key
+const CITY_ALIASES = {
+  'noida':'noida','greater noida':'noida','noida extension':'noida','sector 137':'noida','sector 143':'noida','sector 150':'noida','aqua line':'noida',
+  'gurgaon':'gurgaon','gurugram':'gurgaon','cyber city':'gurgaon','golf course':'gurgaon','dwarka expressway':'gurgaon',
+  'mumbai':'mumbai','thane':'mumbai','navi mumbai':'mumbai','andheri':'mumbai','borivali':'mumbai','powai':'mumbai','bandra':'mumbai',
+  'bangalore':'bangalore','bengaluru':'bangalore','whitefield':'bangalore','koramangala':'bangalore','hebbal':'bangalore','electronic city':'bangalore','sarjapur':'bangalore',
+  'pune':'pune','hinjewadi':'pune','baner':'pune','wakad':'pune','kharadi':'pune','viman nagar':'pune',
+  'hyderabad':'hyderabad','gachibowli':'hyderabad','kondapur':'hyderabad','miyapur':'hyderabad','kokapet':'hyderabad','hitec city':'hyderabad','secunderabad':'hyderabad',
+  'chennai':'chennai','omr':'chennai','sholinganallur':'chennai','porur':'chennai','velachery':'chennai','perumbakkam':'chennai',
+  'delhi':'delhi','new delhi':'delhi','delhi ncr':'delhi','ncr':'delhi','dwarka':'delhi','rohini':'delhi','saket':'delhi','vasant kunj':'delhi','janakpuri':'delhi','south delhi':'delhi',
+  'kolkata':'kolkata','calcutta':'kolkata','new town':'kolkata','salt lake':'kolkata','rajarhat':'kolkata','tollygunge':'kolkata',
+  'ahmedabad':'ahmedabad','sg highway':'ahmedabad','prahlad nagar':'ahmedabad','bopal':'ahmedabad','thaltej':'ahmedabad','satellite ahmedabad':'ahmedabad',
+};
+
+function getMockData(cfg) {
+  const loc = cfg.location || {};
+  // Check primary first (direct user input), then city (may be stale/async)
+  const candidates = [loc.primary, loc.secondary, loc.city].filter(Boolean).map(s => s.toLowerCase().trim());
+  const aliases = Object.keys(CITY_ALIASES).sort((a,b) => b.length - a.length);
+  for (const raw of candidates) {
+    for (const alias of aliases) {
+      if (raw.includes(alias)) return MOCK_DATA[CITY_ALIASES[alias]];
+    }
+  }
+  return MOCK_DATA.noida; // final default
+}
+
+// ── Intelligent Mock Data Generator ──────────────────────────────────────────
+// Generate smarter mock data based on city patterns instead of random slices
+function generateIntelligentMockData(city, searchedLocality) {
+  // Resolve city name to canonical key
+  var cityCode = (city || '').toLowerCase().trim();
+  var found = false;
+  for (var alias in CITY_ALIASES) {
+    if (cityCode.includes(alias)) {
+      cityCode = CITY_ALIASES[alias];
+      found = true;
+      break;
+    }
+  }
+  if (!found) cityCode = 'noida'; // fallback
+
+  var cityData = MOCK_DATA[cityCode];
+  if (!cityData) {
+    console.log('[mock] City not found:', cityCode, '— using fallback');
+    return MOCK_DATA.noida;
+  }
+
+  // Try to find the searched locality in the city's localities list
+  var searchedLoc = null;
+  if (searchedLocality) {
+    var searchLower = searchedLocality.toLowerCase();
+    for (var i = 0; i < cityData.localities.length; i++) {
+      if (cityData.localities[i].name.toLowerCase().includes(searchLower) ||
+          searchLower.includes(cityData.localities[i].name.toLowerCase())) {
+        searchedLoc = cityData.localities[i];
+        break;
+      }
+    }
+  }
+
+  if (!searchedLoc) {
+    // Locality not found — return city sample with warning
+    console.log('[mock] Locality not found:', searchedLocality, '— using city sample');
+    return {
+      properties: cityData.properties ? cityData.properties.slice(0, 8) : [],
+      localities: cityData.localities ? cityData.localities.slice(0, 6) : [],
+      adjacentLocalities: cityData.adjacentLocalities || [],
+      landmarks: cityData.landmarks || {}
+    };
+  }
+
+  // Locality found — generate intelligent mock
+  console.log('[mock] Generating smart mock for:', searchedLoc.name);
+
+  // Find nearby localities: same price tier or within ±30% of avgPsqft
+  var nearbyLocalities = [];
+  if (cityData.localities) {
+    nearbyLocalities = cityData.localities
+      .filter(function(l) {
+        if (l.name === searchedLoc.name) return false;
+        var priceDelta = Math.abs(l.avgPsqft - searchedLoc.avgPsqft) / searchedLoc.avgPsqft;
+        return priceDelta < 0.3;
+      })
+      .sort(function(a, b) { return b.yoy - a.yoy; }) // prefer high YoY
+      .slice(0, 5);
+  }
+
+  // Find properties in or near the searched locality
+  var nearbyProperties = [];
+  if (cityData.properties) {
+    nearbyProperties = cityData.properties.filter(function(p) {
+      // Match searched locality or nearby localities
+      var matchesSearched = p.location.toLowerCase().includes(searchedLoc.name.toLowerCase());
+      var matchesNearby = nearbyLocalities.some(function(nl) {
+        return p.location.toLowerCase().includes(nl.name.toLowerCase());
+      });
+      return matchesSearched || matchesNearby;
+    });
+
+    // If we found properties near the locality, use them; otherwise use city sample
+    if (nearbyProperties.length === 0) {
+      nearbyProperties = cityData.properties.slice(0, 8);
+    } else {
+      nearbyProperties = nearbyProperties.slice(0, 8);
+    }
+  }
+
+  // Build result with searched locality first, then nearby
+  var allLocalities = [searchedLoc].concat(nearbyLocalities);
+
+  console.log('[mock] Generated with', nearbyProperties.length, 'properties from', searchedLoc.name, '+ nearby');
+
+  return {
+    properties: nearbyProperties,
+    localities: allLocalities.slice(0, 6),
+    adjacentLocalities: cityData.adjacentLocalities || [],
+    landmarks: cityData.landmarks || {}
+  };
+}
+
+// ── Property image pool (Unsplash — residential buildings) ────────────────────
+// 12 diverse real residential property images for Indian apartment listings
+const PROP_IMAGES = [
+  'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=800&h=600&fit=crop',  // Modern balcony
+  'https://images.unsplash.com/photo-1570129477492-45ac003edd8f?w=800&h=600&fit=crop',  // Building exterior
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',  // Residential tower
+  'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop',  // Apartment complex
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',  // Modern residential
+  'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=800&h=600&fit=crop',  // Luxury apartment
+  'https://images.unsplash.com/photo-1512891691857-68ad6f1011a0?w=800&h=600&fit=crop',  // Building facade
+  'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop',  // Residential building
+  'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop',  // Modern architecture
+  'https://images.unsplash.com/photo-1515320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop',  // Apartment tower
+  'https://images.unsplash.com/photo-1565641741995-a3d28b94c7fa?w=800&h=600&fit=crop',  // Residential complex
+  'https://images.unsplash.com/photo-1468619216002-b0b62d5d6fe3?w=800&h=600&fit=crop',  // Building exterior
+];
+
+// Get property image - prefer 99acres API, fallback to Unsplash
+function getPropertyImage(p) {
+  // ✅ PRIORITY 1: Use 99acres API image if available (real property photo)
+  if (p.image_url && p.image_url.length > 0) {
+    return p.image_url;
+  }
+
+  // FALLBACK: Use Unsplash (deterministic based on property name hash)
+  const hash = (p.name||'x').split('').reduce(function(a,c){ return a + c.charCodeAt(0); }, 0);
+  return PROP_IMAGES[hash % PROP_IMAGES.length];
+}
+
+// Renders property image (99acres API > Unsplash fallback)
+function propImg(p) {
+  const url = getPropertyImage(p);
+  const uniqueId = 'img-' + Math.random().toString(36).substr(2, 9);
+  // Display property image with CORS support; fallback emoji if image fails to load
+  // NOTE: Do NOT esc() the URL - it breaks the src attribute by escaping quotes
+  return `<div style="width:100%;height:100%;background:#e5e7eb;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+    <img id="${uniqueId}" src='${url}' alt="Property image" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 0.4s ease-in;" onload="this.style.opacity='1'; console.log('[img-load] ✓ Image loaded:', this.src.substring(0,60));" onerror="console.log('[img-error] ✗ Failed to load:', this.src.substring(0,80)); this.parentElement.style.background='#dbeafe'; this.style.display='none';" />
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;pointer-events:none;color:#6b7280;opacity:0.4;">🏢</div>
+  </div>`;
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let config = defaultConfig();
+let data = { properties:[], localities:[], adjacentLocalities:[], landmarks:{} };
+let rawData = data; // pre-filter — used by modules that intentionally show a different subset (e.g. UC properties)
+let loading = false;
+let _fetchId = 0;        // incremented on each new fetch — guards against stale completions
+let _lastFetchKey = '';  // tracks last location used for fetching — skip re-fetch on filter-only changes
+const propNotes = {}; // keyed by property name; persists across renderPage() calls
+const propChips = {}; // keyed by property name; stores array of selected chip labels
+
+function defaultConfig() {
+  return {
+    user:{ name:'', age:null, occupation:'', worksNear:'' },
+    location:{ primary:'', secondary:null, city:'', openToNearby:false },
+    filters:{ bhk:[], budgetMin:70, budgetMax:95, readyToMove:'either', buyTimeline:'exploring' },
+    behavior:{ developerContact:'none', visitedSite:false, priceSensitivity:'medium' },
+    lastVisitDaysAgo:null, stage:1, openAIData:null, openAIKey:null, apiBase:null
+  };
+}
+
+// ── Message listener (SET UP FIRST - attach before any code runs) ──────────────
+var _panelConnected = false;
+window.addEventListener('message', function(e) {
+  console.log('[homepage-listener] Message received, type:', e.data?.type || '(none)');
+  if (!e.data || typeof e.data !== 'object') return;
+
+  if (e.data.type === 'CONFIG_UPDATE') {
+    console.log('[homepage-listener] ✓✓✓ CONFIG_UPDATE from panel!');
+    _panelConnected = true;
+    config = Object.assign(defaultConfig(), e.data.config || {});
+    console.log('[homepage-listener] ✓ Config applied:', {
+      stage: config.stage,
+      location: config.location.primary,
+      hasApiBase: !!config.apiBase
+    });
+    fetchAndRender();
+  }
+});
+
+// ── Fetch ─────────────────────────────────────────────────────────────────────
+async function fetchAndRender() {
+  var loc = config.location || {};
+  var fetchKey = (loc.primary || '') + '|' + (loc.secondary || '') + '|' + (loc.city || '');
+
+  // Filter-only change (BHK / budget / RTM / timeline) — location unchanged.
+  // Skip the full API/OpenAI/mock pipeline and just re-apply filters on cached rawData.
+  if (_lastFetchKey === fetchKey && rawData && (rawData.properties || []).length) {
+    data = applyFilters(rawData, config);
+    renderPage();
+    return;
+  }
+
+  _lastFetchKey = fetchKey;
+  var myId = ++_fetchId;   // guard: if a newer fetch starts, this one becomes stale
+  loading = true; renderPage();
+  var fetched = await fetchData(config);
+  console.log('[fetchAndRender] fetchData returned:', {
+    propertiesCount: (fetched.properties || []).length,
+    hasImageUrls: (fetched.properties || []).some(p => p.image_url),
+    firstPropImageUrl: (fetched.properties || []).length > 0 ? (fetched.properties[0].image_url || '(empty)') : 'N/A'
+  });
+  if (myId !== _fetchId) return; // superseded — discard result
+  rawData = fetched;
+  console.log('[fetchAndRender] rawData now has', (rawData.properties || []).length, 'properties');
+  data = applyFilters(rawData, config);
+  console.log('[fetchAndRender] after applyFilters, data has', (data.properties || []).length, 'properties');
+  loading = false; renderPage();
+}
+
+// Fetch with hard timeout — prevents hanging on unreachable internal API servers
+function fetchWithTimeout(url, ms) {
+  ms = ms || 5000;
+  var ctrl = new AbortController();
+  var timer = setTimeout(function() { ctrl.abort(); }, ms);
+  return fetch(url, { signal: ctrl.signal }).finally(function() { clearTimeout(timer); });
+}
+
+// Parse the scraped text format returned by /debug/search-urls
+// Each listing block has: Landing URL, Listing Title, Listing Image URL, Listing Description, Posted by, Possession Status
+function parseApiListings(text, fallbackLoc) {
+  console.log('[parseApiListings] Input text length:', text.length);
+  const results = [];
+  const blocks = text.split(/\n{2,}(?=Landing URL:)/);
+  console.log('[parseApiListings] Split into', blocks.length, 'blocks');
+  for (var i = 0; i < blocks.length; i++) {
+    var block = blocks[i];
+    var get = function(field) {
+      var m = block.match(new RegExp('^' + field + ':\\s*(.+)$', 'm'));
+      return m ? m[1].trim() : '';
+    };
+    var title  = get('Listing Title');
+    if (!title) {
+      console.log('[parseApiListings] Block', i, 'has no title, skipping');
+      continue;
+    }
+    console.log('[parseApiListings] Block', i, 'title:', title.substring(0, 50));
+    var desc   = get('Listing Description');
+    var imgUrl = get('Listing Image URL');
+    var poss   = get('Possession Status');
+
+    var bhkM   = title.match(/(\d)\s*BHK/i);
+    var bhk    = bhkM ? bhkM[1] + ' BHK' : '2 BHK';
+    var nameM  = title.match(/^(.+?)\s+\d\s*BHK/i);
+    var name   = nameM ? nameM[1].trim() : title;
+    var locM   = title.match(/\bin\s+(.+)$/i);
+    var loc    = locM ? locM[1].trim() : fallbackLoc;
+
+    // Price: grab first ₹ amount, strip deposit/month suffix
+    var priceM = desc.match(/₹[\d,]+(?:\.\d+)?(?:\s*(?:Cr|L))?(?:\s*\/month)?/);
+    var price  = priceM ? priceM[0].replace(/\s*\/month/, '').trim() : '₹—';
+
+    var sqftM  = desc.match(/([\d,]+)\s*sqft/i);
+    var sqft   = sqftM ? sqftM[1].replace(/,/g, '') + ' sq ft' : '';
+
+    var nearbyM = desc.match(/Nearby\s*:\s*(.+?)(?:\s+\+\d|$)/i);
+    var lm      = nearbyM ? nearbyM[1].trim() : '';
+
+    var rtm = /ready to move/i.test(desc) || /ready to move/i.test(poss);
+    results.push({
+      name, location: loc, price, sqft, bhk,
+      ready_to_move: rtm,
+      status: rtm ? 'Ready to move' : (poss || 'Under Construction'),
+      lm, image_url: imgUrl
+    });
+  }
+  var filtered = results.filter(function(r) { return r.name; });
+  console.log('[parseApiListings] Returning', filtered.length, 'results:', filtered.map(function(r) { return r.name; }));
+  return filtered;
+}
+
+// Apply RTM and BHK filters to any data result — runs on every data path
+// so filter changes take effect immediately without re-fetching
+// Parse a price string like "₹88L", "₹1.1 Cr", "₹79.5L" → value in Lakhs, or null
+function parsePriceLakhs(priceStr) {
+  if (!priceStr || priceStr === '₹—') return null;
+  var s = priceStr.replace(/[₹,\s]/g, '');
+  var crMatch = s.match(/^([\d.]+)[Cc]r$/);
+  if (crMatch) return parseFloat(crMatch[1]) * 100;
+  var lMatch = s.match(/^([\d.]+)[Ll]$/);
+  if (lMatch) return parseFloat(lMatch[1]);
+  return null;
+}
+
+function applyFilters(result, cfg) {
+  var f = cfg.filters || {};
+  var props = (result.properties || []).slice();
+
+  // RTM filter — strict: respect the user's selection exactly
+  if (f.readyToMove === 'yes') {
+    props = props.filter(function(p) { return p.ready_to_move; });
+  } else if (f.readyToMove === 'no') {
+    props = props.filter(function(p) { return !p.ready_to_move; });
+  }
+
+  // BHK filter — keep any property matching one of the selected BHKs
+  if (f.bhk && f.bhk.length) {
+    var selectedNums = f.bhk.map(function(b) { return b.replace(/\D/g, ''); });
+    var filtered = props.filter(function(p) {
+      // Handle both string and array bhk formats
+      var bhkStr = Array.isArray(p.bhk) ? p.bhk.join(', ') : (p.bhk || '');
+      var pNum = bhkStr.replace(/\D/g, '').charAt(0);
+      return selectedNums.indexOf(pNum) !== -1;
+    });
+    // Only apply if results remain — avoids blanking the page on stale cached data
+    if (filtered.length > 0) props = filtered;
+  }
+
+  // Budget filter — only apply when both min and max are valid (> 0)
+  if ((f.budgetMin || 0) > 0 && (f.budgetMax || 0) > 0) {
+    props = props.filter(function(p) {
+      var val = parsePriceLakhs(p.price);
+      if (val === null) return true; // keep if unparseable
+      return val >= f.budgetMin && val <= f.budgetMax;
+    });
+  }
+
+  // Enrich lm field with dynamic commute calculation if worksNear is set
+  var worksNear = cfg.user && cfg.user.worksNear;
+  if (worksNear) {
+    props = props.map(function(p) {
+      var commute = estimateCommute(p.location, worksNear);
+      var commuteStr = commute ? commute + ' mins to ' + worksNear : null;
+      var newLm = commuteStr ? commuteStr : p.lm;
+      return Object.assign({}, p, { lm: newLm });
+    });
+  }
+
+  return Object.assign({}, result, { properties: props });
+}
+
+// ── Core Scoring Functions ──────────────────────────────────────────────────
+// Used by modules to rank localities and properties intelligently
+// All functions return 0–100 score
+
+function scoreProximity(targetLocalityName, candidateLocalityName, city) {
+  // Score based on geographic distance (km)
+  // Distance curve: 0-2km=100, 2-5km=75, 5-10km=50, 10-15km=25, 15+=10
+
+  // For now, use locality name similarity as proxy (can enhance with real distance data)
+  var targetNum = parseInt(targetLocalityName.match(/\d+/) || '0');
+  var candidateNum = parseInt(candidateLocalityName.match(/\d+/) || '0');
+
+  if (!targetNum || !candidateNum) return 50; // fallback for non-numbered localities
+
+  var distance = Math.abs(targetNum - candidateNum) * 1.2; // rough proxy: each sector ~1.2km apart
+
+  if (distance <= 2) return 100;
+  if (distance <= 5) return 75;
+  if (distance <= 10) return 50;
+  if (distance <= 15) return 25;
+  return 10;
+}
+
+function scorePriceTier(budgetMinL, budgetMaxL, localityAvgPsqft) {
+  // Match locality price to user's budget
+  // Assumes 1000 sqft average property
+  if (!budgetMinL || !budgetMaxL) return 50; // no budget filter
+
+  var midpointL = (budgetMinL + budgetMaxL) / 2;
+  var estimatedPrice = (localityAvgPsqft * 1000) / 10000000; // estimate for 1000 sqft in crores, simplified to lakhs/100
+  var deltaPercent = Math.abs(estimatedPrice - midpointL) / midpointL;
+
+  if (deltaPercent <= 0.1) return 100;
+  if (deltaPercent <= 0.2) return 85;
+  if (deltaPercent <= 0.3) return 70;
+  if (deltaPercent <= 0.5) return 40;
+  return 0;
+}
+
+function scoreCommute(locality, userWorkLocation) {
+  // Score based on work location commute viability
+  // Returns 100 if on path + within tolerance, 20 if off path, 30 if way over
+
+  if (!userWorkLocation) return 50; // neutral if no work location provided
+
+  // Check if locality is on typical commute route
+  var isOnPath = false;
+  if (userWorkLocation.toLowerCase().includes('cyber city') || userWorkLocation.toLowerCase().includes('gurgaon')) {
+    // Gurgaon work hub: prefer Gurgaon, nearby Noida, avoid far locations
+    isOnPath = locality.conn && (locality.conn.includes('Expressway') || locality.conn.includes('NH'));
+  }
+
+  // Metro distance as proxy for commute viability
+  var metroDistKm = 2; // default assumption
+  if (locality.metro && locality.metro.match(/(\d+(?:\.\d+)?)\s*km/)) {
+    metroDistKm = parseFloat(locality.metro.match(/(\d+(?:\.\d+)?)/)[1]);
+  }
+
+  if (metroDistKm <= 1) return 100;
+  if (metroDistKm <= 2) return 85;
+  if (metroDistKm <= 3) return 70;
+  return 40;
+}
+
+function scoreLocality(targetLocality, candidateLocality, cfg) {
+  // Composite score: 30% proximity + 25% price + 20% commute + 15% appreciation + 10% infrastructure
+  // Combines all factors into single 0–100 score for ranking
+
+  var weights = { proximity: 0.30, price: 0.25, commute: 0.20, yoy: 0.15, infra: 0.10 };
+
+  var scores = {
+    proximity: scoreProximity(targetLocality.name, candidateLocality.name, cfg.location.city),
+    price: scorePriceTier((cfg.filters || {}).budgetMin || 80, (cfg.filters || {}).budgetMax || 120, candidateLocality.avgPsqft),
+    commute: scoreCommute(candidateLocality, (cfg.user || {}).worksNear),
+    yoy: candidateLocality.yoy > 14 ? 90 : (candidateLocality.yoy > 10 ? 70 : 50),
+    infra: 50 // placeholder; enhance with real infra scoring
+  };
+
+  var total = 0;
+  for (var key in weights) {
+    if (scores.hasOwnProperty(key)) {
+      total += scores[key] * weights[key];
+    }
+  }
+
+  return Math.round(total);
+}
+
+function scoreProperty(property, cfg, stage) {
+  // Score property for given stage (S1–S5)
+  // Stage-specific weights: S1 prioritizes newness/trending, S2 prioritizes price/RTM, etc.
+
+  stage = stage || 2; // default to S2
+
+  var scores = {
+    price: scorePriceTier((cfg.filters || {}).budgetMin, (cfg.filters || {}).budgetMax, parsePriceLakhs(property.price)),
+    bhk: (cfg.filters || {}).bhk && (cfg.filters || {}).bhk.length ?
+         ((cfg.filters || {}).bhk.some(function(b) { return property.bhk && property.bhk.includes(b.charAt(0)); }) ? 100 : 30) : 50,
+    rtm: (cfg.filters || {}).readyToMove === 'yes' ? (property.ready_to_move ? 100 : 0) : 50,
+    newness: 50, // would need property.isNew metadata
+    demand: 50   // would need property.viewCount metadata
+  };
+
+  // Stage-specific weights
+  var weights;
+  switch (stage) {
+    case 1: // S1 Discovery: budget & trending matter
+      weights = { price: 0.40, bhk: 0.20, newness: 0.30, demand: 0.10 };
+      break;
+    case 2: // S2 Locality aware: price & availability
+      weights = { price: 0.30, bhk: 0.25, rtm: 0.25, newness: 0.20 };
+      break;
+    case 3: // S3 Comparison: all matter equally
+      weights = { price: 0.25, bhk: 0.25, rtm: 0.25, newness: 0.25 };
+      break;
+    case 4: // S4 Decision: RTM critical
+      weights = { price: 0.35, rtm: 0.40, bhk: 0.25 };
+      break;
+    default:
+      weights = { price: 0.35, bhk: 0.35, rtm: 0.30 };
+  }
+
+  var total = 0;
+  for (var key in weights) {
+    if (scores.hasOwnProperty(key)) {
+      total += (scores[key] || 0) * weights[key];
+    }
+  }
+
+  return Math.round(total);
+}
+
+// ── Location Cache Helpers ──────────────────────────────────────────────────
+function generateLocationKey(location) {
+  var primary = (location.primary || '').toLowerCase().replace(/\s+/g, '-');
+  var city = (location.city || '').toLowerCase().replace(/\s+/g, '-');
+  return city + '/' + primary;
+}
+
+async function cacheInSupabase(locationKey, data, ttlSeconds) {
+  if (!window.SUPABASE_URL) {
+    console.log('[cache] Supabase not configured, skipping');
+    return;
+  }
+
+  try {
+    var expiresAt = new Date(Date.now() + ttlSeconds * 1000).toISOString();
+    console.log('[cache] Writing to Supabase:', locationKey);
+
+    var result = await supabase.from('location_cache').upsert({
+      location_key: locationKey,
+      payload: data,
+      expires_at: expiresAt,
+      updated_at: new Date().toISOString()
+    });
+
+    if (result.error) throw result.error;
+    console.log('[cache] ✓ Cached successfully');
+  } catch (err) {
+    console.warn('[cache] Failed to write:', err.message);
+  }
+}
+
+async function getFromSupabaseCache(locationKey) {
+  if (!window.SUPABASE_URL) return null;
+
+  try {
+    console.log('[cache] Reading from Supabase:', locationKey);
+
+    var result = await supabase
+      .from('location_cache')
+      .select('*')
+      .eq('location_key', locationKey)
+      .single();
+
+    if (result.error || !result.data) {
+      console.log('[cache] Cache miss');
+      return null;
+    }
+
+    var isStale = new Date(result.data.expires_at) < new Date();
+    console.log('[cache] ✓ Found', isStale ? 'STALE' : 'FRESH', 'data');
+
+    return {
+      payload: result.data.payload,
+      isStale: isStale,
+      age: Math.round((Date.now() - new Date(result.data.updated_at)) / 1000 / 60)
+    };
+  } catch (err) {
+    console.warn('[cache] Failed to read:', err.message);
+    return null;
+  }
+}
+
+async function fetchData(cfg) {
+  var loc = cfg.location || {};
+  var primary = loc.primary || '';
+
+  console.log('[fetchData] === USING REAL SUPABASE DATA ONLY ===');
+  console.log('[fetchData] Fetching for:', primary);
+
+  // ── ONLY SOURCE: Real Data from Supabase ────────────────────────────────────
+  if (!primary) {
+    console.log('[fetchData] No primary location provided');
+    return { properties:[], localities:[], adjacentLocalities:[], landmarks:{} };
+  }
+
+  try {
+    var realResult = await fetchRealDataFromSupabase(cfg);
+    if (realResult && realResult.properties && realResult.properties.length > 0) {
+      console.log('[fetchData] ✓ Real Supabase data:', realResult.properties.length, 'properties');
+      config.dataSource = 'real-data';
+      return realResult;
+    }
+  } catch(err) {
+    console.log('[fetchData] Real data error:', err.message);
+  }
+
+  // No data available
+  console.log('[fetchData] No properties found');
+  return { properties:[], localities:[], adjacentLocalities:[], landmarks:{} };
+}
+
+// Normalize any API response shape → homepage property shape
+function normalizeProps(raw, fallbackLoc) {
+  return raw.map(function(p) {
+    // Price: try various field names, fallback to computing from min_price
+    const priceL = p.min_price ? Math.round(p.min_price / 100000) : null;
+    const priceCr = priceL && priceL >= 100 ? (priceL/100).toFixed(2)+' Cr' : null;
+    const priceStr = p.price_str || p.PRICE || p.price
+      || (priceCr ? '₹'+priceCr : priceL ? '₹'+priceL+'L' : '₹—');
+    // Sqft
+    const area = p.carpet_area || p.SUPER_AREA || p.built_up_area || p.area || '';
+    const sqft = area ? (typeof area === 'number' ? area+' sq ft' : area) : '';
+    // BHK
+    const bhk = p.bhk_types || p.BEDROOM_NUM || p.bedroom_num
+      || (p.bedroom ? p.bedroom+' BHK' : p.PROP_BED ? p.PROP_BED+' BHK' : '2 BHK');
+    // Name / developer
+    const name = p.project_name || p.PROP_NAME || p.name || p.title || 'Property';
+    const dev  = p.developer || p.DEVELOPER || p.company_name || '';
+    // Location
+    const loc  = p.location || p.address || p.locality_name
+      || (p.LOCALITY_NAME ? p.LOCALITY_NAME+', '+p.CITY_NAME : fallbackLoc);
+    // Status
+    const rtm  = p.ready_to_move === true || p.ready_to_move === 1
+      || (typeof p.status === 'string' && /ready/i.test(p.status))
+      || (typeof p.STATUS === 'string' && /ready/i.test(p.STATUS));
+    const status = p.status || p.STATUS || (rtm ? 'Ready to move' : 'Under Construction');
+    return {
+      name, dev, location: loc, price: priceStr, sqft,
+      bhk: typeof bhk === 'number' ? bhk+' BHK' : bhk,
+      status, ready_to_move: rtm,
+      lm: p.lm || p.landmark || '',
+      image_url: p.image_url || p.PHOTO_URL || p.photo || ''
+    };
+  });
+}
+
+async function fetchFromOpenAI(cfg) {
+  const loc = cfg.location||{}, f = cfg.filters||{};
+  const bhk = (f.bhk||[]).join(', ')||'2 BHK';
+  const budget = f.budgetMax ? '₹'+f.budgetMin+'L–₹'+f.budgetMax+'L' : 'flexible';
+  const city = loc.city||loc.primary||'';
+  const prompt = `Real estate data for India. Return ONLY valid JSON, no markdown.
+City: ${city}, Locality: ${loc.primary||city}, Budget: ${budget}, BHK: ${bhk}
+Shape:
+{"localities":[{"name":"","bhkRange":"","avgPsqft":0,"yoy":0,"metro":"","conn":"","count":"","featured":false}],
+"properties":[{"name":"","dev":"","location":"","price":"","sqft":"","bhk":"","status":"","ready_to_move":false,"lm":""}],
+"adjacentLocalities":[{"name":"","delta":0,"label":"","metro":"","summary":""}],
+"landmarks":{"primary":{"metro":"","hospital":"","school":"","mall":""},"secondary":{"metro":"","hospital":"","school":"","mall":""}}}
+Return 5 localities, 6 properties, 4 adjacent. Realistic for ${city}, India.`;
+  const r = await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.openAIKey},body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:1800})});
+  const j = await r.json();
+  return JSON.parse(j.choices[0].message.content.trim().replace(/^```json?\n?/,'').replace(/\n?```$/,''));
+}
+
+// ── Fetch Real Data from Supabase ──────────────────────────────────────────────
+// Tries to fetch actual property data and locality metadata from real_properties / real_localities tables
+async function fetchRealDataFromSupabase(cfg) {
+  const loc = cfg.location||{};
+  const primary = loc.primary || '';
+  // Normalize city to title case (database stores as "Noida", "Bangalore", "Mumbai")
+  const rawCity = (loc.city || '').trim();
+  const city = rawCity.charAt(0).toUpperCase() + rawCity.slice(1).toLowerCase();
+
+  if (!primary || !city) {
+    console.log('[real-data] Missing primary location or city, skipping');
+    return null;
+  }
+
+  try {
+    // Check if Supabase library and credentials are available
+    if (typeof supabase === 'undefined') {
+      console.log('[real-data] Supabase library not loaded');
+      return null;
+    }
+
+    // Get or create Supabase client
+    let sb = window.supabase;
+    if (!sb) {
+      const _supaUrl = window.SUPABASE_URL || '';
+      const _supaKey = window.SUPABASE_ANON_KEY || '';
+      if (!_supaUrl || !_supaKey) {
+        console.log('[real-data] Missing Supabase credentials');
+        return null;
+      }
+      console.log('[real-data] Creating Supabase client on-demand');
+      sb = supabase.createClient(_supaUrl, _supaKey);
+      window.supabase = sb; // Cache for future use
+    }
+
+    // Fetch properties matching city and locality
+    console.log('[real-data] Fetching properties for', city, '/', primary);
+    const { data: propData, error: propError } = await sb
+      .from('real_properties')
+      .select('*')
+      .eq('city', city)
+      .eq('locality', primary)
+      .limit(20);
+
+    if (propError) {
+      console.log('[real-data] Properties fetch error:', propError);
+      return null;
+    }
+
+    if (!propData || propData.length === 0) {
+      console.log('[real-data] No properties found for', city, '/', primary);
+      return null;
+    }
+
+    console.log('[real-data] Found', propData.length, 'properties');
+
+    // Fetch localities metadata for this city
+    console.log('[real-data] Fetching localities for', city);
+    const { data: locData, error: locError } = await sb
+      .from('real_localities')
+      .select('*')
+      .eq('city', city)
+      .limit(20);
+
+    if (locError) {
+      console.log('[real-data] Localities fetch error:', locError);
+      return null;
+    }
+
+    // Transform Supabase data to match our expected format
+    const properties = propData.map(p => ({
+      name: p.name || 'Property',
+      dev: p.developer || '',
+      location: [primary, city].join(', '),
+      price: p.price_avg_sqft ? '₹' + (p.price_min || 'varying') + 'L' : '₹—',
+      sqft: p.area_sqft ? p.area_sqft + ' sq ft' : '',
+      bhk: (p.bhk && p.bhk.length) ? p.bhk.join(', ') : '2 BHK',
+      status: p.status || 'Under Construction',
+      ready_to_move: p.ready_to_move || false,
+      lm: p.landmarks?.metro ? (p.landmarks.metro + ' (metro)') : '',
+      image_url: p.image_url || ''
+    }));
+
+    const localities = (locData || []).map(l => ({
+      name: l.name,
+      bhkRange: 'Varies',
+      avgPsqft: l.avg_price_sqft || 0,
+      yoy: l.yoy_growth || 0,
+      metro: l.metro_distance_min ? l.metro_distance_min + ' km' : '',
+      conn: 'Good connectivity',
+      count: 'Various',
+      featured: l.rank && l.rank <= 3
+    }));
+
+    console.log('[real-data] ✓ Returning real data:', properties.length, 'properties,', localities.length, 'localities');
+    config.dataSource = 'real-data';
+
+    return {
+      properties: properties,
+      localities: localities,
+      adjacentLocalities: localities.slice(1, 5),
+      landmarks: {}
+    };
+  } catch(err) {
+    console.log('[real-data] Error fetching real data:', err.message);
+    return null;
+  }
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+// ── Commute time calculator ───────────────────────────────────────────────────
+// Simple heuristic-based commute estimation (in minutes)
+function estimateCommute(locality, worksNear) {
+  if (!locality || !worksNear) return null;
+
+  const loc = String(locality).toLowerCase();
+  const work = String(worksNear).toLowerCase();
+
+  // Same locality/sector = 10 mins
+  if (loc === work || loc.includes(work.split(' ')[0])) return 10;
+
+  // Adjacent sectors/nearby = 15-20 mins
+  if ((loc.includes('sector') && work.includes('sector')) ||
+      (loc.includes('noida') && work.includes('noida'))) {
+    const locNum = parseInt(loc.match(/\d+/)?.[0] || 0);
+    const workNum = parseInt(work.match(/\d+/)?.[0] || 0);
+    if (locNum && workNum) {
+      const diff = Math.abs(locNum - workNum);
+      if (diff <= 20) return 10 + (diff * 0.5);
+    }
+    return 18;
+  }
+
+  // Different city/far = 30+ mins
+  return 35;
+}
+
+function renderPage() {
+  const page = document.getElementById('page');
+  const loc = config.location||{};
+  const stage = config.stage||1;
+  const primary = loc.primary||'';
+  const secondary = loc.secondary||'';
+  const city = loc.city||primary;
+  const f = config.filters||{};
+  const bhk = (f.bhk && f.bhk.length) ? f.bhk.join(', ') : '2 BHK';
+  const budget = f.budgetMax ? '₹'+f.budgetMin+'L–₹'+f.budgetMax+'L' : '';
+  const rtmLabel = f.readyToMove === 'yes' ? 'Ready to move' : f.readyToMove === 'no' ? 'Under construction' : '';
+  const worksNear = (config.user && config.user.worksNear) || '';
+
+  // Nav
+  const newListingCount = data.properties ? data.properties.filter(p => !p.ready_to_move).length : 0;
+  const navLabel = primary
+    ? (secondary && secondary !== primary ? primary + ' · ' + secondary : primary) + (newListingCount > 0 ? ' · ' + newListingCount + ' new listings' : '')
+    : 'Search City/Locality...';
+  document.getElementById('nav-search-text').textContent = navLabel;
+
+  // Sticky CTA
+  if (!primary) { page.innerHTML = renderEmpty(); return; }
+  if (loading) { page.innerHTML = renderLoading(); return; }
+
+  const mods = [];
+
+  // ════════════════════════════════════════════════════════════════════════════════
+  // WIREFRAME-ALIGNED SECTION ORDER BY STAGE
+  // ════════════════════════════════════════════════════════════════════════════════
+
+  // ── Always present ───────────────────────────────────────────────────────────────
+  mods.push(modContextChips(stage, primary, secondary));       // Show location context (S2+)
+  mods.push(modHero(stage, city, primary, secondary));         // Hero section (S1 only)
+  mods.push(modBudgetAnchor(stage, primary));                  // Budget anchor (S1 only entry point)
+
+  // ── S1: DISCOVERY FLOW ───────────────────────────────────────────────────────────
+  // Continue → Locations Radar → Fresh Listings → Similar BHK → Budget Check → Upcoming →
+  // Experts → Price Trend → Nearby → Articles → Tools
+  if (stage === 1) {
+    mods.push(modContinue(stage, primary, secondary));         // Continue (for returning S1 users)
+    mods.push(modLocalitiesRadar(stage, city, primary));       // Locations on your radar
+    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
+    mods.push(modSimilarBHK(stage, bhk, primary));             // Similar BHK
+    mods.push(modBudgetCheck(stage, f));                       // Budget validation
+    mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming projects
+    mods.push(modExpertAgents(stage, primary, secondary));     // Expert sellers
+    mods.push(modPriceTrend(stage, primary));                  // Price trend
+    mods.push(modNearbyLocalities(stage, primary));            // Buyers also explore nearby
+  }
+
+  // ── S2: LOCALITY AWARENESS FLOW ──────────────────────────────────────────────────
+  // Continue → Fresh Listings → Localities Radar → Properties → Nearby Localities →
+  // Budget Check → Similar BHK → Buyers Also Explore → News/Articles → Tools → FAQ → Bottom Nav
+  else if (stage === 2) {
+    mods.push(modContinue(stage, primary, secondary));         // Continue (multi-sector view)
+    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
+    mods.push(modLocalitiesRadar(stage, city, primary));       // Localities on radar + nearby suggestions
+    mods.push(modPropertiesPrimary(stage, primary, secondary, worksNear)); // Properties in primary
+    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to explore
+    mods.push(modBudgetCheck(stage, f));                       // Open to view properties in ₹80-1 Cr?
+    mods.push(modSimilarBHK(stage, bhk, primary));             // Similar BHK
+    mods.push(modBuyersAlsoExploreLocalities(stage, primary)); // Buyers also explore (S2 variant)
+  }
+
+  // ── S3: COMPARISON FLOW ──────────────────────────────────────────────────────────
+  // Continue → Fresh listings near {worksNear} → Consideration Set → Properties → H2H →
+  // Landmarks → Expert Sellers → Upcoming Developments → Nearby Localities → News/Articles → Tools → FAQ → Bottom Nav
+  else if (stage === 3) {
+    mods.push(modContinue(stage, primary, secondary));         // Continue
+    mods.push(modNewInSectors(stage, primary, worksNear));     // Fresh listings (commute-sorted if worksNear)
+    mods.push(modConsiderationSet(stage));                     // What is your consideration set?
+    mods.push(modPropertiesPrimary(stage, primary, secondary, worksNear)); // Properties in primary
+    mods.push(modHeadToHead(stage, primary, secondary, worksNear)); // H2H with commute times
+    mods.push(modNearestLandmarks(stage, primary, secondary)); // Landmarks/amenities
+    mods.push(modExpertAgents(stage, primary, secondary));     // Expert sellers
+    mods.push(modUpcomingDevelopments(stage, primary));        // Upcoming developments
+    mods.push(modNearbyLocalities(stage, primary));            // Nearby localities to consider
+  }
+
+  // ── S4: SHORTLIST/DECISION FLOW ──────────────────────────────────────────────────
+  // Continue → Decision Spotlight → Social Proof → Still Considering →
+  // Decision CTA → Visit With Shortlist → Upcoming Projects → Buyers Also Explore →
+  // News/Articles → Tools → FAQ → Bottom Nav
+  else if (stage === 4) {
+    mods.push(modContinue(stage, primary, secondary));         // Continue (rich cards)
+    mods.push(modDecisionSpotlight(stage, primary, worksNear)); // Decision spotlight (commute context)
+    mods.push(modSocialProof(stage, primary));                 // Social proof (X people contacted)
+    mods.push(modStillConsidering(stage, primary));            // Still considering
+    mods.push(modDecisionCtaSection(stage));                   // Decision CTA (Compare + Plan Visits)
+    mods.push(modVisitWithShortlist(stage, primary));          // Visit with shortlist
+    mods.push(modUpcomingProjects(stage, primary));            // Upcoming projects (if specific locality)
+    mods.push(modBuyersAlsoExploreLocalities(stage, primary)); // Buyers also explore (S4 variant)
+  }
+
+  // ── S5: POST-VISIT FLOW ──────────────────────────────────────────────────────────
+  // Still Considering → Post-visit Tools → Price Trend → Articles → Tools
+  else if (stage === 5) {
+    mods.push(modStillConsidering(stage, primary));            // Still considering
+    mods.push(modPostVisitTools(stage));                       // Post-visit tools (EMI, Loan, Registration)
+    mods.push(modPriceTrend(stage, primary));                  // Price trend
+  }
+
+  // ── Footer (all stages) ──────────────────────────────────────────────────────────
+  mods.push(modArticles(stage, primary, secondary));           // Articles
+  mods.push(modTools(stage));                                  // Tools & calculators
+  mods.push(modFAQ(stage, primary, city));                     // FAQ (v3 new)
+  mods.push(modBottomNav());                                   // Bottom navigation (v3 new)
+
+  page.innerHTML = mods.filter(Boolean).join('');
+}
+
+// ── Modules ───────────────────────────────────────────────────────────────────
+
+function modContextChips(stage, primary, secondary) {
+  if (stage === 1 || !primary) return null;
+  const locations = [primary];
+  if (secondary && secondary !== primary) locations.push(secondary);
+  const chips = locations.map(loc => `<button class="ds-chip ds-chip-md">${esc(loc)}</button>`).join('');
+  return `<div class="ds-chip-group" style="padding:10px 14px;background:#fff;display:flex;gap:8px;overflow-x:auto;">${chips}</div>`;
+}
+
+function modHero(stage, city, primary, secondary) {
+  if (stage === 1) {
+    return `<div class="hero-s1">
+      <div class="hero-stats-bar">
+        <span><b>24,800+</b> listings</span>
+        <span class="hero-stat-dot">·</span>
+        <span><b>5</b> trending localities</span>
+        <span class="hero-stat-dot">·</span>
+        <span>Verified by 99acres</span>
+      </div>
+      <h1 class="ds-page-heading">Find your home in <span class="hero-city">${esc(city||primary)}</span></h1>
+      <p style="font-size:13px;color:rgba(255,255,255,0.82);margin-top:6px;">Browse verified listings · Compare localities · Connect directly with sellers</p>
+      <div class="hero-search-hint">
+        <span class="material-icons" aria-hidden="true" style="font-size:16px;color:var(--text3);">search</span>
+        <span style="color:var(--text3);font-size:13px;">Search localities, projects…</span>
+        <div class="hero-search-pulse"></div>
+      </div>
+    </div>`;
+  }
+  return null;
+}
+
+function noteHtml(key, stage) {
+  const val = propNotes[key] || '';
+  const showDisplay = val && stage >= 4;
+  return `<div class="prop-note-wrap">
+    ${showDisplay ? `<div class="prop-note-display"><span aria-hidden="true">📝</span> "${esc(val)}"</div>` : ''}
+    <textarea class="prop-note-input" aria-label="Add a note for this property" data-propkey="${esc(key)}" placeholder="Add a note...">${esc(val)}</textarea>
+  </div>`;
+}
+
+function reactionHtml(key, notePlaceholder) {
+  const passed = propChips[key] === 'pass';
+  const note = propNotes[key] || '';
+  const ph = notePlaceholder || 'Any concerns? Ask about parking, floor, etc.';
+  return `${note ? `<div class="prop-note-display" style="margin-top:6px;">📝 "${esc(note)}"</div>` : ''}
+  <textarea class="prop-note-input hidden" data-propkey="${esc(key)}" placeholder="${esc(ph)}">${esc(note)}</textarea>
+  <div class="card-actions">
+    <button class="card-act pass-act${passed?' active':''}" data-rkey="${esc(key)}" data-rlabel="pass"><span class="material-icons" aria-hidden="true">close</span>${passed?'Removed':'Not for me'}</button>
+    <button class="card-act note-act${note?' has-note':''}" data-notetoggle="${esc(key)}"><span class="material-icons" aria-hidden="true">${note?'edit_note':'add_comment'}</span>${note?'Edit note':'Add a note'}</button>
+  </div>`;
+}
+
+// WIREFRAME-ALIGNED: modContinue now shows for all stages (S1-S5)
+function modContinue(stage, primary, secondary) {
+  if (stage < 2 || stage > 3) return null;  // S2, S3 only (Continue Where You Left Off)
+  if (!primary && stage !== 1) return null; // S1 is okay with no primary
+
+  // PRIORITY: rawData → data → getMockData
+  let props = [];
+
+  // Try primary source (rawData from latest fetch)
+  if (rawData && rawData.properties && rawData.properties.length > 0) {
+    props = rawData.properties.slice(0, 2);
+  }
+  // Try secondary source (currently filtered data)
+  else if (data && data.properties && data.properties.length > 0) {
+    props = data.properties.slice(0, 2);
+  }
+  // Fallback to mock data - this ALWAYS works
+  else {
+    const mockData = getMockData(config);
+    if (mockData && mockData.properties) {
+      props = mockData.properties.slice(0, 2);
+    }
+  }
+
+  if (!props || props.length === 0) return null; // No data, skip
+
+  const lastDays = config.lastVisitDaysAgo;
+  const timeBadge = !lastDays || lastDays === 0 ? 'Today'
+    : lastDays === 1 ? '1d ago' : `${lastDays}d ago`;
+
+  // Simple version for S1-S2 (early discovery/locality stages)
+  // Rich version for S3+ (comparison/decision stages with more engagement)
+  const isEarlyStage = stage < 3;
+
+  if (isEarlyStage) {
+    // ── SIMPLE VERSION: Just image + basic info ──
+    const cards = props.map((p, i) => {
+      return `<div class="ds-prop-card">
+        <div class="ds-prop-card-img">
+          ${propImg(p)}
+          <div class="ds-prop-card-badges">
+            <span class="ds-image-tag">${i === 0 ? 'Today' : i === 1 ? '1d ago' : '2d ago'}</span>
+          </div>
+          <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Save to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+        </div>
+        <div class="ds-prop-card-body">
+          <div>
+            <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+            <div class="ds-prop-card-subtitle">${esc(p.bhk||'2 BHK')} · ${esc(p.dev||'')}</div>
+          </div>
+          <div>
+            <div class="ds-prop-card-name">${esc(p.location||primary)}</div>
+            <div class="ds-prop-card-highlights">${esc(p.lm||'')}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="sec">
+      <div class="sec-pad" style="padding-bottom:8px;">
+        <div class="ds-section-heading">Continue Where You Left Off</div>
+        <div class="ds-heading-sub">Properties you recently viewed</div>
+      </div>
+      <div class="grid-2-col" style="padding:0 14px 12px;">
+        ${cards}
+      </div>
+    </div>`;
+  }
+
+  // ── RICH VERSION: Full details for engaged users (S3+) ──
+  const cards = props.map((p, i) => {
+    const isMostViewed = i === 0;
+    const noteKey = p.name || ('prop_cont_' + i);
+
+    // View counts (simulated: first property gets more views)
+    const viewCounts = [3, 1];
+    const viewCount = viewCounts[i] || 1;
+
+    // Feedback chips (simulated from property features)
+    const feedbackChips = [
+      ['Layout', '2 Car Parking', 'Open Kitchen'],
+      ['Parking', 'Visit and confirm parking here']
+    ];
+    const chips = feedbackChips[i] || [];
+
+    // Commute info
+    const commute = config.user && config.user.worksNear ? estimateCommute(p.location, config.user.worksNear) : null;
+
+    // Image with badges
+    const imageBadges = `
+      <div class="ds-prop-card-badges" style="left:10px;right:auto;gap:4px;">
+        <span class="ds-image-tag">${viewCount}x</span>
+        ${isMostViewed ? `<span class="ds-image-tag" style="background:#111827;color:#fff;font-weight:800;">MOST VIEWED</span>` : ''}
+      </div>
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+    `;
+
+    return `<div class="card-rich">
+      <div class="card-grid-2-img">
+        <!-- Image -->
+        <div class="card-image-box">
+          ${propImg(p)}
+          ${imageBadges}
+        </div>
+        <!-- Details -->
+        <div>
+          <div class="flex-center gap-sm mb-4 text-xs text-tertiary">
+            <span class="material-icons" style="font-size:12px;">visibility</span> Viewed ${viewCount} time${viewCount > 1 ? 's' : ''}
+          </div>
+          <div class="text-md font-bold text-primary mb-2">${esc(p.bhk||'2 BHK')} · ${esc(p.price||'₹—')}</div>
+          <div class="text-base text-secondary mb-2">${esc(p.location||primary)}</div>
+          <div class="text-xs text-tertiary mb-6">${p.lm ? esc(p.lm.split('·')[0].trim()) : ''}</div>
+          ${commute ? `<div class="text-xs text-tertiary mb-6"><span class="material-icons" style="font-size:13px;vertical-align:-2px;">directions_car</span> ${commute} mins from ${config.user.worksNear}</div>` : ''}
+          <!-- Feedback chips -->
+          <div class="mb-8">
+            <div class="text-xs text-tertiary font-semibold mb-4 uppercase">What's working/not working for you?</div>
+            <div class="flex-wrap gap-sm">
+              ${chips.slice(0, 2).map(chip => `<button class="chip-muted">${esc(chip)}</button>`).join('')}
+              <button class="chip-muted">+ Add note</button>
+            </div>
+          </div>
+          <button class="ds-btn ds-btn-sm ds-btn-secondary" style="width:100%;">Contact Seller</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:12px;">
+      <div class="ds-section-heading">Continue Where You Left Off</div>
+      <div class="ds-heading-sub">Most properties are located in ${esc(primary)}${secondary?', '+esc(secondary):''}</div>
+    </div>
+    <div style="padding:0 14px;">${cards}</div>
+  </div>`;
+}
+
+function modNewInSectors(stage, primary, worksNear) {
+  if (stage < 1 || stage > 3) return null;
+  const f = config.filters || {};
+  const selectedBhk = f.bhk && f.bhk.length ? f.bhk : null;
+  const pool = rawData.properties || data.properties;
+
+  // Filter: prefer properties matching BHK preference; if none match, fall back to unfiltered
+  let newProps = pool.filter(p => !p.ready_to_move);
+  if (selectedBhk) {
+    const nums = selectedBhk.map(b => b.replace(/\D/g, ''));
+    const bhkFiltered = newProps.filter(p => nums.indexOf((p.bhk||'').replace(/\D/g,'').charAt(0)) !== -1);
+    if (bhkFiltered.length) newProps = bhkFiltered;
+  }
+
+  // Sort by commute time if worksNear is set
+  if (worksNear) {
+    newProps = newProps.sort((a, b) => {
+      const commuteA = estimateCommute(a.location, worksNear) || 999;
+      const commuteB = estimateCommute(b.location, worksNear) || 999;
+      return commuteA - commuteB;
+    });
+  }
+
+  newProps = newProps.slice(0, 4);
+  if (!newProps.length) return null;
+
+  const bhkLabel = selectedBhk ? selectedBhk.join(', ') : '';
+  const budget = f.budgetMax ? `₹${f.budgetMin}L–₹${f.budgetMax}L` : '';
+  const sub = [bhkLabel, budget].filter(Boolean).join(' · ');
+
+  const cards = newProps.map((p, i) => {
+    const freshTime = i === 0 ? 'Today' : `${i}d ago`;
+
+    // Show commute time if worksNear is set, otherwise use default lm
+    let featureText = '';
+    if (worksNear) {
+      const commute = estimateCommute(p.location, worksNear);
+      featureText = commute ? `${commute} mins to ${worksNear}` : (p.lm ? p.lm.split('·')[0].trim() : '');
+    } else {
+      featureText = p.lm ? p.lm.split('·')[0].trim() : '';
+    }
+
+    const featureTag = featureText
+      ? `<div style="padding:7px 12px;border-top:1px solid rgba(108,48,212,0.12);font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--purple-text);background:var(--purple-light);">✦ ${esc(featureText)}</div>`
+      : '';
+
+    return `<div class="ds-prop-card">
+      <div class="ds-prop-card-img">
+        ${propImg(p)}
+        <div class="ds-prop-card-badges">
+          <span class="ds-image-tag">${freshTime}</span>
+        </div>
+        <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Save to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+      </div>
+      <div class="ds-prop-card-body">
+        <div class="ds-prop-card-price">${esc(p.price)}</div>
+        <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+        <div class="ds-prop-card-name">${esc(p.location||primary)}</div>
+        <div class="ds-prop-card-highlights">${esc(featureText)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const heading = worksNear ? `Fresh listings near ${esc(worksNear)}` : `Fresh Listings in ${esc(primary)}`;
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading">${heading}</div>
+      ${sub ? `<div class="ds-heading-sub">${esc(sub)}</div>` : ''}
+    </div>
+    <div class="fresh-grid">${cards}</div>
+  </div>`;
+}
+
+function modStaleLocationNudge(stage, secondary, lastDays) {
+  if (stage < 2 || stage > 3) return null;
+  if (!secondary || !lastDays || lastDays < 2) return null;
+  const timeLabel = lastDays >= 7 ? `${Math.round(lastDays/7)} week${lastDays>=14?'s':''} ago` : `${lastDays} days ago`;
+  const ctxId = 'stale-nudge-' + esc(secondary).replace(/\\s+/g, '-').toLowerCase();
+  return `<div class="sec sec-pad">
+    <div style="background:#fffbeb;border-left:3px solid var(--orange);border-radius:var(--radius-md);padding:14px 16px;">
+      <div id="${ctxId}" style="font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--text-primary);margin-bottom:10px;">
+        You were looking in <b>${esc(secondary)}</b> ${timeLabel}. Still want recommendations for that?
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="ds-btn ds-btn-sm ds-btn-primary" aria-describedby="${ctxId}">Yes, keep showing</button>
+        <button class="ds-btn ds-btn-sm ds-btn-tertiary" aria-describedby="${ctxId}">No</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function modLocalitySuggestions(stage, primary, secondary) {
+  if (stage < 2 || stage > 3) return null;
+  if (secondary) return null; // buyer has narrowed to two — H2H handles it
+
+  const fallback = generateIntelligentMockData(config.location.city, primary);
+  const allLocs = data.localities && data.localities.length ? data.localities : fallback.localities;
+
+  // Find primary locality
+  const targetLoc = allLocs.find(l => l.name.toLowerCase().trim() === primary.toLowerCase().trim());
+  if (!targetLoc) return null;
+
+  // Score all OTHER localities by relevance
+  // FIRST: Try curated adjacentLocalities (expert-selected alternatives)
+  let suggestions = [];
+  if (data.adjacentLocalities && data.adjacentLocalities.length) {
+    suggestions = data.adjacentLocalities
+      .map(adj => {
+        const locData = allLocs.find(l => l.name === adj.name);
+        return { ...locData, ...adj, score: 100 };
+      })
+      .filter(s => s && s.name)
+      .slice(0, 4);
+  }
+
+  // FALLBACK: Score all localities by relevance
+  if (!suggestions.length) {
+    suggestions = allLocs
+      .filter(l => l.name.toLowerCase().trim() !== primary.toLowerCase().trim())
+      .map(l => ({
+        ...l,
+        score: scoreLocality(targetLoc, l, config)
+      }))
+      .sort(function(a, b) { return b.score - a.score; })
+      .slice(0, 4);
+  }
+
+  if (!suggestions.length) return null;
+
+  const cards = suggestions.map(l => {
+    const yoy = l.yoy || 14;
+    const metro = l.metro || '~1km';
+    const insight = yoy >= 14 ? `${yoy}% YoY growth — highest potential` : `Strong value at ₹${(l.avgPsqft||'—').toLocaleString()}/sqft`;
+    return `<div style="flex-shrink:0;width:220px;background:var(--surface);border:1px solid var(--border-medium);border-radius:var(--radius-md);padding:12px;display:flex;flex-direction:column;">
+      <div style="font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--text-primary);margin-bottom:2px;">${esc(l.name)}</div>
+      <div class="ds-heading-sub">${esc(l.bhkRange||'')}</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:3px;flex:1;">
+        <div style="font-size:var(--text-sm);color:var(--text-secondary);">📈 ${yoy}% YoY · 🚇 ${esc(metro)}</div>
+        <div style="font-size:var(--text-sm);color:var(--text-secondary);">₹${(l.avgPsqft||'—').toLocaleString()}/sqft</div>
+        <div style="font-size:var(--text-xs);color:var(--text-primary);background:var(--blue-light);padding:4px 6px;border-radius:4px;margin-top:4px;">✦ ${insight}</div>
+      </div>
+      <button class="ds-btn ds-btn-tertiary ds-btn-sm" style="width:100%;margin-top:10px;">View ${esc(l.count||'')} →</button>
+    </div>`;
+  }).join('');
+
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading">Localities that match your search</div>
+      <div class="ds-heading-sub">Ranked by relevance to ${esc(primary)}</div>
+    </div>
+    <div class="hscroll" style="padding-bottom:12px;">${cards}</div>
+    <div style="padding:6px 14px 0;">
+      <div class="ds-subsection-heading">What matters most in your daily life?</div>
+      <div class="ds-heading-sub">We'll prioritise localities that match</div>
+    </div>
+    <div class="pref-row">
+      <div class="ds-chip ds-chip-sm active">🚇 Metro</div>
+      <div class="ds-chip ds-chip-sm">🏥 Hospital</div>
+      <div class="ds-chip ds-chip-sm">🏫 School</div>
+      <div class="ds-chip ds-chip-sm">🛒 Marketplace</div>
+      <div class="ds-chip ds-chip-sm"><span class="material-icons" aria-hidden="true" style="font-size:14px;">add</span> Add landmark</div>
+    </div>
+  </div>`;
+}
+
+function modLocalitiesRadar(stage, city, primary) {
+  if (stage < 2 || stage > 3) return null;  // S2-S3
+
+  // For S2: Show recently viewed + nearby suggestions in one consolidated view
+  const props = data.properties || [];
+  if (!props.length) return null;
+
+  // Extract unique localities from recently viewed properties
+  const localityMap = {};
+  props.forEach(p => {
+    if (p.location) {
+      // Extract just the locality name (first part before comma)
+      const fullLoc = p.location;
+      const cleanLoc = fullLoc.split(',')[0].trim();
+      if (!localityMap[cleanLoc] && (cleanLoc.includes('Sector') || cleanLoc.includes('Road') || cleanLoc.includes('West') || cleanLoc.includes('East') || cleanLoc.includes('North') || cleanLoc.includes('South'))) {
+        localityMap[cleanLoc] = true;
+      }
+    }
+  });
+
+  const uniqueLocalities = Object.keys(localityMap);
+  const fallback = getMockData(config);
+  const allLocs = data.localities && data.localities.length ? data.localities : fallback.localities;
+  const adjs = data.adjacentLocalities && data.adjacentLocalities.length ? data.adjacentLocalities : fallback.adjacentLocalities;
+
+  // Combine: recently viewed (with stars) + suggested alternatives (lighter styling)
+  const allCards = [];
+
+  // Add recently viewed (max 3)
+  uniqueLocalities.slice(0, 3).forEach((locName, idx) => {
+    const locMeta = allLocs.find(l => l.name && l.name.trim() === locName);
+    const isBold = idx === 0;
+    allCards.push({
+      name: locName,
+      meta: locMeta,
+      isSuggested: false,
+      isPrimary: isBold,
+      distance: null
+    });
+  });
+
+  // Add suggested alternatives (max 2)
+  adjs.slice(0, 2).forEach(adj => {
+    if (!uniqueLocalities.includes(adj.name)) {
+      const locMeta = allLocs.find(l => l.name === adj.name);
+      allCards.push({
+        name: adj.name,
+        meta: locMeta || adj,
+        isSuggested: true,
+        isPrimary: false,
+        distance: adj.delta
+      });
+    }
+  });
+
+  const cards = allCards.map(card => {
+    const opacity = card.isSuggested ? 0.85 : 1;
+    const borderColor = card.isSuggested ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.16)';
+    const badgeHtml = card.isPrimary
+      ? '<div style="display:inline-block;background:rgba(255,193,7,0.2);color:#f59e0b;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;margin-bottom:6px;">⭐ PRIMARY</div>'
+      : card.isSuggested
+      ? `<div style="display:inline-block;background:rgba(59,130,246,0.15);color:#2563eb;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;margin-bottom:6px;">💡 SUGGESTED</div>`
+      : '';
+
+    return `<div style="flex-shrink:0;width:220px;background:white;border:1px solid ${borderColor};border-radius:8px;padding:12px;opacity:${opacity};display:flex;flex-direction:column;">
+      ${badgeHtml}
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
+        <div style="flex:1;"><div style="font-size:13px;font-weight:800;color:var(--text);">${esc(card.name)}</div></div>
+      </div>
+      ${card.isSuggested ? `<div style="font-size:10px;color:var(--text2);margin-bottom:8px;">≈ ${Math.abs(card.distance).toFixed(1)}km from ${esc(primary)}</div>` : ''}
+      <div style="font-size:12px;color:#555555;margin-bottom:8px;">${esc(card.meta?.bhkRange||'2-3 BHK')}</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:#999999;">₹/sqft</span><span style="color:#111111;font-weight:700;">₹${card.meta?.avgPsqft||'—'}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span style="color:#999999;">Price growth</span><span style="color:#16a34a;font-weight:700;">+${card.meta?.yoy||'—'}% YoY</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:11px;flex:1;"><span style="color:#999999;">Metro</span><span style="color:#111111;font-weight:700;">${esc(card.meta?.metro||'—')}</span></div>
+      <button class="ds-btn ds-btn-tertiary ds-btn-xs" style="width:100%;margin-top:auto;">View properties →</button>
+    </div>`;
+  }).join('');
+
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading">Localities on your radar</div>
+      <div class="ds-heading-sub">Your top views + nearby alternatives</div>
+    </div>
+    <div class="hscroll">${cards}</div>
+  </div>`;
+}
+
+function modConsiderationSet(stage) {
+  if (stage === 2) {
+    // S2: "Which of these matters most to your daily routine?" (landmark preferences)
+    const factors = [
+      { icon:'train', label:'Metro' },
+      { icon:'local_hospital', label:'Hospital' },
+      { icon:'school', label:'School' },
+      { icon:'shopping_center', label:'Market/shops' },
+    ];
+    return `<div class="sec" style="padding:16px 0;">
+      <div class="sec-pad">
+        <div class="ds-section-heading">Which of these matters most to your daily routine?</div>
+        <div class="ds-heading-sub">Accordingly let's help in figuring out a locality for you</div>
+      </div>
+      <div style="padding:0 14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        ${factors.slice(0, 3).map(f=>`<button class="ds-chip ds-chip-md">
+          <span class="material-icons" aria-hidden="true">${f.icon}</span> ${f.label}
+        </button>`).join('')}
+      </div>
+      <div style="padding:0 14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <button class="ds-chip ds-chip-md">
+          <span class="material-icons" aria-hidden="true">shopping_center</span> Market
+        </button>
+        <button class="ds-chip ds-chip-md">
+          <span class="material-icons" aria-hidden="true">add</span> Add a landmark
+        </button>
+      </div>
+    </div>`;
+  }
+  else if (stage === 3) {
+    // S3: "What is your consideration set?" (property status filtering for comparison)
+    const statuses = [
+      { label:'Ready to move properties only', sel:false },
+      { label:'Open to Under Construction properties', sel:false },
+      { label:'Interested in New Launches', sel:false },
+    ];
+    return `<div class="sec">
+      <div class="sec-pad" style="padding-bottom:8px;">
+        <div class="ds-section-heading">What is your consideration set?</div>
+        <div class="ds-heading-sub">Choose which properties to view</div>
+      </div>
+      <div style="padding:0 14px;display:flex;flex-direction:column;gap:10px;">
+        ${statuses.map(s=>`<button style="padding:14px;background:white;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:14px;color:var(--text);text-align:left;font-weight:500;transition:all 0.2s;">${s.label}</button>`).join('')}
+      </div>
+    </div>`;
+  }
+  return null;
+}
+
+function modPropertiesInSecondary(stage, secondary) {
+  if (stage !== 3 || !secondary) return null;
+  const f = config.filters||{};
+  const budget = f.budgetMax ? '₹'+f.budgetMin+'L–₹'+f.budgetMax+'L' : '';
+  const props = data.properties.slice(2, 4);
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div style="padding:12px 14px;text-align:left;"><div class="ds-section-heading">Properties in ${esc(secondary)}${budget?' · '+budget:''}</div></div>
+    </div>
+    <div class="hscroll">
+      ${props.length ? props.map(p=>propCard(p, {showBadge:true, horizontal:true})).join('') : skCard()+skCard()}
+    </div>
+  </div>`;
+}
+
+function modHeadToHead(stage, primary, secondary, worksNear) {
+  if (stage !== 3) return null;
+  if (!secondary) return null;
+  const _fb = getMockData(config);
+  const l1 = data.localities[0]||_fb.localities[0];
+  const l2 = data.localities[1]||_fb.localities[1];
+  const filt = config.filters || {};
+  const cap = filt.budgetMax || 85;
+  const sqft1 = Math.round(cap * 100000 / (l1.avgPsqft || 8000) / 10) * 10;
+  const sqft2 = Math.round(cap * 100000 / (l2.avgPsqft || 7000) / 10) * 10;
+
+  // Calculate actual commute times if worksNear is available
+  let commuteLabel = 'Drive to office';
+  let commuteV1 = '5 mins';
+  let commuteV2 = '20–25 mins';
+  let commutWin = 0;
+
+  if (worksNear) {
+    commuteLabel = 'Drive to ' + worksNear;
+    const commute1 = estimateCommute(primary, worksNear);
+    const commute2 = estimateCommute(secondary, worksNear);
+    if (commute1 && commute2) {
+      commuteV1 = commute1 + ' mins';
+      commuteV2 = commute2 + ' mins';
+      commutWin = commute1 <= commute2 ? 0 : 1;
+    }
+  }
+
+  const rows = [
+    { label: commuteLabel, v1: commuteV1, v2: commuteV2, win: commutWin },
+    { label:'Entry price / sqft', v1:'₹'+(l1.avgPsqft||8100), v2:'₹'+(l2.avgPsqft||6200), win: (l1.avgPsqft||8100) < (l2.avgPsqft||6200) ? 0 : 1 },
+    { label:`Space for ₹${cap}L`, v1:'~'+sqft1+' sq ft', v2:'~'+sqft2+' sq ft', win: sqft1 >= sqft2 ? 0 : 1 },
+    { label:'YoY appreciation', v1:'+'+( l1.yoy||12)+'%', v2:'+'+( l2.yoy||14)+'%', win: (l1.yoy||12) >= (l2.yoy||14) ? 0 : 1 },
+    { label:'Who buys here', v1:'Owner-occupiers', v2:'Investors & end-users', win:0 },
+    { label:'Development stage', v1:'Established', v2:'Mixed — verify', win:0 },
+  ];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:0;">
+      <div class="ds-section-heading">Head to Head</div>
+      <div class="ds-heading-sub" style="margin:2px 0 0;">${esc(primary)} vs ${esc(secondary||'Nearby')}</div>
+    </div>
+    <div style="overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <caption class="sr-only">Comparison of ${esc(primary)} and ${esc(secondary||'Nearby')}</caption>
+        <thead style="background:#111827;color:white;">
+          <tr>
+            <th scope="col" style="padding:10px 12px;font-weight:800;text-align:left;">Feature</th>
+            <th scope="col" style="padding:10px 12px;font-weight:800;text-align:center;">${esc(primary)}</th>
+            <th scope="col" style="padding:10px 12px;font-weight:800;text-align:center;">${esc(secondary||'Nearby')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r=>`<tr style="border-bottom:1px solid var(--border);">
+            <td scope="row" style="padding:9px 12px;font-size:11px;color:var(--text-tertiary);font-weight:600;width:30%;">${r.label}</td>
+            <td style="padding:9px 12px;font-weight:700;color:var(--text-primary);text-align:center;">${r.win===0?`<span style="color:var(--green);">${esc(r.v1)}</span>`:esc(r.v1)}</td>
+            <td style="padding:9px 12px;font-weight:700;color:var(--text-primary);text-align:center;">${r.win===1?`<span style="color:var(--green);">${esc(r.v2)}</span>`:esc(r.v2)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="sec-pad" style="padding-top:4px;padding-bottom:0;">
+      <div class="ds-insight sm">
+        <div class="ds-insight-head">
+          <span class="material-icons" aria-hidden="true" style="font-size:15px;color:var(--purple-text);">auto_awesome</span>
+          <span class="ds-insight-title">Based on your filters</span>
+        </div>
+        <div class="ds-insight-sub">${esc(primary)} has more ready-to-move options within budget. ${esc(secondary)} offers ₹15–20L savings but with 2026–27 possession.</div>
+      </div>
+    </div>
+    <div class="helpful-row"><span>Is this helpful?</span><div class="helpful-btns"><button class="ds-btn ds-btn-xs ds-btn-secondary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_up</span> Yes</button><button class="ds-btn ds-btn-xs ds-btn-tertiary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_down</span> No</button></div></div>
+    ${Object.keys(propNotes).length === 0 ? `<div style="padding:10px 14px 4px;font-size:12px;color:var(--text3);">💡 Add notes to individual properties to remember what stood out on your visit.</div>` : `<div style="padding:10px 14px 4px;font-size:12px;color:var(--green);font-weight:600;">✓ ${Object.keys(propNotes).length} propert${Object.keys(propNotes).length > 1 ? 'ies have' : 'y has'} notes — you're building your decision.</div>`}
+  </div>`;
+}
+
+function modNearestLandmarks(stage, primary, secondary) {
+  if (stage !== 3) return null;
+  if (!secondary) return null;
+  const lm = (data.landmarks && data.landmarks.primary) ? data.landmarks : getMockData(config).landmarks;
+  const iconMap = { Metro: { icon: 'directions_subway', cls: 'metro' }, Hospital: { icon: 'local_hospital', cls: 'hospital' }, School: { icon: 'school', cls: 'school' }, Mall: { icon: 'shopping_bag', cls: 'mall' } };
+  const rows = [
+    { type:'Metro', p: lm.primary.metro, s: lm.secondary.metro },
+    { type:'Hospital', p: lm.primary.hospital, s: lm.secondary.hospital },
+    { type:'School', p: lm.primary.school, s: lm.secondary.school },
+    { type:'Mall', p: lm.primary.mall, s: lm.secondary.mall },
+  ];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="ds-section-heading">Nearest Landmarks</div></div>
+    <div class="lm-table-wrap">
+      <table class="lm-table">
+        <caption class="sr-only">Landmark distances for ${esc(primary)} and ${esc(secondary||'Nearby')}</caption>
+        <thead><tr><th scope="col">Landmark</th><th scope="col">${esc(primary)}</th><th scope="col">${esc(secondary||'Nearby')}</th></tr></thead>
+        <tbody>
+          ${rows.map(r=>{const ic=iconMap[r.type];return `<tr><td scope="row"><div style="display:flex;align-items:center;gap:7px;"><div class="lm-icon-circle ${ic.cls}"><span class="material-icons" aria-hidden="true">${ic.icon}</span></div>${r.type}</div></td><td>${esc(r.p||'—')}</td><td>${esc(r.s||'—')}</td></tr>`;}).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function modTradeoff(stage, primary, secondary) {
+  if (stage !== 3 || !secondary) return null;
+  const _adjFb = getMockData(config).adjacentLocalities;
+  const adj0 = data.adjacentLocalities[0] || _adjFb[0] || {};
+  const saving = Math.abs(adj0.delta || 8);
+  const metroNote = adj0.metro || _adjFb[0] && _adjFb[0].metro || 'farther from metro';
+  return `<div class="sec sec-pad">
+    <div class="ds-insight">
+      <div class="ds-insight-title-row">
+        <span class="ds-insight-icon material-icons" aria-hidden="true">auto_awesome</span>
+        <span class="ds-insight-title">${esc(secondary)} saves ~₹${saving}L vs ${esc(primary)} · ${esc(metroNote)}. Worth the trade-off?</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="ds-btn ds-btn-sm ds-btn-primary">Metro first</button>
+      <button class="ds-btn ds-btn-sm ds-btn-quaternary">₹${saving}L saving</button>
+    </div>
+  </div>`;
+}
+
+function modPropertiesPrimary(stage, primary, secondary, worksNear) {
+  if (stage === 4 || stage === 5) return null;  // Show S1, S2, S3 per wireframes
+
+  // ── INTELLIGENT FALLBACK FILTERING ──
+  // Stage 1: Filter by exact primary location
+  let candidateProperties = data.properties.filter(p => p.location.includes(primary));
+  let fallbackType = null;
+
+  // Stage 2: If empty, try adjacent localities
+  if (!candidateProperties.length && (data.adjacentLocalities || []).length > 0) {
+    const adjacentNames = data.adjacentLocalities.map(a => a.name);
+    candidateProperties = data.properties.filter(p =>
+      adjacentNames.some(adj => p.location.includes(adj))
+    );
+    if (candidateProperties.length) fallbackType = 'adjacent';
+  }
+
+  // Stage 3: If still empty, try same price tier (±30%)
+  if (!candidateProperties.length) {
+    const targetLoc = data.localities && data.localities.find(l =>
+      l.name.toLowerCase().includes(primary.toLowerCase())
+    );
+    if (targetLoc) {
+      const priceBand = targetLoc.avgPsqft * 0.3;
+      candidateProperties = data.properties.filter(p => {
+        const pPrice = parsePriceLakhs(p.price);
+        return Math.abs(pPrice - targetLoc.avgPsqft) <= priceBand;
+      });
+      if (candidateProperties.length) fallbackType = 'price-tier';
+    }
+  }
+
+  // If still empty, show message
+  if (!candidateProperties.length) {
+    return `<div class="sec sec-pad"><div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">No listings available</div><div class="empty-sub">Properties for ${esc(primary)} are being curated. Check back soon!</div></div></div>`;
+  }
+
+  // Score each property using stage-aware scoring, and enrich with commute time if worksNear is set
+  const scored = candidateProperties
+    .map(p => {
+      const propWithScore = {
+        ...p,
+        score: scoreProperty(p, config, stage)
+      };
+      // Add commute info to lm field if worksNear is available
+      if (worksNear) {
+        const commute = estimateCommute(p.location, worksNear);
+        if (commute) {
+          propWithScore.lm = `${commute} mins to ${worksNear}${p.lm ? ' · ' + p.lm : ''}`;
+        }
+      }
+      return propWithScore;
+    })
+    .sort(function(a, b) { return b.score - a.score; });
+
+  // ── LABEL & TRANSPARENCY ──
+  let label = `Properties in ${esc(primary)}`;
+  let transparencyBadge = '';
+
+  if (fallbackType === 'adjacent') {
+    label = `Properties near ${esc(primary)}`;
+    transparencyBadge = `<div style="background:#fef3c7;border-left:3px solid #f59e0b;padding:8px 12px;margin-bottom:8px;border-radius:4px;font-size:12px;color:#78350f;">
+      📍 Limited listings in ${esc(primary)}. Showing nearby areas (Sectors 128, 137, 143, etc).
+    </div>`;
+  } else if (fallbackType === 'price-tier') {
+    label = `Similar-priced properties to ${esc(primary)}`;
+    transparencyBadge = `<div style="background:#f0fdf4;border-left:3px solid #16a34a;padding:8px 12px;margin-bottom:8px;border-radius:4px;font-size:12px;color:#15803d;">
+      💰 Showing properties in your budget range. Perfect for comparing options.
+    </div>`;
+  }
+
+  if (stage === 3 && secondary) {
+    // S3: split into two groups by location, scored within each group
+    const primary_props = scored.filter(p => p.location.includes(primary)).slice(0, 3);
+    const secondary_props = scored.filter(p => p.location.includes(secondary)).slice(0, 3);
+
+    return `<div class="sec">
+      <div class="group-label"><div class="group-dot"></div>${esc(primary)}</div>
+      <div class="hscroll">${primary_props.map((p,i)=>propCard(p,{showBadge:p.score>70,horizontal:true})).join('')}</div>
+      <div class="group-label" style="margin-top:4px;"><div class="group-dot orange"></div>${esc(secondary)}</div>
+      <div class="hscroll">${secondary_props.map(p=>propCard(p,{showBadge:p.score>70,horizontal:true})).join('')}</div>
+    </div>`;
+  }
+
+  // S2-S4: show top-scored properties in grid
+  const topProps = scored.slice(0, 4);
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading">${label}</div>
+    </div>
+    ${transparencyBadge}
+    <div class="fresh-grid">${topProps.map(p=>propCard(p,{showBadge:p.score>70})).join('')}</div>
+  </div>`;
+}
+
+function modNearbyLocalities(stage, primary) {
+  if (stage < 2 || stage > 3) return null;  // Show S2-S3 only
+  const adjs = data.adjacentLocalities.length ? data.adjacentLocalities : getMockData(config).adjacentLocalities;
+  const propPool = data.properties.length > 5 ? data.properties : getMockData(config).properties;
+
+  const cards = adjs.slice(0, 2).map((a, ai) => {
+    // For this adjacent locality, filter and score all properties in it
+    const adjProps = propPool
+      .filter(p => p.location.includes(a.name))
+      .map(p => ({
+        ...p,
+        score: scoreProperty(p, config, stage)
+      }))
+      .sort(function(a, b) { return b.score - a.score; })
+      .slice(0, 2);  // Top 2 properties from this adjacent locality
+
+    // If no properties found, use generic samples from pool
+    const ap = adjProps.length > 0 ? adjProps : propPool.slice(3 + ai * 2, 5 + ai * 2);
+
+    return `<div>
+      <div class="group-label" style="padding:8px 14px 4px;font-size:13px;"><div class="group-dot" style="background:var(--green)"></div>${esc(a.name)} · ${esc(a.label)} vs ${esc(primary)}</div>
+      <div class="prop-grid" style="margin-bottom:4px;">
+        ${ap.map(p=>`<div class="prop-sm">
+          <div class="prop-sm-img">${propImg(p)}</div>
+          <div class="prop-sm-body">
+            <div class="prop-sm-price">${esc(p.price)}</div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:2px;">${esc(p.bhk||'')}</div>
+            <div class="prop-sm-name">${esc(p.name||'')}</div>
+            <div class="prop-sm-loc">${esc(a.name)}</div>
+            <div class="prop-sm-landmark">${esc(a.metro||'')}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  const saving = adjs[0] ? adjs[0].delta : 6;
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;">
+      <div style="padding:12px 14px;text-align:left;"><div class="ds-section-heading">Nearby Localities</div></div>
+    </div>
+    ${cards}
+  </div>`;
+}
+
+function modBudgetAnchor(stage, primary) {
+  if (stage !== 1) return null;
+  const loc = data.localities[0] || getMockData(config).localities[0];
+  if (!loc || !loc.avgPsqft) return null;
+  const entry = Math.round(loc.avgPsqft * 900 / 100000);
+  const mid   = Math.round(loc.avgPsqft * 1050 / 100000);
+  const prem  = Math.round(loc.avgPsqft * 1300 / 100000);
+  const sqft900 = Math.round(loc.avgPsqft * 900 / 100000 * 100000 / loc.avgPsqft);
+  const sqft1050 = Math.round(loc.avgPsqft * 1050 / 100000 * 100000 / loc.avgPsqft);
+  const sqft1300 = Math.round(loc.avgPsqft * 1300 / 100000 * 100000 / loc.avgPsqft);
+  return `<div class="sec sec-pad">
+    <div class="ds-section-heading" style="margin-bottom:4px;">2 BHKs in ${esc(primary)} start at ₹${entry}L</div>
+    <div class="ds-heading-sub">Based on ₹${loc.avgPsqft.toLocaleString()}/sq ft · ${esc(loc.count||'')}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;">
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-md);padding:12px 8px;text-align:center;">
+        <div style="font-size:var(--text-xs);color:var(--text-secondary);font-weight:var(--weight-medium);margin-bottom:4px;">Entry</div>
+        <div style="font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--text-primary);">Under ₹${entry}L</div>
+        <div class="ds-heading-sub">~${sqft900} sq ft</div>
+      </div>
+      <div style="background:var(--surface);border:1.5px solid var(--blue);border-radius:var(--radius-md);padding:12px 8px;text-align:center;">
+        <div style="font-size:var(--text-xs);color:var(--text-secondary);font-weight:var(--weight-medium);margin-bottom:4px;">Mid</div>
+        <div style="font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--text-primary);">₹${entry}L–₹${mid}L</div>
+        <div class="ds-heading-sub">~${sqft1050} sq ft</div>
+      </div>
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-md);padding:12px 8px;text-align:center;">
+        <div style="font-size:var(--text-xs);color:var(--text-secondary);font-weight:var(--weight-medium);margin-bottom:4px;">Premium</div>
+        <div style="font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--text-primary);">₹${mid}L+</div>
+        <div class="ds-heading-sub">~${sqft1300}+ sq ft</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function modBudgetFit(stage, f, primary, secondary) {
+  if (stage > 3) return null;
+  const max = f.budgetMax || 0;
+  if (!max) return null;
+
+  const loc = data.localities[0] || getMockData(config).localities[0];
+  if (!loc || !loc.avgPsqft) return null;
+
+  let headline, bodyText, btnText;
+  if (stage === 3 && secondary) {
+    const loc2 = data.localities[1] || getMockData(config).localities[1];
+    if (loc2 && loc2.avgPsqft) {
+      const sqft1 = Math.round(max * 100000 / loc.avgPsqft / 10) * 10;
+      const sqft2 = Math.round(max * 100000 / loc2.avgPsqft / 10) * 10;
+      const bigger = sqft2 > sqft1 ? secondary : primary;
+      headline = `₹${max}L unlocks more space in ${esc(bigger)}`;
+      bodyText = `${esc(primary)}: ~${sqft1} sq ft · ${esc(secondary)}: ~${sqft2} sq ft at the same budget.`;
+      btnText = `See properties in ${esc(bigger)}`;
+    } else {
+      return null;
+    }
+  } else {
+    const areaEntry = Math.round(loc.avgPsqft * 900 / 100000);
+    if (max < areaEntry) {
+      headline = `Budget is tight for ${esc(primary)}`;
+      bodyText = `Most 2 BHKs start around ₹${areaEntry}L. Explore nearby localities with better value.`;
+    } else if (max > areaEntry * 1.4) {
+      headline = `Your budget opens premium options`;
+      bodyText = `₹${max}L qualifies for 3 BHKs and best-in-class developments.`;
+    } else {
+      headline = `₹${max}L works well in ${esc(primary)}`;
+      bodyText = `Expect a well-sized 2 BHK with options across the locality.`;
+    }
+    btnText = 'See properties';
+  }
+
+  return `<div class="sec sec-pad">
+    <div class="ds-insight">
+      <div class="ds-insight-head">
+        <div class="ds-insight-title-row">
+          <span class="ds-insight-icon material-icons" aria-hidden="true">auto_awesome</span>
+          <span class="ds-insight-title">${headline}</span>
+        </div>
+      </div>
+      <div class="ds-insight-sub">${bodyText}</div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="ds-btn ds-btn-sm ds-btn-primary">${btnText}</button>
+        <button class="ds-btn ds-btn-sm ds-btn-tertiary">Adjust budget</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function modDecisionSpotlight(stage, primary, worksNear) {
+  if (stage < 4) return null;  // S4, S5 (Decision Spotlight)
+  const prop = data.properties[0];
+  if (!prop) return null;
+  const loc = data.localities[0] || getMockData(config).localities[0];
+  const yoy = loc ? (loc.yoy || 12) : 12;
+  // EMI estimate: approx (price in lakhs * 100000 * 0.0085) / 1000 = rough ₹/mo
+  const priceLakhs = parsePriceLakhs(prop.price);
+  const emiK = priceLakhs ? Math.round(priceLakhs * 0.85) : null; // ~0.85% of price per month at 8.5% 20yr
+
+  // Calculate commute time if worksNear is available
+  let commuteText = 'Check commute from your office';
+  if (worksNear) {
+    const commute = estimateCommute(prop.location, worksNear);
+    if (commute) {
+      commuteText = `${commute} mins to ${worksNear} from here`;
+    }
+  }
+
+  return `<div class="spotlight">
+    <div class="spotlight-header">
+      <div class="sph-title">✦ Your Top Pick</div>
+    </div>
+    <div class="spotlight-body">
+      <div style="height:160px;border-radius:var(--r-sm);margin-bottom:10px;overflow:hidden;position:relative;">
+        ${propImg(prop)}
+        ${prop.ready_to_move ? `<div style="position:absolute;bottom:8px;left:8px;background:rgba(22,163,74,0.85);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;">Ready to move</div>` : `<div style="position:absolute;bottom:8px;left:8px;background:rgba(37,99,235,0.82);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;">${esc(prop.status||'Under Construction')}</div>`}
+      </div>
+      <div class="sp-insight">You shortlisted this. Here's a full picture before you decide.</div>
+      <div class="sp-prop-detail">
+        ${prop.dev?`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">${esc(prop.dev.toUpperCase())}</div>`:''}
+        <div class="sp-prop-name">${esc(prop.name||'Property')}</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:2px;">
+          <div class="sp-prop-price">${esc(prop.price||'₹—')}</div>
+          ${emiK ? `<div style="font-size:12px;color:var(--text3);">~₹${emiK}K/mo EMI</div>` : ''}
+        </div>
+        <div class="sp-prop-sub">${esc(prop.bhk||'2 BHK')} · ${esc(prop.sqft||'')} · ${esc(prop.location||primary)}</div>
+      </div>
+      <div class="sp-landmarks">
+        ${prop.lm?`<div class="sp-lm">📍 ${esc(prop.lm)}</div>`:''}
+        <div class="sp-lm">🚗 ${esc(commuteText)}</div>
+        <div class="sp-lm">📈 ${esc(primary)} prices grew +${yoy}% last year</div>
+      </div>
+      ${noteHtml(prop.name || 'spotlight_prop', 4)}
+      <div class="sp-ctarow">
+        <button class="ds-btn ds-btn-md ds-btn-tertiary" style="flex:1;">Not interested</button>
+        <button class="ds-btn ds-btn-md ds-btn-primary" style="flex:2;">📅 Schedule a visit</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function modStillConsidering(stage, primary) {
+  if (stage !== 4 && stage !== 5) return null;
+  const props = data.properties.slice(1, 4);
+  if (!props.length) return null;
+  const topProp = data.properties[0];
+  const topPrice = parsePriceLakhs(topProp ? topProp.price : null);
+  const cards = props.map((p, i) => {
+    const propPrice = parsePriceLakhs(p.price);
+    let delta = '', isGood = false;
+    if (topPrice && propPrice) {
+      const diff = Math.round(propPrice - topPrice);
+      if (diff < 0) { delta = `₹${Math.abs(diff)}L cheaper`; isGood = true; }
+      else if (diff > 0) { delta = `₹${diff}L more`; isGood = false; }
+      else { delta = 'Same price as your top pick'; isGood = true; }
+    }
+
+    // Engagement metrics (simulated from data)
+    const engagements = ['4x', '3x', '2x'];
+    const engagementText = engagements[i] || '2x';
+    const shareActions = ['shared this with your friend', 'viewed this property', 'shortlisted this'];
+    const shareAction = shareActions[i] || 'viewed this property';
+
+    // Distance to landmark (extract from lm field)
+    const landmarkDist = p.lm ? p.lm.split('·').slice(1).join('·').trim() : '';
+
+    // Badge for new properties
+    const newBadge = !p.ready_to_move ? `<div style="position:absolute;top:8px;left:8px;background:#111827;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;">NEW</div>` : '';
+
+    const noteKey = p.name || ('prop_sc_' + i);
+    return `<div style="padding:14px;border-bottom:1px solid var(--border);position:relative;">
+      <div class="flex gap-lg mb-10">
+        <div style="position:relative;width:80px;height:70px;border-radius:6px;background:var(--bg);overflow:hidden;flex-shrink:0;">
+          ${propImg(p)}
+          ${newBadge}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div class="text-xs text-tertiary mb-2"><span class="material-icons" style="font-size:12px;vertical-align:-2px;">visibility</span> ${engagementText} · ${shareAction}</div>
+          <div class="text-lg font-bold text-primary mb-2">${esc(p.bhk||'2 BHK')} · ${esc(p.price||'₹—')}</div>
+          <div class="text-base text-secondary mb-4">${esc(p.sqft||'')} sq ft · ${p.ready_to_move ? 'Ready to move' : 'UC'} · ${esc(p.location||primary)}</div>
+          ${delta ? `<div class="text-xs text-tertiary mb-4"><span style="color:${isGood?'var(--green)':'var(--text-tertiary)'};font-weight:${isGood?'700':'400'};"><span aria-hidden="true">${isGood?'✓':'•'}</span> ${esc(delta)}</span></div>` : ''}
+          ${landmarkDist ? `<div class="text-xs text-tertiary italic">${esc(landmarkDist)}</div>` : ''}
+        </div>
+        <button class="ds-btn ds-btn-xs ds-btn-quaternary" style="flex-shrink:0;" aria-label="Save property"><span class="material-icons" aria-hidden="true" style="font-size:16px;">bookmark_border</span></button>
+      </div>
+      <div style="padding:8px 0;border-top:1px solid var(--border);">
+        <div class="text-base text-secondary mb-6">${stage === 5 ? 'How did your visit compare?' : 'Still in the running?'}</div>
+        <div class="flex gap-sm">
+          <button class="ds-btn ds-btn-xs ds-btn-primary" style="flex:1;">Yes</button>
+          <button class="ds-btn ds-btn-xs ds-btn-tertiary" style="flex:1;">No</button>
+          <button class="ds-btn ds-btn-xs ds-btn-secondary" style="flex:1;">Details →</button>
+        </div>
+      </div>
+      ${noteHtml(noteKey, 4)}
+    </div>`;
+  }).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div class="ds-section-heading">${stage === 5 ? 'How did your visits compare?' : 'Still Considering'}</div>
+          <div class="ds-heading-sub">${stage === 5 ? 'Review the properties you visited and decide your next step' : `${props.length} others`}</div>
+        </div>
+      </div>
+    </div>
+    ${cards}
+    <div style="padding:10px 14px 12px;display:flex;gap:8px;">
+      <button class="ds-btn ds-btn-sm ds-btn-tertiary" style="flex:1;">⚖ Compare All</button>
+      <button class="ds-btn ds-btn-sm ds-btn-primary" style="flex:2;">📅 Plan Weekend Visits</button>
+    </div>
+  </div>`;
+}
+
+function modVisitPlanner(stage) {
+  if (stage !== 4) return null;
+  const props = data.properties.slice(1, 4);
+  if (!props.length) return null;
+  const cards = props.slice(0, 3).map(p => `<div class="ds-prop-card horizontal">
+    <div class="ds-prop-card-img" style="position:relative;">
+      ${propImg(p)}
+      <button class="visit-schedule-cta"><span class="material-icons" aria-hidden="true" style="font-size:13px;">event</span> Schedule</button>
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||'')}</div>
+      <div class="text-xs text-tertiary mt-2">${esc(p.sqft||'')}${p.sqft?' · ':''}<span style="color:${p.ready_to_move?'var(--green)':'var(--text-tertiary)'}">${p.ready_to_move?'Ready to move':'UC'}</span></div>
+      ${p.lm ? `<div class="text-xs text-tertiary mt-1" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📍 ${esc(p.lm.split('·')[0].trim())}</div>` : ''}
+    </div>
+  </div>`).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading">Plan your site visits</div>
+      <div class="ds-heading-sub">Save time by grouping site visits nearby</div>
+    </div>
+    <div class="hscroll">${cards}</div>
+    <div style="padding:10px 14px 12px;"></div>
+  </div>`;
+}
+
+function modSimilarBHK(stage, bhk, primary) {
+  if (stage !== 2) return null;
+  // Use rawData so budget/RTM filter doesn't shrink the pool; deduplicate against what PropertiesPrimary already shows
+  const shown = new Set(data.properties.slice(0, 4).map(p => p.name));
+  const pool = (rawData.properties || data.properties).filter(p => !shown.has(p.name));
+  const props = pool.slice(0, 3);
+  if (!props.length) return null;
+  const cards = props.map(p => `<div class="ds-prop-card horizontal">
+    <div class="ds-prop-card-img">
+      ${propImg(p)}
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+      <div class="ds-prop-card-possession"><span>${p.ready_to_move?'Ready to move':'Under Construction'}</span></div>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
+      <div class="text-xs text-tertiary mt-2">${esc(p.sqft||'')}${p.sqft?' · ':''}<span style="color:${p.ready_to_move?'var(--green)':'var(--text-tertiary)'}">${p.ready_to_move?'Ready to move':'UC'}</span></div>
+      ${p.lm ? `<div class="text-xs text-tertiary mt-1" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📍 ${esc(p.lm.split('·')[0].trim())}</div>` : ''}
+    </div>
+  </div>`).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div style="padding:12px 14px;text-align:left;"><div class="ds-section-heading">More ${esc(bhk)} options in ${esc(primary)}</div></div>
+    </div>
+    <div class="hscroll">${cards}</div>
+  </div>`;
+}
+
+function modExpertAgents(stage, primary, secondary) {
+  if (stage !== 3) return null;
+  const agents = [
+    { init:'AS', name:'Arpit Sharma', area:'Expert for '+primary+' & '+( secondary||'nearby'), avClass:'av-blue', rating:4.8, deals:12 },
+    { init:'PJ', name:'Preeti Joshi', area:'Expert for '+(secondary||primary)+' · 5yr experience', avClass:'av-purple', rating:4.6, deals:8 },
+  ];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="ds-section-heading">Local experts for ${esc(primary)}</div><div class="ds-heading-sub">Highly rated agents in this area</div></div>
+    ${agents.map(a=>`<div class="expert-card">
+      <div class="expert-av ${a.avClass}">${a.init}</div>
+      <div class="expert-info"><div class="expert-name">${a.name}</div><div class="expert-rating"><span class="material-icons expert-star" aria-hidden="true">star</span><b style="color:var(--text);font-size:12px;">${a.rating}</b><span style="color:var(--text3);font-size:11px;">· ${a.deals} deals in ${esc(primary)}</span></div></div>
+      <button class="ds-btn ds-btn-sm ds-btn-primary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">call</span> Call</button>
+    </div>`).join('')}
+  </div>`;
+}
+
+function modUpcomingDevelopments(stage, primary) {
+  if (stage < 3 || stage > 4) return null;  // Show S3-S4
+  const cityName = (config.location && config.location.city) || primary;
+  const devs = [
+    { title:'Property prices are rising rapidly in '+cityName, date:'Feb 28, 2026' },
+    { title:'New residential zones announced near '+primary, date:'Jan 15, 2026' },
+    { title:'Metro expansion update — impact on '+primary, date:'Mar 5, 2026' },
+  ];
+  const cityImgs = [
+    'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=400&q=75',
+    'https://images.unsplash.com/photo-1610642372651-fe6e7bc6a4d1?auto=format&fit=crop&w=400&q=75',
+    'https://images.unsplash.com/photo-1444723121867-7a241cacace9?auto=format&fit=crop&w=400&q=75',
+  ];
+  const cards = devs.map((d,i)=>`<div class="upcoming-card">
+    <div class="upcoming-img"><img src="${cityImgs[i]}" style="width:100%;height:100%;object-fit:cover;opacity:.75;" loading="lazy" onerror="this.style.display='none'" /></div>
+    <div class="upcoming-body"><div class="upcoming-title">${esc(d.title)}</div><div class="upcoming-date">${d.date}</div></div>
+  </div>`).join('');
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;"><div class="ds-section-heading">Upcoming developments in these zones</div></div>
+    <div class="hscroll">${cards}</div>
+    <div style="padding:10px 14px 4px;"></div>
+  </div>`;
+}
+
+function modUpcomingProjects(stage, primary) {
+  if (!primary || (stage !== 2 && stage !== 4)) return null;
+
+  // Only show for specific localities, not city-level browsing
+  // If primary equals city (e.g. "Noida"), user is browsing at city-level → don't show
+  const cityLevel = (config.location && config.location.city) ? primary === config.location.city : false;
+  if (cityLevel) return null;
+
+  // Show new/upcoming properties in the primary location
+  const props = (data.properties || [])
+    .filter(p => p.location && p.location.includes(primary) && !p.ready_to_move)
+    .slice(0, 2);
+
+  if (!props.length) return null;
+
+  const cards = props.map(p => `<div class="ds-prop-card" style="flex:0 0 calc(50% - 6px);">
+    <div class="ds-prop-card-img" style="height:120px;position:relative;">
+      ${propImg(p)}
+      <div style="position:absolute;top:6px;left:6px;">
+        <div style="background:black;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;display:inline-block;">NEW</div>
+      </div>
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Save to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+      <div class="ds-prop-card-subtitle" style="font-size:11px;margin-bottom:6px;">${esc(p.bhk||'')} · ${esc(p.sqft||'')} sqft</div>
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">${esc(p.name||'')}</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">${esc(p.dev||'')} · ${esc(p.location||'')}</div>
+      <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;">
+        ${p.ready_to_move ? '<div style="background:rgba(22,163,74,0.15);color:var(--green);font-size:10px;padding:3px 6px;border-radius:4px;">RTM ✓</div>' : ''}
+        ${p.rera ? '<div style="background:rgba(37,99,235,0.15);color:var(--blue);font-size:10px;padding:3px 6px;border-radius:4px;">RERA ✓</div>' : ''}
+        <div style="background:rgba(0,0,0,0.1);color:var(--text);font-size:10px;padding:3px 6px;border-radius:4px;">NEW</div>
+      </div>
+      ${p.lm ? `<div style="font-size:11px;color:var(--text2);margin-bottom:8px;">⭐ ${esc(p.lm)}</div>` : ''}
+      <button class="ds-btn ds-btn-tertiary ds-btn-sm" style="width:100%;">View →</button>
+    </div>
+  </div>`).join('');
+
+  const newCount = props.length;
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div style="padding:12px 14px;text-align:left;">
+        <div class="ds-section-heading">Upcoming Projects in ${esc(primary)}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;padding:0 14px 14px;justify-content:space-between;">
+      ${cards}
+    </div>
+  </div>`;
+}
+
+function modNearbyComparison(stage, primary) {
+  if (stage !== 3) return null;
+  if (config.location && config.location.secondary) return null;
+  const _fb2 = getMockData(config);
+  const adjs = data.adjacentLocalities.length ? data.adjacentLocalities : _fb2.adjacentLocalities;
+  const pair = adjs.slice(0, 2);
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;"><div class="ds-section-heading">More localities to explore</div></div>
+    <div style="display:flex;gap:8px;padding:0 14px 4px;">
+      ${pair.map(a=>`<div style="flex:1;background:white;border-radius:6px;padding:10px;border:1px solid rgba(0,0,0,0.16);box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+        <div style="font-size:13px;font-weight:800;color:var(--text-primary);margin-bottom:3px;">${esc(a.name)}</div>
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:6px;">${esc(a.label||'')} vs ${esc(primary)}</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-tertiary);">Avg/sqft</span><span style="font-size:10px;font-weight:700;color:var(--text-primary);">₹${a.avgPsqft||((_fb2.localities[2]||{}).avgPsqft)||7400}</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:var(--text-tertiary);">YoY</span><span style="font-size:10px;font-weight:700;color:var(--green);">+${a.yoy||((_fb2.localities[2]||{}).yoy)||14}%</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:10px;color:var(--text-tertiary);">Metro</span><span style="font-size:10px;font-weight:700;color:var(--text-primary);">${esc(a.metro||'~1.5km')}</span></div>
+        <div style="margin-top:7px;padding-top:6px;border-top:1px solid var(--border);font-size:10px;color:var(--text-tertiary);">${esc(a.summary||'Similar residential zone')}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function modNewLaunches(stage, primary) {
+  if (stage > 3) return null; // Show S1-S3; S4+: discovery noise
+  const nl = data.properties.filter(p=>!p.ready_to_move)[0] || getMockData(config).properties[2];
+  return `<div class="nl-wrap">
+    <div class="nl-top">
+      <div class="nl-icon">✦</div>
+      <div><div class="nl-title">Newly launched projects</div><div class="nl-sub">Best prices · Unit of choice · Easy payment plans</div></div>
+    </div>
+    <div class="nl-card">
+      <div class="nl-new-label">✦ New launch ✦</div>
+      <div class="nl-row">
+        <div class="nl-thumb">${propImg(nl)}</div>
+        <div><div class="nl-name">${esc(nl.name)}</div><div class="nl-loc">${esc(nl.location||primary)}</div></div>
+      </div>
+      <div class="nl-details-row">${esc(nl.price)} <span class="nl-sep">|</span> <span class="nl-bhk">${esc(nl.bhk||'2, 3 BHK')}</span></div>
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:2px;"><span class="nl-rera">🔑 RERA</span><span style="font-size:12px;color:var(--text2);">${esc(nl.status||'Completion 2027')}</span></div>
+      <div class="nl-footer"><div class="nl-footer-text">🏷 First-choice units at zero brokerage</div><button class="ds-btn ds-btn-xs ds-btn-primary">View number</button></div>
+    </div>
+  </div>`;
+}
+
+function modPeopleAlsoViewed(stage, primary) {
+  return null; // DISABLED: Redundant with modContinue + modPropertiesPrimary (all show same property pool)
+  // Users see same 6-8 properties repeated 5+ times; consolidation into single tabbed module recommended
+  if (stage < 1) return null;
+  const props = data.properties.slice(stage===4?1:3, stage===4?5:6);
+  if (!props.length) return null;
+  const cards = props.map((p,i)=>`<div class="ds-prop-card horizontal">
+    <div class="ds-prop-card-img">
+      ${propImg(p)}
+      <div class="ds-prop-card-badges" style="right:44px;">
+        ${i>0 ? `<span class="ds-image-tag">Seen</span>` : `<span class="ds-image-tag">🔑 RERA</span>`}
+      </div>
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Add to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+      <div class="ds-prop-card-possession"><span>${esc(p.status||(p.ready_to_move?'Ready to Move':'Possession 2026'))}</span></div>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price)}</div>
+      <div class="ds-prop-card-subtitle">${esc(p.bhk)} · ${esc(p.dev||'')}</div>
+      <div class="ds-prop-card-name" style="font-size:var(--text-sm);">${esc(p.location||primary)}</div>
+    </div>
+  </div>`).join('');
+  const label = 'People like you also viewed';
+  const badgeHtml = '';
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading" style="font-size:15px;display:inline-block;">${label}</div>${badgeHtml}
+    </div>
+    <div class="hscroll">${cards}</div>
+    <div style="padding:8px 14px 4px;"></div>
+  </div>`;
+}
+
+function modPriceTrend(stage, primary) {
+  const loc = data.localities[0]||getMockData(config).localities[0];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading">Price Trends</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:1px solid var(--border);border-radius:6px;margin:0 14px;background:white;cursor:pointer;" role="button" tabindex="0" aria-label="View price trends for ${esc(primary)}">
+      <div style="display:flex;gap:10px;align-items:center;flex:1;">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;color:var(--green);flex-shrink:0;">
+          <span class="material-icons" aria-hidden="true" style="font-size:18px;">trending_up</span>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:13px;color:var(--text-primary);">+${loc.yoy||18}% price growth</div>
+          <div style="font-size:12px;color:var(--text-secondary);">${esc(primary)} · YoY appreciation</div>
+        </div>
+      </div>
+      <span class="material-icons" aria-hidden="true" style="color:var(--text-tertiary);font-size:18px;flex-shrink:0;">chevron_right</span>
+    </div>
+  </div>`;
+}
+
+function modPostVisitTools(stage) {
+  if (stage !== 5) return null;
+  const cityName = (config.location && config.location.city) || (config.location && config.location.primary) || 'your city';
+  const tools = [
+    { matIcon:'calculate', name:'EMI Calculator', desc:'Estimate monthly outflow based on your budget & tenure', bgColor:'var(--blue-light)', iconColor:'var(--blue)' },
+    { matIcon:'account_balance', name:'Home Loan Guide', desc:'Compare SBI, HDFC, ICICI rates & processing fees', bgColor:'var(--green-light)', iconColor:'var(--green)' },
+    { matIcon:'gavel', name:'Stamp Duty Estimator', desc:'Registration + legal fees for '+cityName, bgColor:'#fef3c7', iconColor:'var(--orange)' },
+    { matIcon:'home_work', name:'Possession Checklist', desc:'What to verify at handover', bgColor:'#ede9fe', iconColor:'#6c30d4' },
+  ];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;"><div class="ds-section-heading">Tools for your next step</div></div>
+    ${tools.map(t=>`<div style="display:grid;grid-template-columns:40px 1fr 20px;gap:12px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:6px;margin:0 14px 8px;cursor:pointer;background:white;" role="button" tabindex="0" aria-label="${t.name}">
+      <div style="width:40px;height:40px;border-radius:6px;background:${t.bgColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span class="material-icons" aria-hidden="true" style="font-size:18px;color:${t.iconColor};">${t.matIcon}</span>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:13px;color:var(--text-primary);margin-bottom:2px;">${t.name}</div>
+        <div style="font-size:12px;color:var(--text-secondary);">${t.desc}</div>
+      </div>
+      <span class="material-icons" aria-hidden="true" style="color:var(--text-tertiary);font-size:18px;">chevron_right</span>
+    </div>`).join('')}
+  </div>`;
+}
+
+
+function modDecisionVelocity(stage) {
+  if (stage < 2 || stage > 3) return null;
+  const days = config.lastVisitDaysAgo;
+  if (!days || days < 5) return null; // only meaningful if user has been searching a while
+  const weeks = Math.min(12, Math.max(1, Math.round(days / 7)));
+  const questions = stage === 2
+    ? ['Resale value?', 'Builder reputation?', 'Loan eligibility?']
+    : ['Shortlist ready?', 'Site visit done?', 'Negotiation next?'];
+  return `<div class="sec sec-pad">
+    <div style="display:flex;gap:16px;align-items:flex-start;">
+      <div style="background:var(--surface-alt);border-radius:var(--radius-md);padding:12px 14px;text-align:center;flex-shrink:0;">
+        <div style="font-size:28px;font-weight:var(--weight-extrabold);color:var(--text-primary);line-height:1;">${weeks}</div>
+        <div style="font-size:var(--text-xs);color:var(--text-secondary);font-weight:var(--weight-medium);">weeks</div>
+      </div>
+      <div>
+        <div style="font-size:var(--text-base);font-weight:var(--weight-semibold);color:var(--text-primary);margin-bottom:4px;">
+          You're ${weeks} week${weeks>1?'s':''} into your search.
+        </div>
+        <div class="ds-heading-sub" style="margin-bottom:8px;">Most buyers at your stage decide in 4–6 more weeks. What's still an open question?</div>
+        <div class="ds-chip-group">${questions.map(q=>`<button class="ds-chip ds-chip-xs">${q}</button>`).join('')}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function modTools(stage) {
+  if (stage === 1) return null;  // Show S2, S3, S4, S5
+  const sets = {
+    2:[{icon:'trending_up',name:'Price Trends',desc:'Locality history'},{icon:'menu_book',name:'Buyer Guide',desc:'Step-by-step checklist'}],
+    3:[{icon:'trending_up',name:'Price Trends',desc:'Locality history'},{icon:'calculate',name:'EMI Calculator',desc:'Monthly outflow'},{icon:'account_balance',name:'Home Loan Guide',desc:'Rates & eligibility'},{icon:'menu_book',name:'Buyer Guide',desc:'Step-by-step checklist'}],
+    4:[{icon:'calculate',name:'EMI Calculator',desc:'Monthly outflow'},{icon:'verified',name:'Loan Eligibility',desc:'Pre-qualify in 2 mins'},{icon:'trending_up',name:'Price Check',desc:'Current market rate'}],
+    5:[{icon:'calculate',name:'EMI Calculator',desc:'Loan monthly payment'},{icon:'account_balance',name:'Home Loan Guide',desc:'Final approval & rates'},{icon:'assignment',name:'Registration Guide',desc:'Stamp duty & costs'},{icon:'verified_user',name:'Possession Checklist',desc:'Move-in readiness'}],
+  };
+  const tools = (sets[stage]||sets[2]);
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading">Tools &amp; Calculators</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 14px;">
+      ${tools.map(t => `
+        <div role="button" tabindex="0" aria-label="${t.name}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 12px;cursor:pointer;">
+          <span class="material-icons" aria-hidden="true" style="font-size:24px;color:var(--blue);">${t.icon}</span>
+          <div style="font-size:var(--text-base);font-weight:var(--weight-semibold);margin-top:6px;color:var(--text-primary);">${t.name}</div>
+          <div class="ds-heading-sub">${t.desc}</div>
+        </div>`).join('')}
+    </div>
+    <div style="padding:8px 14px 4px;"></div>
+  </div>`;
+}
+
+function modHelpWith(stage) {
+  return null; // Removed: Buy/Rent/Invest onboarding menu is noise for committed buyers at S2+
+}
+
+function modArticles(stage, primary, secondary) {
+  if (stage === 1) return null;
+  const city = (config.location && config.location.city) || primary;
+  const sets = {
+    2:[
+      {t:'Which '+esc(city)+' localities have the best resale value?',d:'Jan 12, 2026',img:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?auto=format&fit=crop&w=200&q=70'},
+      {t:'What buyers often miss when buying in '+esc(city),d:'Feb 3, 2026',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=200&q=70'},
+      {t:'Understanding RERA — a complete buyer\'s guide',d:'Jan 28, 2026',img:'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=200&q=70'},
+    ],
+    3:[
+      {t:'Reasons to invest in '+esc(primary)+' right now',d:'Nov 18, 2025',img:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?auto=format&fit=crop&w=200&q=70'},
+      {t:esc(primary)+' vs '+(secondary?esc(secondary):'nearby locality')+' — which is better in 2026?',d:'Dec 12, 2025',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=200&q=70'},
+      {t:'Top residential projects in '+esc(primary)+' 2026',d:'Feb 8, 2026',img:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=70'},
+    ],
+    4:[
+      {t:'How to close a property deal — checklist',d:'Jan 20, 2026',img:'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=200&q=70'},
+      {t:'Red flags to watch in a property agreement',d:'Feb 1, 2026',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=200&q=70'},
+      {t:'Price negotiation tactics that actually work',d:'Feb 22, 2026',img:'https://images.unsplash.com/photo-1460472178825-e5240623afd5?auto=format&fit=crop&w=200&q=70'},
+    ],
+    5:[
+      {t:'Home loan: How to choose the right bank',d:'Jan 15, 2026',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=200&q=70'},
+      {t:'Stamp duty & registration — complete guide',d:'Feb 3, 2026',img:'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=200&q=70'},
+      {t:'Moving checklist — before you take possession',d:'Mar 1, 2026',img:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=70'},
+    ],
+  };
+  const articles = sets[stage]||sets[2];
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:4px;">
+      <div class="ds-section-heading">Latest Articles</div>
+    </div>
+    ${articles.map(a=>`<div role="link" tabindex="0" style="display:flex;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);align-items:flex-start;cursor:pointer;">
+      <div style="width:80px;height:64px;flex-shrink:0;border-radius:var(--radius-sm);overflow:hidden;background:var(--surface-alt);">
+        <img src="${a.img}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'" />
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:var(--text-base);font-weight:var(--weight-semibold);line-height:1.35;color:var(--text-primary);">${a.t}</div>
+        <div class="ds-heading-sub" style="margin-top:2px;"><span class="material-icons" aria-hidden="true" style="font-size:11px;vertical-align:-2px;">calendar_today</span> ${a.d}</div>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function modQuickLinks() {
+  const links = [
+    {icon:'home',t:'Buy Property'},{icon:'vpn_key',t:'Rent Property'},
+    {icon:'fiber_new',t:'New Projects'},{icon:'trending_up',t:'Price Trends'},
+    {icon:'calculate',t:'EMI Calculator'},{icon:'account_balance',t:'Home Loans'},
+    {icon:'verified_user',t:'RERA Check'},{icon:'menu_book',t:'Buyer Guide'},
+  ];
+  return `<div class="sec sec-pad">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div class="ds-section-heading">Quick Links</div><button class="ds-btn ds-btn-tertiary ds-btn-xs" style="font-size:11px;color:var(--text-tertiary);">Top ↑</button></div>
+    <div class="ds-chip-group">${links.map(l=>`<div class="ds-chip ds-chip-sm"><span class="material-icons" aria-hidden="true" style="font-size:12px;">${l.icon}</span> ${l.t}</div>`).join('')}</div>
+  </div>`;
+}
+
+function modHelpful() {
+  return `<div class="helpful-row"><span>Is this page helpful?</span><div class="helpful-btns"><button class="ds-btn ds-btn-xs ds-btn-secondary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_up</span> Yes</button><button class="ds-btn ds-btn-xs ds-btn-tertiary"><span class="material-icons" aria-hidden="true" style="font-size:14px;">thumb_down</span> No</button></div></div>`;
+}
+
+// ════════════════════════════════════════════════════════════════════════════════
+// V3 NEW MODULES (Wireframe-aligned)
+// ════════════════════════════════════════════════════════════════════════════════
+
+function modBottomNav() {
+  return `<div class="bottom-nav">
+    <button class="bottom-nav-item active" aria-label="Home"><span class="material-icons">home</span><div>Home</div></button>
+    <button class="bottom-nav-item" aria-label="New projects"><span class="material-icons">fiber_new</span><div>New</div></button>
+    <button class="bottom-nav-item" aria-label="Sell or Rent"><span class="material-icons">vpn_key</span><div>Sell/Rent</div></button>
+    <button class="bottom-nav-item" aria-label="Saved properties"><span class="material-icons">grid_3x3</span><div>Saved</div></button>
+    <button class="bottom-nav-item" aria-label="Profile"><span class="material-icons">person</span><div>Profile</div></button>
+  </div>`;
+}
+
+function modFAQ(stage, primary, city) {
+  if (!primary) return null;
+  const faqs = [
+    { q: 'Which is the nearest metro to ' + esc(primary) + '?', a: 'Most properties in ' + esc(primary) + ' are within 1–2 km from the nearest metro station, ensuring quick commute access.' },
+    { q: 'Is ' + esc(primary) + ' good for investment?', a: 'Yes, ' + esc(primary) + ' has shown consistent YoY appreciation and strong rental yields. Many institutional buyers and investors consider it a growth corridor.' },
+    { q: 'What\'s the average price per sqft in ' + esc(primary) + '?', a: 'The average price per sqft in ' + esc(primary) + ' ranges from ₹6,500–₹9,000 depending on locality and amenities.' },
+    { q: 'What are the best schools near ' + esc(primary) + '?', a: 'Popular schools include DPS, KV, and other CBSE-affiliated institutions. Many are within 2–5 km radius from residential developments.' },
+  ];
+  const faqHtml = faqs.map((f, i) => `
+    <details class="faq-item">
+      <summary class="faq-summary">${f.q}</summary>
+      <div class="faq-answer">${f.a}</div>
+    </details>
+  `).join('');
+  return `<div class="sec">
+    <div class="sec-pad"><div class="ds-section-heading">Frequently asked questions about ${esc(city || primary)}</div></div>
+    <div class="faq-section">${faqHtml}</div>
+  </div>`;
+}
+
+function modBuyersAlsoExploreLocalities(stage, primary) {
+  if ((stage !== 2 && stage !== 4) || !primary) return null;
+  const allLocs = data.localities && data.localities.length ? data.localities : getMockData(config).localities;
+  const targetLoc = allLocs.find(l => l.name.toLowerCase().trim() === primary.toLowerCase().trim());
+  if (!targetLoc) return null;
+  const others = allLocs.filter(l => l.name.toLowerCase().trim() !== primary.toLowerCase().trim()).slice(0, 2);
+  if (!others.length) return null;
+
+  const chips = others.map(l => `<div class="locality-chip">
+    <div class="locality-chip-name">${esc(l.name)}</div>
+    <div class="locality-chip-detail">₹${(l.avgPsqft || '—').toLocaleString()}/sqft · +${l.yoy || 12}% YoY</div>
+    <div class="locality-chip-count">${esc(l.count || '')}</div>
+  </div>`).join('');
+
+  const filt = config.filters || {};
+  const budgetDisplay = filt.budgetMax ? '₹' + filt.budgetMin + 'L–₹' + filt.budgetMax + 'L' : '₹60L–₹1 Cr';
+
+  return `<div class="sec">
+    <div class="sec-pad"><div class="ds-section-heading">Buyers like you also explore these localities</div></div>
+    <div style="display:flex;gap:8px;padding:0 14px 12px;flex-wrap:wrap;">${chips}</div>
+    <div class="sec-pad" style="padding-top:8px;">
+      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;">Open to view properties in ${budgetDisplay}?</div>
+      <div style="display:flex;gap:8px;">
+        <button class="ds-btn ds-btn-sm ds-btn-primary" style="flex:1;">Yes</button>
+        <button class="ds-btn ds-btn-sm ds-btn-tertiary" style="flex:1;">No</button>
+        <button class="ds-btn ds-btn-sm ds-btn-secondary" style="flex:1;">+ Add budget</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════════════════════
+// ORIGINAL MODULES (Wireframe-aligned)
+// ════════════════════════════════════════════════════════════════════════════════
+
+// Budget Check: Validate user's budget (S1-S2)
+function modBudgetCheck(stage, filters) {
+  if (stage < 1 || stage > 2) return null;
+  if (!filters || !filters.budgetMin || !filters.budgetMax) return null;
+
+  const budgetDisplay = `₹${filters.budgetMin}L–₹${filters.budgetMax}L`;
+  return `<div class="sec">
+    <div class="sec-pad">
+      <div style="background:#EBF1FE;border-radius:8px;padding:14px 16px;border:1px solid rgba(37,99,235,0.15);">
+        <div style="font-size:13px;color:var(--text);margin-bottom:10px;">We see your budget is around <b>${budgetDisplay}</b>. Is that correct?</div>
+        <div style="display:flex;gap:8px;">
+          <button class="ds-btn ds-btn-sm ds-btn-primary" style="flex:1;">Yes</button>
+          <button class="ds-btn ds-btn-sm ds-btn-tertiary" style="flex:1;">+ Add budget</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Preference Confirmation: "Do you want to continue with 2BHK?" (S2)
+function modPreferenceConfirmation(stage, bhk) {
+  if (stage !== 2) return null;
+  if (!bhk || !bhk.length) return null;
+
+  const primaryBhk = Array.isArray(bhk) ? bhk[0] : bhk;
+  // If they've viewed multiple BHK types, ask about the alternate one
+  const alternateBhk = primaryBhk === '2BHK' ? '3BHK' : '2BHK';
+
+  return `<div class="sec sec-pad">
+    <div style="background:#FFF7ED;border-radius:8px;padding:14px 16px;border:1px solid rgba(217,119,6,0.15);">
+      <div class="text-base text-primary font-bold mb-10">Do you want to continue viewing <b>${esc(alternateBhk)}s</b>?</div>
+      <div class="flex gap-md">
+        <button class="ds-btn ds-btn-sm ds-btn-primary" style="flex:1;">Yes</button>
+        <button class="ds-btn ds-btn-sm ds-btn-tertiary" style="flex:1;">No</button>
+        <button class="ds-btn ds-btn-sm ds-btn-secondary" style="flex:1;">Only ${esc(primaryBhk)}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Social Proof: "X people contacted this week" (S4)
+function modSocialProof(stage, primary) {
+  if (stage !== 4) return null;
+
+  // Mock data: simulate "12 people contacted this week"
+  const peopleContacted = Math.floor(Math.random() * 20) + 5;
+
+  return `<div class="sec">
+    <div class="sec-pad" style="background:#F0FDF4;border-left:3px solid var(--green);border-radius:8px;padding:14px 16px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="material-icons" aria-hidden="true" style="color:var(--green);font-size:20px;">people</span>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${peopleContacted} people contacted</div>
+          <div style="font-size:11px;color:var(--text3);">in the last week on this property</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Decision CTA Section: "Find the home that feels right for you" (S4)
+function modDecisionCtaSection(stage) {
+  if (stage !== 4) return null;
+
+  // Calculate next Sat-Sun
+  const today = new Date();
+  let nextSat = new Date(today);
+  nextSat.setDate(nextSat.getDate() + (6 - nextSat.getDay() + 1) % 7);
+  if (nextSat <= today) nextSat.setDate(nextSat.getDate() + 7);
+  let nextSun = new Date(nextSat);
+  nextSun.setDate(nextSun.getDate() + 1);
+
+  const satDate = nextSat.getDate();
+  const sunDate = nextSun.getDate();
+  const month = nextSat.toLocaleString('en-US', { month: 'short' });
+
+  const dateLabel = `${satDate}–${sunDate} ${month}`;
+
+  return `<div class="sec">
+    <div class="sec-pad" style="text-align:center;padding-bottom:20px;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;">Find the home that feels right for you</div>
+      <div style="display:flex;gap:8px;">
+        <button class="ds-btn ds-btn-secondary" style="flex:1;"><span class="material-icons" aria-hidden="true" style="font-size:16px;vertical-align:-2px;">compare</span> Compare</button>
+        <button class="ds-btn ds-btn-primary" style="flex:1;"><span class="material-icons" aria-hidden="true" style="font-size:16px;vertical-align:-2px;">calendar_today</span> Plan Visits (${dateLabel})</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Visit with Shortlist: "Visit these places along with your shortlist" (S4)
+function modVisitWithShortlist(stage, primary) {
+  if (stage !== 4) return null;
+  if (!primary) return null;
+
+  const props = data.properties ? data.properties.slice(0, 3) : [];
+  if (!props.length) return null;
+
+  const cards = props.map(p => `<div class="ds-prop-card" style="flex:0 0 calc(50% - 6px);">
+    <div class="ds-prop-card-img" style="height:100px;">
+      ${propImg(p)}
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Save to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price||'₹—')}</div>
+      <div class="ds-prop-card-subtitle" style="font-size:11px;">${esc(p.bhk||'')} · ${esc(p.location||primary)}</div>
+      ${p.lm ? `<div class="ds-prop-card-highlights" style="margin-top:6px;font-size:11px;color:var(--text2);">${esc(p.lm)}</div>` : ''}
+    </div>
+  </div>`).join('');
+
+  return `<div class="sec">
+    <div class="sec-pad" style="padding-bottom:8px;">
+      <div class="ds-section-heading">Visit these places along with your shortlist</div>
+      <div class="ds-heading-sub">Properties in the same area</div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;padding:0 14px 14px;justify-content:space-between;">
+      ${cards}
+    </div>
+  </div>`;
+}
+
+// ── Shared prop card ──────────────────────────────────────────────────────────
+function propCard(p, opts) {
+  opts = opts || {};
+  const isH = !!opts.horizontal;
+  const cls = isH ? 'ds-prop-card horizontal' : 'ds-prop-card';
+
+  // Badges on image
+  const badges = [];
+  if (p.ready_to_move) badges.push(`<div class="ds-image-tag" style="background:rgba(22,163,74,0.85);">Ready to move</div>`);
+  else badges.push(`<div class="ds-image-tag" style="background:rgba(37,99,235,0.88);">UC</div>`);
+
+  return `<div class="${cls}">
+    <div class="ds-prop-card-img">
+      ${propImg(p)}
+      <div class="ds-prop-card-badges">${badges.join('')}</div>
+      <button class="ds-shortlist ds-prop-card-shortlist" aria-label="Save to shortlist"><span class="material-icons" aria-hidden="true">favorite_border</span></button>
+    </div>
+    <div class="ds-prop-card-body">
+      <div class="ds-prop-card-price">${esc(p.price || '₹—')}</div>
+      <div class="ds-prop-card-subtitle">${esc(p.bhk || '')}${p.dev ? ' · ' + esc(p.dev) : ''}</div>
+      <div class="ds-prop-card-name">${esc(p.name || 'Property')}</div>
+      <div class="ds-prop-card-highlights">${esc(p.lm || '')}</div>
+    </div>
+  </div>`;
+}
+
+// ── Skeletons ─────────────────────────────────────────────────────────────────
+function skHprop() {
+  return `<div class="hprop"><div class="hprop-img skel"></div><div class="hprop-body"><div class="skel" style="height:14px;width:60%;margin-bottom:6px;"></div><div class="skel" style="height:10px;width:80%;margin-bottom:4px;"></div><div class="skel" style="height:10px;width:50%;"></div></div></div>`;
+}
+function skCard() {
+  return `<div class="prop"><div style="height:160px;" class="skel"></div><div class="prop-body"><div class="skel" style="height:16px;width:50%;margin-bottom:8px;"></div><div class="skel" style="height:12px;width:80%;margin-bottom:6px;"></div><div class="skel" style="height:12px;width:40%;"></div></div></div>`;
+}
+function renderLoading() {
+  return [
+    `<div class="sec" style="padding:16px 14px;">${skCard()}${skCard()}</div>`,
+    `<div class="sec" style="padding:16px 14px;">${[1,2,3].map(()=>`<div class="skel" style="height:90px;border-radius:8px;margin-bottom:8px;"></div>`).join('')}</div>`,
+  ].join('');
+}
+function renderEmpty() {
+  return `<div class="empty"><div class="empty-icon">🏡</div><div class="empty-title">Set a location to begin</div><div class="empty-sub">Open the researcher panel, configure a buyer profile, and click <strong>Apply to Preview</strong> to load the homepage.</div></div>`;
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function esc(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Shortlist toggle — delegate from #page ────────────────────────────────────
+document.getElementById('page').addEventListener('click', function(e) {
+  const btn = e.target.closest('.ds-shortlist');
+  if (btn) {
+    btn.classList.toggle('saved');
+    const icon = btn.querySelector('.material-icons');
+    if (icon) icon.textContent = btn.classList.contains('saved') ? 'favorite' : 'favorite_border';
+  }
+});
+
+// ── Locality watch toggle — delegate from #page ───────────────────────────────
+document.getElementById('page').addEventListener('click', function(e) {
+  const btn = e.target.closest('.loc-watch-btn');
+  if (btn) {
+    btn.classList.toggle('watching');
+    const icon = btn.querySelector('.material-icons');
+    if (icon) icon.textContent = btn.classList.contains('watching') ? 'notifications_active' : 'notifications_none';
+    btn.childNodes[btn.childNodes.length - 1].textContent = btn.classList.contains('watching') ? ' Watching' : ' Watch';
+  }
+});
+
+// ── Sticky notes — delegate from #page ────────────────────────────────────────
+document.getElementById('page').addEventListener('input', function(e) {
+  const ta = e.target.closest('.prop-note-input');
+  if (ta) {
+    const key = ta.dataset.propkey;
+    propNotes[key] = ta.value;
+    // Update note display in both prop-note-wrap and card-chips-wrap contexts
+    const wrap = ta.closest('.prop-note-wrap') || ta.closest('.card-chips-wrap');
+    if (wrap) {
+      let disp = wrap.querySelector('.prop-note-display');
+      if (ta.value) {
+        if (!disp) {
+          disp = document.createElement('div');
+          disp.className = 'prop-note-display';
+          wrap.insertBefore(disp, wrap.firstChild);
+        }
+        disp.textContent = '📝 "' + ta.value + '"';
+      } else if (disp) {
+        disp.remove();
+      }
+    }
+    // Update note button appearance — amber + "Edit note" when note exists
+    const cardActions = ta.nextElementSibling;
+    if (cardActions && cardActions.classList.contains('card-actions')) {
+      const noteBtn = cardActions.querySelector('.note-act');
+      if (noteBtn) {
+        const hasNote = !!ta.value;
+        noteBtn.classList.toggle('has-note', hasNote);
+        noteBtn.innerHTML = '<span class="material-icons" aria-hidden="true">' + (hasNote ? 'edit_note' : 'add_comment') + '</span>' + (hasNote ? 'Edit note' : 'Add a note');
+      }
+    }
+  }
+});
+
+// ── Per-card actions — delegate from #page ────────────────────────────────────
+document.getElementById('page').addEventListener('click', function(e) {
+  // "Not for me" toggle
+  const passBtn = e.target.closest('[data-rlabel="pass"]');
+  if (passBtn) {
+    const key = passBtn.dataset.rkey;
+    propChips[key] = propChips[key] === 'pass' ? '' : 'pass';
+    const active = propChips[key] === 'pass';
+    passBtn.className = 'card-act pass-act' + (active ? ' active' : '');
+    passBtn.innerHTML = '<span class="material-icons" aria-hidden="true">close</span>' + (active ? 'Removed' : 'Not for me');
+    return;
+  }
+  // Note toggle
+  const toggle = e.target.closest('[data-notetoggle]');
+  if (toggle && toggle.classList.contains('card-act')) {
+    const key = toggle.dataset.notetoggle;
+    const wrap = toggle.closest('.card-actions');
+    if (!wrap) return;
+    const ta = wrap.previousElementSibling;
+    if (ta && ta.classList.contains('prop-note-input')) {
+      ta.classList.toggle('hidden');
+      if (!ta.classList.contains('hidden')) ta.focus();
+    }
+    return;
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+var _supaUrl = (typeof window !== 'undefined' && window.SUPABASE_URL)  || '';
+var _supaKey = (typeof window !== 'undefined' && window.SUPABASE_ANON_KEY) || '';
+
+console.log('[init] page URL:', window.location.href);
+console.log('[init] Supabase configured:', !!_supaUrl, 'window.supabase:', !!window.supabase);
+
+// Initialize Supabase client if not already initialized by config.js
+if (_supaUrl && _supaKey && typeof supabase !== 'undefined' && !window.supabase) {
+  try {
+    window.supabase = supabase.createClient(_supaUrl, _supaKey);
+    console.log('[init] ✓ Created Supabase client for real-time');
+  } catch(e) {
+    console.log('[init] Could not create Supabase client:', e.message);
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// PRIORITY: Panel (postMessage) > Supabase > Demo fallback
+// NOTE: Always try panel mode first - don't rely on iframe detection
+// ────────────────────────────────────────────────────────────────────────────
+
+// Signal to parent that homepage is ready (works in iframe)
+function _signalReady() {
+  if (_panelConnected) return;
+  try {
+    window.parent.postMessage({ type: 'HOMEPAGE_READY' }, '*');
+  } catch(e) {
+    // Silently fail if not in iframe
+  }
+}
+
+// Send signal immediately and keep retrying every 300ms indefinitely
+console.log('[init] → Waiting for panel to send config...');
+_signalReady();
+var _readyTimer = setInterval(function() {
+  if (_panelConnected) {
+    console.log('[init] ✓ Panel connected! Stopping ready signals.');
+    clearInterval(_readyTimer);
+    return;
+  }
+  _signalReady();
+}, 300);
+
+// ── Supabase real-time subscription for standalone mode ──────────────────────
+// Subscribe to live_config table so standalone homepage stays in sync with panel
+setTimeout(function() {
+  console.log('[init] Attempting real-time subscription setup...');
+  console.log('[init] _supaUrl:', !!_supaUrl, '_supaKey:', !!_supaKey);
+  console.log('[init] typeof supabase:', typeof supabase);
+
+  // Create Supabase client if not already created
+  if (_supaUrl && _supaKey && typeof supabase !== 'undefined' && !window._sbClient) {
+    try {
+      window._sbClient = supabase.createClient(_supaUrl, _supaKey);
+      console.log('[init] ✓ Created Supabase client');
+    } catch(e) {
+      console.log('[init] ✗ Failed to create client:', e.message);
+      return;
+    }
+  }
+
+  var sb = window._sbClient;
+  if (!sb) {
+    console.log('[init] ✗ No Supabase client available');
+    return;
+  }
+
+  try {
+    console.log('[init] Setting up real-time subscription to live_config...');
+    var channel = sb.channel('live_config_changes');
+    channel
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'live_config',
+        filter: 'id=eq.default'
+      }, function(payload) {
+        console.log('[supabase-realtime] ✓ Change detected:', payload.eventType);
+        if (payload.new && payload.new.config) {
+          console.log('[supabase-realtime] → Applying new config');
+          config = Object.assign(defaultConfig(), payload.new.config || {});
+          fetchAndRender();
+        }
+      })
+      .subscribe(function(status) {
+        console.log('[supabase-realtime] Subscription status:', status);
+      });
+    console.log('[init] ✓ Real-time subscription active');
+  } catch(err) {
+    console.log('[init] ✗ Subscription error:', err.message);
+  }
+}, 1000);
+
+// Load demo config immediately (for standalone usage)
+// When panel connects via postMessage, it will override this with real config
+console.log('[init] Loading demo config for standalone/fallback...');
+console.log('%c📋 HOW TO USE THIS SYSTEM:', 'color: #2563eb; font-size: 14px; font-weight: bold;');
+console.log('%c1. RECOMMENDED: Open /panel/index.html', 'color: #16a34a; font-weight: bold;');
+console.log('   → The researcher panel with embedded homepage preview');
+console.log('   → Select personas from the dropdown to test different stages');
+console.log('%c2. ALTERNATIVE: Open /homepage/index.html directly', 'color: #16a34a; font-weight: bold;');
+console.log('   → Standalone mode: syncs with panel via Supabase');
+console.log('%c3. IMAGES: For images to load, serve files over HTTP:', 'color: #dc2626; font-weight: bold;');
+console.log('   → Run: python3 -m http.server 8000');
+console.log('   → Or: npx http-server');
+console.log('   → Then open: http://localhost:8000/panel/index.html');
+console.log('%cCONSOLE TIPS:', 'font-weight: bold;');
+console.log('   • Watch for [img-load] messages when images load');
+console.log('   • Watch for [img-error] if images fail (file:// protocol limitation)');
+console.log('   • Watch for [homepage-listener] messages for panel-homepage sync');
+console.log('   • Watch for [supabase-realtime] messages for standalone sync');
+loadDemoConfig();
+
+// After 30 seconds of waiting, log a warning but keep trying
+setTimeout(function() {
+  if (!_panelConnected) {
+    console.warn('[init] ⚠ Panel connection taking longer than 30s. Make sure panel is open and iframe is loaded.');
+  }
+}, 30000);
+
+// Helper function to load demo config
+// Uses s2_locality_explorer (Priya Mehta) persona as default
+function loadDemoConfig() {
+  config = Object.assign(defaultConfig(), {
+    stage: 2,
+    location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: true },
+    filters: { bhk: ['2BHK'], budgetMin: 70, budgetMax: 95, readyToMove: 'either', buyTimeline: 'exploring' },
+    lastVisitDaysAgo: 3,
+    user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager', worksNear: 'Sector 62' }
+  });
+  fetchAndRender();
+}
+</script>
+</body>
+</html>
