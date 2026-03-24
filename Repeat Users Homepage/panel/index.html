@@ -853,47 +853,47 @@ console.log('[panel] Script loaded - starting initialization...');
   /* ─── Preset personas ─── */
   const PERSONAS = {
     priya: {
-      // S2: Broad city entry, locality aware, exploring options
+      // S2: Broad city entry, locality aware, exploring options. Budget: Sector 137 2BHK range ₹72-85L
       user: { name: 'Priya Mehta', age: 32, occupation: 'Product Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 3,
       location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: true },
-      filters: { budgetMin: 70, budgetMax: 450, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
+      filters: { budgetMin: 70, budgetMax: 120, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: 'exploring' },
       behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'medium' },
       stageOverride: 2
     },
     rahul: {
-      // S2: Narrow locality entry, single sector focus — NOT over-bumped despite callback
+      // S2: Tight budget, Sector 137 2BHK focus. Budget: ₹72-100L range
       user: { name: 'Rahul Sharma', age: 34, occupation: 'Software Engineer', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 5,
       location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: false },
-      filters: { budgetMin: 75, budgetMax: 90, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: '6m' },
+      filters: { budgetMin: 70, budgetMax: 100, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: '6m' },
       behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'medium' },
       stageOverride: 2
     },
     meera: {
-      // S3: Budget-constrained, comparing affordable zones (Noida-only)
+      // S3: Budget-constrained teacher. Budget: ₹65-90L for affordable Sector 137 2BHK
       user: { name: 'Meera Iyer', age: 29, occupation: 'Teacher', worksNear: null },
       lastVisitDaysAgo: 7,
       location: { primary: 'Sector 137', secondary: 'Noida Extension', city: 'Noida', openToNearby: true },
-      filters: { budgetMin: 50, budgetMax: 95, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: '6m+' },
+      filters: { budgetMin: 65, budgetMax: 90, bhk: ['2BHK'], readyToMove: 'either', buyTimeline: '6m+' },
       behavior: { developerContact: 'none', visitedSite: false, priceSensitivity: 'high' },
       stageOverride: 3
     },
     vikram: {
-      // S3: Investor mindset, appreciation-focused comparison (Noida-only)
+      // S3: Business owner investor. Budget: ₹85-350L covers Sector 75 2BHK to Sector 107 3BHK luxury
       user: { name: 'Vikram Nair', age: 45, occupation: 'Business Owner', worksNear: null },
       lastVisitDaysAgo: 2,
       location: { primary: 'Sector 75', secondary: 'Sector 107', city: 'Noida', openToNearby: true },
-      filters: { budgetMin: 100, budgetMax: 150, bhk: ['2BHK', '3BHK'], readyToMove: 'either', buyTimeline: '3m' },
+      filters: { budgetMin: 85, budgetMax: 350, bhk: ['2BHK', '3BHK'], readyToMove: 'either', buyTimeline: '3m' },
       behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'low' },
       stageOverride: 3
     },
     upgrader: {
-      // S4: Shortlist/decision mode — owns 2BHK Sec 62, upgrading to 3BHK
+      // S4: Senior manager upgrading to 3BHK. Budget: ₹110-200L covers Sector 137 3BHK range
       user: { name: 'Ankit Verma', age: 38, occupation: 'Senior Manager', worksNear: 'Sector 62' },
       lastVisitDaysAgo: 1,
       location: { primary: 'Sector 137', secondary: null, city: 'Noida', openToNearby: false },
-      filters: { budgetMin: 120, budgetMax: 150, bhk: ['3BHK'], readyToMove: 'either', buyTimeline: '3m' },
+      filters: { budgetMin: 110, budgetMax: 200, bhk: ['3BHK'], readyToMove: 'either', buyTimeline: '3m' },
       behavior: { developerContact: 'callback', visitedSite: false, priceSensitivity: 'medium' },
       stageOverride: 4
     }
