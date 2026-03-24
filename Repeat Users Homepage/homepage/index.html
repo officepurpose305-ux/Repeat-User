@@ -1424,7 +1424,8 @@ function modNewInSectors(stage, primary, worksNear) {
   if (stage < 1 || stage > 3) return null;
   const f = config.filters || {};
   const selectedBhk = f.bhk && f.bhk.length ? f.bhk : null;
-  const pool = rawData.properties || data.properties;
+  const fallback = getMockData(config);
+  const pool = (rawData && rawData.properties) || (data && data.properties) || (fallback.properties);
 
   // Filter: prefer properties matching BHK preference; if none match, fall back to unfiltered
   let newProps = pool.filter(p => !p.ready_to_move);
@@ -1858,30 +1859,35 @@ function modPropertiesPrimary(stage, primary, secondary, worksNear) {
   if (stage === 4 || stage === 5) return null;  // Show S1, S2, S3 per wireframes
 
   // ── INTELLIGENT FALLBACK FILTERING ──
+  const mockData = getMockData(config);
+  const allProperties = (data && data.properties && data.properties.length) ? data.properties : (mockData.properties || []);
+  const allLocalities = (data && data.localities && data.localities.length) ? data.localities : (mockData.localities || []);
+  const allAdjacentLocalities = (data && data.adjacentLocalities && data.adjacentLocalities.length) ? data.adjacentLocalities : (mockData.adjacentLocalities || []);
+
   // Stage 1: Filter by exact primary location
-  let candidateProperties = (data && data.properties) ? data.properties.filter(p => p.location.includes(primary)) : [];
+  let candidateProperties = allProperties.filter(p => p.location.includes(primary));
   let fallbackType = null;
 
   // Stage 2: If empty, try adjacent localities
-  if (!candidateProperties.length && (data && data.adjacentLocalities && data.adjacentLocalities.length)) {
-    const adjacentNames = data.adjacentLocalities.map(a => a.name);
-    candidateProperties = (data && data.properties) ? data.properties.filter(p =>
+  if (!candidateProperties.length && allAdjacentLocalities.length) {
+    const adjacentNames = allAdjacentLocalities.map(a => a.name);
+    candidateProperties = allProperties.filter(p =>
       adjacentNames.some(adj => p.location.includes(adj))
-    ) : [];
+    );
     if (candidateProperties.length) fallbackType = 'adjacent';
   }
 
   // Stage 3: If still empty, try same price tier (±30%)
   if (!candidateProperties.length) {
-    const targetLoc = (data && data.localities) ? data.localities.find(l =>
+    const targetLoc = allLocalities.find(l =>
       l.name.toLowerCase().includes(primary.toLowerCase())
-    ) : null;
+    );
     if (targetLoc) {
       const priceBand = targetLoc.avgPsqft * 0.3;
-      candidateProperties = (data && data.properties) ? data.properties.filter(p => {
+      candidateProperties = allProperties.filter(p => {
         const pPrice = parsePriceLakhs(p.price);
         return Math.abs(pPrice - targetLoc.avgPsqft) <= priceBand;
-      }) : [];
+      });
       if (candidateProperties.length) fallbackType = 'price-tier';
     }
   }
@@ -2136,9 +2142,10 @@ function modDecisionSpotlight(stage, primary, worksNear) {
 
 function modStillConsidering(stage, primary) {
   if (stage !== 4 && stage !== 5) return null;
-  const props = (data && data.properties) ? data.properties.slice(1, 4) : [];
+  const fallback = getMockData(config);
+  const props = (data && data.properties && data.properties.length) ? data.properties.slice(1, 4) : (fallback.properties || []).slice(1, 4);
   if (!props.length) return null;
-  const topProp = (data && data.properties) ? data.properties[0] : null;
+  const topProp = (data && data.properties && data.properties.length) ? data.properties[0] : (fallback.properties || [])[0];
   const topPrice = parsePriceLakhs(topProp ? topProp.price : null);
   const cards = props.map((p, i) => {
     const propPrice = parsePriceLakhs(p.price);
@@ -2208,7 +2215,8 @@ function modStillConsidering(stage, primary) {
 
 function modVisitPlanner(stage) {
   if (stage !== 4) return null;
-  const props = (data && data.properties) ? data.properties.slice(1, 4) : [];
+  const fallback = getMockData(config);
+  const props = (data && data.properties && data.properties.length) ? data.properties.slice(1, 4) : (fallback.properties || []).slice(1, 4);
   if (!props.length) return null;
   const cards = props.slice(0, 3).map(p => `<div class="ds-prop-card horizontal">
     <div class="ds-prop-card-img" style="position:relative;">
@@ -2313,7 +2321,9 @@ function modUpcomingProjects(stage, primary) {
   if (cityLevel) return null;
 
   // Show new/upcoming properties in the primary location
-  const props = (data.properties || [])
+  const fallback = getMockData(config);
+  const allProps = (data && data.properties && data.properties.length) ? data.properties : (fallback.properties || []);
+  const props = allProps
     .filter(p => p.location && p.location.includes(primary) && !p.ready_to_move)
     .slice(0, 2);
 
