@@ -1480,9 +1480,15 @@ function modNewInSectors(stage, primary, worksNear) {
     </div>`;
   }).join('');
 
+  const freshCount = newProps.length;
   return `<div class="sec">
     <div class="sec-pad" style="padding-bottom:8px;">
-      <div class="ds-section-heading">Fresh Listings in ${esc(primary)}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <div class="ds-section-heading" style="margin:0;">Fresh Listings in ${esc(primary)}</div>
+        <div style="background:black;color:white;font-size:11px;font-weight:700;padding:4px 8px;border-radius:4px;display:inline-block;">
+          ${freshCount} NEW
+        </div>
+      </div>
       ${sub ? `<div class="ds-heading-sub">${esc(sub)}</div>` : ''}
     </div>
     <div class="fresh-grid">${cards}</div>
